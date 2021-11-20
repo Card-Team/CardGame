@@ -1,15 +1,137 @@
 ﻿@startuml
-'Les champs publics commençant par une majuscule sont des propriétés
+'Les champs ayant le stéréotype <<property>> sont des propriétés C#
 
 hide circle
 skinparam classAttributeIconSize 0
+skinparam linetype ortho
 
-class Card {
-+ Name : string
-+ MaxLevel : int
-+ Keywords : Keyword[0..*]
-+ NormalCost : int
-+ ActualCost : int
+'TODO faire un bon systeme de trucs dynamiques avec events, donc liste et value principalement
+' aussi priorité des listeners
+
+package Dynamic{
+class DynamicValue<T>{
+    + <<property>> InitialValue : T {readOnly}
+    + <<property>> CurrentValue : T
+    + <<property>> HasValueChanged : bool {readOnly}
+    'TODO ajouter des methodes pour réagir a un changment
 }
+note left of DynamicValue::CurrentValue
+    Utiliser le setter de **CurrentValue** va mettre 
+    **HasValueChanged** a true obligatoirement
+end note
+}
+
+
+package Cards{
+class Card{
++ <<property>> Name : DynamicValue<string> {readOnly}
++ <<property>> MaxLevel : int {readOnly}
++ <<property>> Cost : DynamicValue<string> {readOnly}
++ CanBePlayedIn(in theGame: Game): bool
++ GetEffect(): Effect
+}
+
+class Keyword{
+'TODO
+}
+package CardPiles{
+class CardPile{
+- cardList: Card[0..*]
+
++ {method} CardPile[int index] : Card
++ MoveTo(in currentCardPile: CardPile, in theCard: Card)
+}
+class DiscardPile extends CardPile{
++ <<property>> MarkedForUpgrade: Card[0..*]
+}
+}
+
+class Artefact{
+'TODO
+}
+
+CardPile ..u|> IEnumerable : <<bind>>\nT=Card
+Card "0..*" o--  "0..*" Keyword : <<property>> Keywords
+
+}
+
+class IEnumerable<T>{
++ GetEnumerator() : IEnumerator<T>
+}
+
+
+
+
+
+
+
+package GameSystems{
+class Effect{
++ DoEffect(in theGame: Game): bool
+'TODO
+}
+
+class Player{
++ <<property>> Deck: CardPile
+'+ <<property>> Artefacts: Artefact[2] {readOnly}
++ <<property>> Name: string {readOnly}
++ <<property>> Hand : CardPile
++ <<property>> ActionPoints : DynamicValue<int> {readOnly}
++ <<property>> Discard : DiscardPile
+
++ DrawCard()
++ PrepareCardUpgrade(in theCard: Card)
++ LoopDeck()
++ DiscardCard(in theCard: Card)
+'consumeactionpoint remplacé par juste modifier la dynamicValue
+}
+
+Player  "2" *-r "1" Artefact : <<property>> Artefacts {readOnly}
+
+package Targeting{
+
+class Target{
++ <<property>> TargetType : TargetTypes {readOnly}
++ <<property>> IsAutomatic : bool
++ <<property>> Name: string
+
+}
+Effect "1" *--  "0..*" Target : <<property>> AllTargets {readOnly}
+
+
+enum TargetTypes{
+    Player
+    Card
+    Deck
+    'TODO player et Deck sont un peu pareil, a voir
+}
+}
+}
+
+
+
+
+
+
+
+
+class Game{
+
++ <<property>> currentPlayerTurn: Player {readOnly}
+
++ gameLoop()
++ CheckHasWon(in playerToCheck: Player) : bool
++ StartPlayerTurn(in player: Player)
++ FinishTurn(in player: Player)
++ PlayCard(in thePlayer: Player, in theCard: Card)
++ ActivateArtifact(in thePlayer: Player,in theArtefact: Artefact)
+}
+
+
+
+Player "1" --l-* "1" Game: <<property>> Player1 {readOnly}
+Player "1" --l-* "1" Game: <<property>> Player2 {readOnly}
+
+
 
 @enduml
