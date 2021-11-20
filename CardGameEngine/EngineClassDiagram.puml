@@ -1,0 +1,15 @@
+﻿@startuml
+'Les champs publics commençant par une majuscule sont des propriétés
+
+hide circle
+skinparam classAttributeIconSize 0
+
+class Card {
++ Name : string
++ MaxLevel : int
++ Keywords : Keyword[0..*]
++ NormalCost : int
++ ActualCost : int
+}
+
+@enduml
