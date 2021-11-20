@@ -1,7 +1,7 @@
 ﻿namespace CardGameEngine
 {
-    public class Card
+    public class Keyword
     {
-        
+        //TODO
     }
 }

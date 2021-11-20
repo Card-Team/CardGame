@@ -40,7 +40,17 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Card.cs" />
+        <Compile Include="Cards\Artefact.cs" />
+        <Compile Include="Cards\Card.cs" />
+        <Compile Include="Cards\CardPiles\CardPile.cs" />
+        <Compile Include="Cards\CardPiles\DiscardPile.cs" />
+        <Compile Include="Cards\Keyword.cs" />
+        <Compile Include="Dynamic\DynamicValue.cs" />
+        <Compile Include="Game.cs" />
+        <Compile Include="GameSystems\Effect.cs" />
+        <Compile Include="GameSystems\Player.cs" />
+        <Compile Include="GameSystems\Targeting\Target.cs" />
+        <Compile Include="GameSystems\Targeting\TargetTypes.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
