@@ -5,7 +5,7 @@ hide circle
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
 
-'TODO faire un bon systeme de trucs dynamiques avec events, donc liste et value principalement
+'TODO faire un bon système de trucs dynamiques avec events, donc liste et value principalement
 ' aussi priorité des listeners
 
 package Dynamic{
@@ -13,11 +13,11 @@ class DynamicValue<T>{
     + <<property>> InitialValue : T {readOnly}
     + <<property>> CurrentValue : T
     + <<property>> HasValueChanged : bool {readOnly}
-    'TODO ajouter des methodes pour réagir a un changment
+    'TODO ajouter des méthodes pour réagir à un changement
 }
 note left of DynamicValue::CurrentValue
     Utiliser le setter de **CurrentValue** va mettre 
-    **HasValueChanged** a true obligatoirement
+    **HasValueChanged** à true obligatoirement
 end note
 }
 
@@ -103,7 +103,7 @@ enum TargetTypes{
     Player
     Card
     Deck
-    'TODO player et Deck sont un peu pareil, a voir
+    'TODO player et Deck sont un peu pareil, à voir
 }
 }
 }
@@ -117,9 +117,9 @@ enum TargetTypes{
 
 class Game{
 
-+ <<property>> currentPlayerTurn: Player {readOnly}
++ <<property>> CurrentPlayerTurn: Player {readOnly}
 
-+ gameLoop()
++ GameLoop()
 + CheckHasWon(in playerToCheck: Player) : bool
 + StartPlayerTurn(in player: Player)
 + FinishTurn(in player: Player)
