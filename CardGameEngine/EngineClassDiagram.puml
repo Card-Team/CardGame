@@ -34,6 +34,7 @@ class Card{
 class Keyword{
 'TODO
 }
+
 package CardPiles{
 class CardPile{
 - cardList: Card[0..*]
@@ -48,10 +49,13 @@ class DiscardPile extends CardPile{
 
 class Artefact{
 'TODO
++ <<property>> Name : DynamicValue<String> {readOnly}
++ CanBePlayedIn(in theGame: Game): bool
 }
 
 CardPile ..u|> IEnumerable : <<bind>>\nT=Card
 Card "0..*" o--  "0..*" Keyword : <<property>> Keywords
+Artefact "0..*" o--  "0..*" Keyword : <<property>> Keywords
 
 }
 
