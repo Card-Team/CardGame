@@ -5,28 +5,90 @@ hide circle
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
 
-'TODO faire un bon système de trucs dynamiques avec events, donc liste et value principalement
-' aussi priorité des listeners
-
-package Dynamic{
-class DynamicValue<T>{
-    + <<property>> InitialValue : T {readOnly}
-    + <<property>> CurrentValue : T
-    + <<property>> HasValueChanged : bool {readOnly}
-    'TODO ajouter des méthodes pour réagir à un changement
+package EventSystem{
+class EventManager{
+'objet intermediaire qui cast pour appeler l'évenement
+ + {field} <<delegate>> OnEvent<T extends Event>(T evt)
+ - eventHandlersDict: Dictionary<Type,List<OnEvent>>
+ 
+ + subscribeToEvent <T extends Event>(OnEven deleg)
+ + unsubscribeFromEvent <T extends Event>(OnEven deleg)
+ + sendEvent<T extends Event>(T evt)
 }
-note left of DynamicValue::CurrentValue
-    Utiliser le setter de **CurrentValue** va mettre 
-    **HasValueChanged** à true obligatoirement
-end note
+
+package Events{
+
+abstract class Event{
+ + <<property>> Cancelled: bool = false
+}
+
+class TargetingEvent extends Event{
+ + <<property>> TargetData: Target
+}
+
+package GameStateEvents{
+
+class StartTurnEvent extends Event{
++ <<property>> Player: Player
+}
+
+class EndTurnEvent extends Event{
++ <<property>> Player: Player
+}
+
+package KeywordEvent{
+
+'TODO
+
+}
+
+
+}
+
+package CardEvents{
+
+abstract class CardEvent extends Event{
+ + <<property>> Card : Card
+}
+
+
+class CardUpgradeEvent extends CardEvent
+class CardMovePileEvent extends CardEvent{
+ + <<property>> SourcePile: CardPile
+ + <<property>> DestPile: CardPile
+}
+
+class CardPlayEvent extends CardEvent
+class CardMarkUpgradeEvent extends CardEvent
+class CardDeleteEvent extends CardEvent
+
+
+
+package PropertyChange{
+abstract class CardPropertyChangeEvent<T> extends CardEvent{
+ + <<property>> OldValue : T {readOnly}
+ + <<property>> NewValue : T
+}
+
+CardNameChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=string
+CardLevelChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
+CardCostChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
+CardEffectIdChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
+'todo effect
+
+}
+
+
+}
+}
 }
 
 
 package Cards{
 class Card{
-+ <<property>> Name : DynamicValue<string> {readOnly}
++ <<property>> Name : ObservableValue<string> {readOnly}
 + <<property>> MaxLevel : int {readOnly}
-+ <<property>> Cost : DynamicValue<string> {readOnly}
++ <<property>> Cost : ObservableValue<string> {readOnly}
 + CanBePlayedIn(in theGame: Game): bool
 + GetEffect(): Effect
 }
@@ -52,7 +114,6 @@ class Artefact{
 + <<property>> Name : DynamicValue<String> {readOnly}
 + CanBePlayedIn(in theGame: Game): bool
 }
-
 CardPile ..u|> IEnumerable : <<bind>>\nT=Card
 Card "0..*" o--  "0..*" Keyword : <<property>> Keywords
 Artefact "0..*" o--  "0..*" Keyword : <<property>> Keywords
@@ -80,14 +141,14 @@ class Player{
 '+ <<property>> Artefacts: Artefact[2] {readOnly}
 + <<property>> Name: string {readOnly}
 + <<property>> Hand : CardPile
-+ <<property>> ActionPoints : DynamicValue<int> {readOnly}
++ <<property>> ActionPoints : ObservableValue<int> {readOnly}
 + <<property>> Discard : DiscardPile
 
 + DrawCard()
 + PrepareCardUpgrade(in theCard: Card)
 + LoopDeck()
 + DiscardCard(in theCard: Card)
-'consumeactionpoint remplacé par juste modifier la dynamicValue
+
 }
 
 Player  "2" *-r "1" Artefact : <<property>> Artefacts {readOnly}
@@ -106,9 +167,8 @@ Effect "1" *--  "0..*" Target : <<property>> AllTargets {readOnly}
 enum TargetTypes{
     Player
     Card
-    Deck
-    'TODO player et Deck sont un peu pareil, à voir
 }
+Target .l. TargetTypes
 }
 }
 
@@ -122,6 +182,7 @@ enum TargetTypes{
 class Game{
 
 + <<property>> CurrentPlayerTurn: Player {readOnly}
++ <<property>> EventManager: EventManager {readOnly}
 
 + GameLoop()
 + CheckHasWon(in playerToCheck: Player) : bool
@@ -133,8 +194,8 @@ class Game{
 
 
 
-Player "1" --l-* "1" Game: <<property>> Player1 {readOnly}
-Player "1" --l-* "1" Game: <<property>> Player2 {readOnly}
+Player "1" --d-* "1" Game: <<property>> Player1 {readOnly}
+Player "1" --d-* "1" Game: <<property>> Player2 {readOnly}
 
 
 
