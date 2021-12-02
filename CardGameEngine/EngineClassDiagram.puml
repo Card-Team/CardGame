@@ -1,9 +1,7 @@
 ﻿@startuml
 'Les champs ayant le stéréotype <<property>> sont des propriétés C#
 
-hide circle
-skinparam classAttributeIconSize 0
-skinparam linetype ortho
+class IDisposable
 
 package EventSystem{
 class EventManager{
@@ -11,129 +9,44 @@ class EventManager{
  + {field} <<delegate>> OnEvent<T extends Event>(T evt)
  - eventHandlersDict: Dictionary<Type,List<OnEvent>>
  
- + subscribeToEvent <T extends Event>(OnEven deleg)
- + unsubscribeFromEvent <T extends Event>(OnEven deleg)
- + sendEvent<T extends Event>(T evt)
+ + SubscribeToEvent <T extends Event>(deleg : OnEvent, evenCancelled : bool = false, postEvent: bool = false)
+ + UnsubscribeFromEvent <T extends Event>(deleg : OnEvent, postEvent: bool = false)
+ + SendEvent<T extends Event>(T evt,postEvent : bool = false) : PostEventSender
+ 'faut pas oublier d'envoyer les Post
+ ' utilisation d'un bloc using
 }
 
-package Events{
-
-abstract class Event{
- + <<property>> Cancelled: bool = false
+class EventManager::PostEventSender implements IDisposable{
+ + <<property>> Event: Event
+ + Dispose()
+ 'méthode qui s'occuppe d'appeler EventManager.SendEvent avec le meme event en post
 }
 
-class TargetingEvent extends Event{
- + <<property>> TargetData: Target
+class EventProperty<S,T,ET implements IPropertyEvent>{
+ - sender : S
+ + <<property>> Value : T {readOnly}
+ 
+ + EventProperty(in sender: S)
+ + TryChangeValue(in newVal: T)
 }
 
-package GameStateEvents{
-
-class StartTurnEvent extends Event{
-+ <<property>> Player: Player
+!include EventsClassDiagram.puml
 }
 
-class EndTurnEvent extends Event{
-+ <<property>> Player: Player
-}
-
-package KeywordEvent{
-
-'TODO
-
-}
-
-
-}
-
-package CardEvents{
-
-abstract class CardEvent extends Event{
- + <<property>> Card : Card
-}
-
-
-class CardUpgradeEvent extends CardEvent
-class CardMovePileEvent extends CardEvent{
- + <<property>> SourcePile: CardPile
- + <<property>> DestPile: CardPile
-}
-
-class CardPlayEvent extends CardEvent
-class CardMarkUpgradeEvent extends CardEvent
-class CardDeleteEvent extends CardEvent
-
-
-
-package PropertyChange{
-abstract class CardPropertyChangeEvent<T> extends CardEvent{
- + <<property>> OldValue : T {readOnly}
- + <<property>> NewValue : T
-}
-
-CardNameChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=string
-CardLevelChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
-CardCostChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
-CardEffectIdChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
-'todo effect
-
-}
-
-
-}
-}
-}
-
-
-package Cards{
-class Card{
-+ <<property>> Name : ObservableValue<string> {readOnly}
-+ <<property>> MaxLevel : int {readOnly}
-+ <<property>> Cost : ObservableValue<string> {readOnly}
-+ CanBePlayedIn(in theGame: Game): bool
-+ GetEffect(): Effect
-}
-
-class Keyword{
-'TODO
-}
-
-package CardPiles{
-class CardPile{
-- cardList: Card[0..*]
-
-+ {method} CardPile[int index] : Card
-+ MoveTo(in currentCardPile: CardPile, in theCard: Card)
-}
-class DiscardPile extends CardPile{
-+ <<property>> MarkedForUpgrade: Card[0..*]
-}
-}
-
-class Artefact{
-'TODO
-+ <<property>> Name : DynamicValue<String> {readOnly}
-+ CanBePlayedIn(in theGame: Game): bool
-}
-CardPile ..u|> IEnumerable : <<bind>>\nT=Card
-Card "0..*" o--  "0..*" Keyword : <<property>> Keywords
-Artefact "0..*" o--  "0..*" Keyword : <<property>> Keywords
-
-}
-
-class IEnumerable<T>{
-+ GetEnumerator() : IEnumerator<T>
-}
-
-
-
-
-
-
+!include CardsClassDiagram.puml
 
 package GameSystems{
 class Effect{
++ <<property>> EffectType: EffectType {readOnly}
++ <<property>> EffectId : int {readOnly}
 + DoEffect(in theGame: Game): bool
-'TODO
+'TODO Lua
+}
+
+enum EffectType{
+    Artefact
+    Keyword
+    Card
 }
 
 class Player{
@@ -141,7 +54,7 @@ class Player{
 '+ <<property>> Artefacts: Artefact[2] {readOnly}
 + <<property>> Name: string {readOnly}
 + <<property>> Hand : CardPile
-+ <<property>> ActionPoints : ObservableValue<int> {readOnly}
++ <<property>> ActionPoints : EventProperty<Player,int,ActionPointEditEvent> {readOnly}
 + <<property>> Discard : DiscardPile
 
 + DrawCard()
@@ -174,7 +87,11 @@ Target .l. TargetTypes
 
 
 
-
+class EffectsDatabase{
+- effectDictionary : Dictionary<int,Effect>
+- LoadEffect(effectId: int) : Effect
++ LoadAllEffects(path: string)
+}
 
 
 
@@ -183,11 +100,12 @@ class Game{
 
 + <<property>> CurrentPlayerTurn: Player {readOnly}
 + <<property>> EventManager: EventManager {readOnly}
++ <<property>> EffectsDatabase: EffectsDatabase {readOnly}
 
-+ GameLoop()
 + CheckHasWon(in playerToCheck: Player) : bool
 + StartPlayerTurn(in player: Player)
 + FinishTurn(in player: Player)
++ CanBePlayed(in by: Player,in theCard: Card)
 + PlayCard(in thePlayer: Player, in theCard: Card)
 + ActivateArtifact(in thePlayer: Player,in theArtefact: Artefact)
 }

@@ -1,0 +1,116 @@
+﻿@startuml
+package Events{
+abstract class Event
+abstract class CancellableEvent extends Event{ 
+ + <<property>> Cancelled: bool = false
+}
+
+class EffectActivateEvent extends CancellableEvent{
+    + <<property>> Effect: Effect
+}
+
+interface PropertyChangeEvent<S,T>{
+    + <<property>> Sender : S
+    + <<property>> Value : T
+}
+
+abstract class ActionPointEditEvent extends CancellableEvent{
+    + <<property>> Player: Player
+    + <<property>> RelativePointCount: int
+    
+}
+
+'implementation explicite seulement accesible via l'interface
+ActionPointEditEvent ..|> PropertyChangeEvent : <<bind>>\nT=int\nS=Player
+
+
+package GameStateEvents{
+
+class StartTurnEvent extends Event{
++ <<property>> Player: Player
+}
+
+class EndTurnEvent extends Event{
++ <<property>> Player: Player
+}
+class DeckLoopEvent extends Event{
++ <<property>> Player: Player
+}
+}
+
+package CardEvents{
+
+abstract class CardEvent extends CancellableEvent{
+ + <<property>> Card : Card
+}
+
+class TargetingEvent extends Event{
+ + <<property>> TargetData: Target
+}
+
+
+class CardUpgradeEvent extends CardEvent
+class CardMovePileEvent extends CardEvent{
+ + <<property>> SourcePile: CardPile
+ + <<property>> DestPile: CardPile
+}
+
+class CardPlayEvent extends CardEvent
+class CardMarkUpgradeEvent extends CardEvent
+class CardDeleteEvent extends CardEvent
+
+
+
+package PropertyChange{
+abstract class CardPropertyChangeEvent<T> extends CardEvent{
+ + <<property>> OldValue : T {readOnly}
+ + <<property>> NewValue : T
+}
+'implementation explicite seulement accesible via l'interface
+CardPropertyChangeEvent ..|> PropertyChangeEvent : <<bind>>\nT=T\nS=Card
+
+CardNameChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=string
+CardLevelChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
+CardCostChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
+CardEffectIdChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
+
+}
+
+package KeywordEvent{
+class CardKeywordEvent extends CardEvent{
+    + <<property>> Card: Card
+    + <<property>> Keyword: Keyword
+}
+
+
+class CardKeywordAddEvent extends CardKeywordEvent{
+}
+class CardKeywordRemoveEvent extends CardKeywordEvent{
+}
+
+class CardKeywordTriggerEvent extends CardKeywordEvent{
+}
+
+'keywordevents
+} 
+'CardEvents
+}
+
+package ArtefactEvents{
+
+abstract class ArtefactEvent extends CancellableEvent{
+    + <<property>> Artefact: Artefact
+}
+
+class ArtefactChargeEditEvent extends ArtefactEvent{
+    + <<property>> RelativeChargeChange: int
+}
+
+
+class ArtefactActivateEvent extends ArtefactEvent
+
+}
+
+'Events
+}
+@enduml

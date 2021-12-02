@@ -1,0 +1,46 @@
+﻿@startuml
+
+class IEnumerable<T>{
++ GetEnumerator() : IEnumerator<T>
+}
+
+package Cards{
+class Card{
++ <<property>> Name : EventProperty<Card,string,CardNameChangeEvent> {readOnly}
++ <<property>> MaxLevel : int {readOnly}
++ <<property>> Cost : EventProperty<Card,int,CardCostChangeEvent> {readOnly}
++ <<property>> EffectId : EventProperty<Card,int,CardEffectIdChangeEvent> {readOnly}
+'c'est un scriptId en fait
+}
+
+class Keyword{
++ <<property>> Name: string {readOnly}
++ <<property>> EffectId: string {readOnly}
+}
+
+package CardPiles{
+class CardPile{
+- cardList: Card[0..*]
+
++ {method} CardPile[int index] : Card
++ MoveTo(in currentCardPile: CardPile, in theCard: Card)
+}
+class DiscardPile extends CardPile{
++ <<property>> MarkedForUpgrade: Card[0..*]
+}
+}
+
+class Artefact{
++ <<property>> Name : DynamicValue<String> {readOnly}
++ <<property>> MaxCharge : int {readOnly}
++ <<property>> CurrentCharges : EventProperty<Artefact,int,ArtefactChargeEditEvent> {readOnly}
++ <<property>> EffectId : int {readOnly}
++ CanBeActivated()
+}
+CardPile ..u|> IEnumerable : <<bind>>\nT=Card
+Card "0..*" o--  "0..*" Keyword : <<property>> Keywords
+Artefact "0..*" o--  "0..*" Keyword : <<property>> Keywords
+
+}
+
+@enduml
