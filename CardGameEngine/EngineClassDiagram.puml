@@ -6,24 +6,26 @@ class IDisposable
 package EventSystem{
 class EventManager{
 'objet intermediaire qui cast pour appeler l'évenement
- + {field} <<delegate>> OnEvent<T extends Event>(T evt)
- - eventHandlersDict: Dictionary<Type,List<OnEvent>>
+ + {field} <<delegate>> OnEvent<T extends Event>(in evt: T)
+ - _eventHandlersDict: Dictionary<Type,List<OnEvent<Event>>>
  
- + SubscribeToEvent <T extends Event>(deleg : OnEvent, evenCancelled : bool = false, postEvent: bool = false)
- + UnsubscribeFromEvent <T extends Event>(deleg : OnEvent, postEvent: bool = false)
- + SendEvent<T extends Event>(T evt,postEvent : bool = false) : PostEventSender
+ + SubscribeToEvent<T extends Event> (in deleg : OnEvent<T>, in evenCancelled : bool = false, postEvent: bool = false)
+ + UnsubscribeFromEvent<T extends Event> (in deleg : OnEvent<T>, in postEvent: bool = false)
+ + SendEvent<T extends Event> (in evt : T, in postEvent : bool = false) : PostEventSender
  'faut pas oublier d'envoyer les Post
  ' utilisation d'un bloc using
 }
 
-class EventManager::PostEventSender implements IDisposable{
- + <<property>> Event: Event
+interface EventManager::IPostEventSender implements IDisposable{
+ + <<property>> Event: Event {readOnly}
  + Dispose()
- 'méthode qui s'occuppe d'appeler EventManager.SendEvent avec le meme event en post
+ 'méthode qui s'occupe d'appeler EventManager.SendEvent avec le meme event en post
 }
 
-class EventProperty<S,T,ET implements IPropertyEvent>{
- - sender : S
+class EventManager::PostEventSenderImpl implements EventManager::IPostEventSender
+
+class EventProperty<S,T,ET implements IPropertyChangeEvent<S, T>>{
+ - _sender : S
  + <<property>> Value : T {readOnly}
  
  + EventProperty(in sender: S)
@@ -48,6 +50,8 @@ enum EffectType{
     Keyword
     Card
 }
+
+Effect .l. EffectType
 
 class Player{
 + <<property>> Deck: CardPile
@@ -88,9 +92,9 @@ Target .l. TargetTypes
 
 
 class EffectsDatabase{
-- effectDictionary : Dictionary<int,Effect>
-- LoadEffect(effectId: int) : Effect
-+ LoadAllEffects(path: string)
+- _effectDictionary : Dictionary<int,Effect>
+- LoadEffect(in effectId: int) : Effect
++ LoadAllEffects(in path: string)
 }
 
 
@@ -105,7 +109,7 @@ class Game{
 + CheckHasWon(in playerToCheck: Player) : bool
 + StartPlayerTurn(in player: Player)
 + FinishTurn(in player: Player)
-+ CanBePlayed(in by: Player,in theCard: Card)
++ CanBePlayed(in by: Player,in theCard: Card) : bool
 + PlayCard(in thePlayer: Player, in theCard: Card)
 + ActivateArtifact(in thePlayer: Player,in theArtefact: Artefact)
 }

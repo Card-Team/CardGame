@@ -9,19 +9,20 @@ class EffectActivateEvent extends CancellableEvent{
     + <<property>> Effect: Effect
 }
 
-interface PropertyChangeEvent<S,T>{
+interface IPropertyChangeEvent<S,T>{
     + <<property>> Sender : S
     + <<property>> Value : T
 }
 
-abstract class ActionPointEditEvent extends CancellableEvent{
+class ActionPointEditEvent extends CancellableEvent{
     + <<property>> Player: Player
-    + <<property>> RelativePointCount: int
+    + <<property>> OldPointCount: int {readOnly}
+    + <<property>> NewPointCount: int
     
 }
 
-'implementation explicite seulement accesible via l'interface
-ActionPointEditEvent ..|> PropertyChangeEvent : <<bind>>\nT=int\nS=Player
+'implementation explicite seulement accessible via l'interface
+ActionPointEditEvent ..|> IPropertyChangeEvent : <<bind>>\nT=int\nS=Player
 
 
 package GameStateEvents{
@@ -67,7 +68,7 @@ abstract class CardPropertyChangeEvent<T> extends CardEvent{
  + <<property>> NewValue : T
 }
 'implementation explicite seulement accesible via l'interface
-CardPropertyChangeEvent ..|> PropertyChangeEvent : <<bind>>\nT=T\nS=Card
+CardPropertyChangeEvent ..|> IPropertyChangeEvent : <<bind>>\nT=T\nS=Card
 
 CardNameChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=string
 CardLevelChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
@@ -76,7 +77,7 @@ CardEffectIdChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
 
 }
 
-package KeywordEvent{
+package KeywordEvents{
 class CardKeywordEvent extends CardEvent{
     + <<property>> Card: Card
     + <<property>> Keyword: Keyword
@@ -109,6 +110,9 @@ class ArtefactChargeEditEvent extends ArtefactEvent{
 
 class ArtefactActivateEvent extends ArtefactEvent
 
+ArtefactChargeEditEvent ..u|> IPropertyChangeEvent : <<bind>>\nT=Artefact\nS=int
+
+'ArtefactEvents
 }
 
 'Events

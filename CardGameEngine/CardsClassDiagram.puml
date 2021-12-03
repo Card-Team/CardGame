@@ -31,11 +31,11 @@ class DiscardPile extends CardPile{
 }
 
 class Artefact{
-+ <<property>> Name : DynamicValue<String> {readOnly}
++ <<property>> Name : String {readOnly}
 + <<property>> MaxCharge : int {readOnly}
 + <<property>> CurrentCharges : EventProperty<Artefact,int,ArtefactChargeEditEvent> {readOnly}
 + <<property>> EffectId : int {readOnly}
-+ CanBeActivated()
++ CanBeActivated() : bool
 }
 CardPile ..u|> IEnumerable : <<bind>>\nT=Card
 Card "0..*" o--  "0..*" Keyword : <<property>> Keywords
