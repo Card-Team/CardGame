@@ -4,6 +4,6 @@ namespace CardGameEngine.Cards.CardPiles
 {
     public class DiscardPile : CardPile
     {
-        public List<Card> MarkedForUpgrade;
+        public List<Card> MarkedForUpgrade { get; set; }
     }
 }

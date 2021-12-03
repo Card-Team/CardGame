@@ -1,4 +1,6 @@
-﻿using GameSystems;
+﻿using CardGameEngine.Cards;
+using CardGameEngine.EventSystem;
+using CardGameEngine.GameSystems;
 
 namespace CardGameEngine
 {
@@ -10,40 +12,38 @@ namespace CardGameEngine
 
         public Player Player2 { get; }
 
+        public EventManager EventManager { get; }
+
+        public EffectsDatabase EffectsDatabase { get; }
+
 
         public void GameLoop()
         {
-            //TODO
             throw new System.NotImplementedException();
         }
 
         public bool CheckHasWon(Player playerToCheck)
         {
-            //TODO
             throw new System.NotImplementedException();
         }
 
         public void StartPlayerTurn(Player player)
         {
-            //TODO
             throw new System.NotImplementedException();
         }
 
         public void FinishTurn(Player player)
         {
-            //TODO
             throw new System.NotImplementedException();
         }
 
         public void PlayCard(Player player, Card card)
         {
-            //TODO
             throw new System.NotImplementedException();
         }
 
         public void ActivateArtifact(Player player, Artefact artefact)
         {
-            //TODO
             throw new System.NotImplementedException();
         }
     }

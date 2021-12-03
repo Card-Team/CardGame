@@ -13,21 +13,19 @@ namespace CardGameEngine.Cards.CardPiles
         //Oui on peut changer ça en c#. Et les opérateurs aussi, genre + et -
         public Card this[int i] => cardList.ElementAt(i);
 
+
         IEnumerator<Card> IEnumerable<Card>.GetEnumerator()
         {
-            //TODO
             throw new System.NotImplementedException();
         }
 
         public IEnumerator GetEnumerator()
         {
-            //TODO
             throw new System.NotImplementedException();
         }
 
         public void MoveTo(CardPile currentCardPile, Card card)
         {
-            //TODO
             throw new System.NotImplementedException();
         }
     }

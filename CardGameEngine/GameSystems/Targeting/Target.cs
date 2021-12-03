@@ -1,6 +1,6 @@
 ﻿namespace CardGameEngine.GameSystems.Targeting
 {
-    public class Target
+    public abstract class Target
     {
         public TargetTypes TargetType { get; }
 

@@ -1,7 +1,9 @@
-﻿namespace CardGameEngine
+﻿namespace CardGameEngine.Cards
 {
     public class Keyword
     {
-        //TODO
+        public string Name { get; }
+
+        public string EffectId { get; }
     }
 }

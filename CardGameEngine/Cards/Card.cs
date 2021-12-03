@@ -1,30 +1,19 @@
 ﻿using System.Collections.Generic;
-using CardGameEngine.GameSystems;
-using Dynamic;
+using CardGameEngine.EventSystem;
+using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 
-namespace CardGameEngine
+namespace CardGameEngine.Cards
 {
     public class Card
     {
-        public DynamicValue<string> Name { get; }
+        public string Name { get; }
 
         public int MaxLevel { get; }
 
-        public DynamicValue<string> Cost { get; }
+        public EventProperty<Card, int, CardCostChangeEvent> Cost { get; }
 
-        public List<Keyword> Keywords;
+        public EventProperty<Card, int, CardEffectIdChangeEvent> EffectId { get; }
 
-
-        public bool CanBePlayedIn(Game game)
-        {
-            //TODO
-            throw new System.NotImplementedException();
-        }
-
-        public Effect GetEffect()
-        {
-            //TODO
-            throw new System.NotImplementedException();
-        }
+        public List<Keyword> Keywords { get; set; }
     }
 }

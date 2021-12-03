@@ -5,11 +5,14 @@ namespace CardGameEngine.GameSystems
 {
     public class Effect
     {
+        public EffectType EffectType { get; }
+
+        public int EffectId { get; }
+
         public List<Target> AllTargets { get; }
 
         public bool DoEffect(Game game)
         {
-            //TODO
             throw new System.NotImplementedException();
         }
     }
