@@ -1,6 +1,4 @@
-﻿using CardGameEngine.Events;
-
-namespace CardGameEngine.EventSystem.Events
+﻿namespace CardGameEngine.EventSystem.Events
 {
     public abstract class CancellableEvent : Event
     {

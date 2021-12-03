@@ -1,4 +1,36 @@
 ﻿@startuml
+
+class IDisposable
+package EventSystem{
+
+class EventManager{
+'objet intermediaire qui cast pour appeler l'évenement
+ + {field} <<delegate>> OnEvent<T extends Event>(in evt: T)
+ - _eventHandlersDict: Dictionary<Type,List<OnEvent<Event>>>
+ 
+ + SubscribeToEvent<T extends Event> (in deleg : OnEvent<T>, in evenCancelled : bool = false, postEvent: bool = false)
+ + UnsubscribeFromEvent<T extends Event> (in deleg : OnEvent<T>, in postEvent: bool = false)
+ + SendEvent<T extends Event> (in evt : T, in postEvent : bool = false) : PostEventSender
+ 'faut pas oublier d'envoyer les Post
+ ' utilisation d'un bloc using
+}
+
+interface EventManager::IPostEventSender implements IDisposable{
+ + <<property>> Event: Event {readOnly}
+ + Dispose()
+ 'méthode qui s'occupe d'appeler EventManager.SendEvent avec le meme event en post
+}
+
+class EventManager::PostEventSenderImpl implements EventManager::IPostEventSender
+
+class EventProperty<S,T,ET implements IPropertyChangeEvent<S, T>>{
+ - _sender : S
+ + <<property>> Value : T {readOnly}
+ 
+ + EventProperty(in sender: S)
+ + TryChangeValue(in newVal: T)
+}
+
 package Events{
 abstract class Event
 abstract class CancellableEvent extends Event{ 
@@ -117,4 +149,13 @@ ArtefactChargeEditEvent ..u|> IPropertyChangeEvent : <<bind>>\nT=Artefact\nS=int
 
 'Events
 }
+
+'EventSystem
+}
+
+EventManager -[hidden]d-> Events
+
+
+CardPropertyChangeEvent -[hidden]d-> KeywordEvents
+
 @enduml
