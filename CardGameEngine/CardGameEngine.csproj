@@ -85,13 +85,11 @@
     </ItemGroup>
     <ItemGroup>
       <Content Include="CardsClassDiagram.puml" />
+      <Content Include="EffectsScripts\Artefacts\ex.lua" />
+      <Content Include="EffectsScripts\Cards\ex.lua" />
+      <Content Include="EffectsScripts\Keywords\ex.lua" />
       <Content Include="EngineClassDiagram.puml" />
       <Content Include="EventsClassDiagram.puml" />
-    </ItemGroup>
-    <ItemGroup>
-      <Folder Include="EffectsScripts\Artefacts" />
-      <Folder Include="EffectsScripts\Cards" />
-      <Folder Include="EffectsScripts\Keywords" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
