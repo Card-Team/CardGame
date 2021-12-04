@@ -88,6 +88,11 @@
       <Content Include="EngineClassDiagram.puml" />
       <Content Include="EventsClassDiagram.puml" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="EffectsScripts\Artefacts" />
+      <Folder Include="EffectsScripts\Cards" />
+      <Folder Include="EffectsScripts\Keywords" />
+    </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
