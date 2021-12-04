@@ -85,7 +85,10 @@ class TargetingEvent extends Event{
 class CardUpgradeEvent extends CardEvent
 class CardMovePileEvent extends CardEvent{
  + <<property>> SourcePile: CardPile
+ + <<property>> SourceIndex: int
+ 
  + <<property>> DestPile: CardPile
+ + <<property>> DestIndex: int
 }
 
 class CardPlayEvent extends CardEvent

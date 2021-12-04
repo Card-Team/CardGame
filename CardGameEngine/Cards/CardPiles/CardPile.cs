@@ -24,7 +24,12 @@ namespace CardGameEngine.Cards.CardPiles
             throw new System.NotImplementedException();
         }
 
-        public void MoveTo(CardPile currentCardPile, Card card)
+        public void MoveTo(CardPile currentCardPile, Card card, int newPosition)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void MoveInternal(Card card, int newPosition)
         {
             throw new System.NotImplementedException();
         }

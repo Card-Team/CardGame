@@ -85,9 +85,10 @@
     </ItemGroup>
     <ItemGroup>
       <Content Include="CardsClassDiagram.puml" />
-      <Content Include="EffectsScripts\Artefacts\ex.lua" />
-      <Content Include="EffectsScripts\Cards\ex.lua" />
-      <Content Include="EffectsScripts\Keywords\ex.lua" />
+      <Content Include="EffectsScripts\Artefacts\example.lua" />
+      <Content Include="EffectsScripts\Cards\example.lua" />
+      <Content Include="EffectsScripts\Cards\montgolfiere.lua" />
+      <Content Include="EffectsScripts\Keywords\example.lua" />
       <Content Include="EngineClassDiagram.puml" />
       <Content Include="EventsClassDiagram.puml" />
     </ItemGroup>

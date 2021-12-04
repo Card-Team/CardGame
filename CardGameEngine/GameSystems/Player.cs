@@ -20,7 +20,7 @@ namespace CardGameEngine.GameSystems
         public DiscardPile Discard;
 
 
-        public void DrawCard()
+        public void DrawCard(Card? theCard = null)
         {
             throw new System.NotImplementedException();
         }

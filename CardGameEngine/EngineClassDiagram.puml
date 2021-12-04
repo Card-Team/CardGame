@@ -34,7 +34,7 @@ class Player{
 + <<property>> ActionPoints : EventProperty<Player,int,ActionPointEditEvent> {readOnly}
 + <<property>> Discard : DiscardPile
 
-+ DrawCard()
++ DrawCard(in theCard?: Card = null)
 + PrepareCardUpgrade(in theCard: Card)
 + LoopDeck()
 + DiscardCard(in theCard: Card)
