@@ -28,10 +28,10 @@ end
 function description()
     local nb = nb_to_move[current_level]
     local hasS =  nb > 1 and "s" or ""
-    local desc = "Remonte une carte de " .. nb .. " position" .. hasS .." dans le deck"
+    local desc = "Remonte une carte de " .. nb .. " position" .. hasS .." dans le deck."
     if(current_level == max_level) then
         desc = desc .. "\n"
-        desc = desc .. "Si la carte doit dépasser le haut du deck, vous la piochez"
+        desc = desc .. "Si la carte doit dépasser le haut du deck, vous la piochez."
     end
 end
 
