@@ -6,7 +6,7 @@ image_id = 512
 name = "Montgolfière"
 pa_cost = 2
 targets = {
-    CreateTarget("La carte a remonter", TargetTypes.Card, false, cardFilter),
+    CreateTarget("La carte à remonter", TargetTypes.Card, false, cardFilter),
 }
 
 function cardFilter(aCard)
