@@ -7,13 +7,13 @@ pa_cost = 2
 
 targets = {
     -- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
-    CreateTarget("Une cible carte", TargetTypes.Card, false, cardFilter),
+    CreateTarget("Une cible carte", TargetTypes.Card, false, card_filter),
     CreateTarget("Un joueur", TargetTypes.Player, true),
 }
 
-function cardFilter(aCard)
+function card_filter(a_card)
     -- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
-    return aCard.Name == "Exemple"
+    return a_card.Name == "Exemple"
 end 
 
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non
@@ -28,4 +28,8 @@ end
 
 function do_effect()
     -- le code de l'effet de la carte
+end
+
+function on_level_change(oldLevel, newLevel)
+    -- fonction appelée quand la carte change de niveau (OPTIONNEL)
 end

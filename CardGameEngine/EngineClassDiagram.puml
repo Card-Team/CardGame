@@ -11,15 +11,15 @@ package GameSystems{
 package Effects{
 class Effect{
 + <<property>> EffectType: EffectType {readOnly}
-+ <<property>> EffectId : int {readOnly}
-_ Script : Script {readOnly}
++ <<property>> EffectId : string {readOnly}
+- Script : Script {readOnly}
 + DoEffect(in theGame: Game): bool
-+ Effect(in effectType: EffectType, in effectId: int, in targets: Target[0..*])
++ Effect(in effectType: EffectType, in effectId: string, in targets: Target[0..*])
 }
 
 class EffectsDatabase{
-- _effectDictionary : Dictionary<int,Effect>
-- LoadEffect(in type: EffectType, in effectId: int) : Effect
+- _effectDictionary : Dictionary<string, Effect>
+- LoadEffect(in path: string, in type: EffectType) : Effect
 + LoadAllEffects(in path: string)
 }
 
@@ -30,11 +30,11 @@ enum EffectType{
 }
 
 class InvalidEffectException extends Exception {
-- _effectId : int {readOnly}
+- _effectId : string {readOnly}
 - _effectType : EffectType {readOnly}
-+ InvalidEffectException(in effectId: int, in effectType: EffectType)
++ InvalidEffectException(in effectId: string, in effectType: EffectType)
 }
-Effect .l. EffectType
+Effect .r. EffectType
 }
 
 
@@ -43,7 +43,7 @@ class Player{
 '+ <<property>> Artefacts: Artefact[2] {readOnly}
 + <<property>> Name: string {readOnly}
 + <<property>> Hand : CardPile
-+ <<property>> ActionPoints : EventProperty<Player,int,ActionPointEditEvent> {readOnly}
++ <<property>> ActionPoints : EventProperty<Player, int, ActionPointEditEvent> {readOnly}
 + <<property>> Discard : DiscardPile
 
 + DrawCard(in theCard?: Card = null)
@@ -61,9 +61,12 @@ class Target{
 + <<property>> TargetType : TargetTypes {readOnly}
 + <<property>> IsAutomatic : bool {readOnly}
 + <<property>> Name: string {readOnly}
-+ <<property>> filterMethod: DynValue {readOnly}
+- _cardFilter: Closure? {readOnly}
+
++ Target(in name: string, in targetType: TargetType, in isAutomatic: bool, in cardFilter: Closure? = null)
++ IsValidTarget(in card: Card) : bool
 }
-Effect "1" *--  "0..*" Target : <<property>> AllTargets {readOnly}
+Effect "1" *-- "0..*" Target : <<property>> AllTargets {readOnly}
 
 
 enum TargetTypes{

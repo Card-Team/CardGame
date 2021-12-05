@@ -5,17 +5,17 @@ namespace CardGameEngine.GameSystems.Effects
 {
     public class Effect
     {
-        public EffectType EffectEffectType { get; }
+        public EffectType EffectType { get; }
 
-        public int EffectEffectId { get; }
+        public string EffectId { get; }
 
         public List<Target> AllTargets { get; }
 
 
-        public Effect(EffectType effectType, int effectId, List<Target> targets)
+        public Effect(EffectType effectType, string effectId, List<Target> targets)
         {
-            EffectEffectType = effectType;
-            EffectEffectId = effectId;
+            EffectType = effectType;
+            EffectId = effectId;
             AllTargets = targets;
         }
 

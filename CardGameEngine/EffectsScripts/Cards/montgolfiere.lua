@@ -6,16 +6,16 @@ image_id = 512
 name = "Montgolfière"
 pa_cost = 2
 targets = {
-    CreateTarget("La carte à remonter", TargetTypes.Card, false, cardFilter)
+    CreateTarget("La carte à remonter", TargetTypes.Card, false, card_filter)
 }
 
-function cardFilter(aCard)
-    return EffectOwner.Deck.Contains(aCard)
+function card_filter(a_card)
+    return EffectOwner.Deck.Contains(a_card)
             and
             (
                     current_level == max_level
                     or 
-                    EffectOwner.Deck.IndexOf(aCard) > 0
+                    EffectOwner.Deck.IndexOf(a_card) > 0
             )
 end
 
