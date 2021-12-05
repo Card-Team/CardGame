@@ -4,19 +4,23 @@
 'potentiellement inclure les deux
 !include CardsClassDiagram.puml
 
+class Exception
+
 package GameSystems{
+
+package Effects{
 class Effect{
 + <<property>> EffectType: EffectType {readOnly}
 + <<property>> EffectId : int {readOnly}
 + DoEffect(in theGame: Game): bool
-'TODO Lua
-}
-class EffectsDatabase{
-- _effectDictionary : Dictionary<int,Effect>
-- LoadEffect(in effectId: int) : Effect
-+ LoadAllEffects(in path: string)
++ Effect(in effectType: EffectType, in effectId: int, in targets: Target[0..*])
 }
 
+class EffectsDatabase{
+- _effectDictionary : Dictionary<int,Effect>
+- LoadEffect(in type: EffectType, in effectId: int) : Effect
++ LoadAllEffects(in path: string)
+}
 
 enum EffectType{
     Artefact
@@ -24,7 +28,14 @@ enum EffectType{
     Card
 }
 
+class InvalidEffectException extends Exception {
+- _effectId : int {readOnly}
+- _effectType : EffectType {readOnly}
++ InvalidEffectException(in effectId: int, in effectType: EffectType)
+}
 Effect .l. EffectType
+}
+
 
 class Player{
 + <<property>> Deck: CardPile
@@ -41,7 +52,7 @@ class Player{
 
 }
 
-Player  "2" *-- "1" Artefact : <<property>> Artefacts {readOnly}
+Player "2" *-- "1" Artefact : <<property>> Artefacts {readOnly}
 
 package Targeting{
 
@@ -58,7 +69,7 @@ enum TargetTypes{
     Player
     Card
 }
-Target .l. TargetTypes
+Target .r. TargetTypes
 }
 }
 
@@ -71,9 +82,9 @@ class Game{
 + CheckHasWon(in playerToCheck: Player) : bool
 + StartPlayerTurn(in player: Player)
 + FinishTurn(in player: Player)
-+ CanBePlayed(in by: Player,in theCard: Card) : bool
++ CanBePlayed(in by: Player, in theCard: Card) : bool
 + PlayCard(in thePlayer: Player, in theCard: Card)
-+ ActivateArtifact(in thePlayer: Player,in theArtefact: Artefact)
++ ActivateArtifact(in thePlayer: Player, in theArtefact: Artefact)
 }
 
 

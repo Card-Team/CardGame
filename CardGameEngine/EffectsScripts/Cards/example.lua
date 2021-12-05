@@ -16,9 +16,9 @@ function cardFilter(aCard)
     return aCard.Name == "Exemple"
 end 
 
--- fonction qui renvoit un booleen si la carte peut etre jouée ou non
+-- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
-    -- la carte peut etre jouée sans aucun critere spécifiques
+    -- la carte peut être jouée sans aucun critère spécifiques
     return true
 end 
 

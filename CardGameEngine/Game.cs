@@ -2,6 +2,7 @@
 using CardGameEngine.Cards;
 using CardGameEngine.EventSystem;
 using CardGameEngine.GameSystems;
+using CardGameEngine.GameSystems.Effects;
 
 namespace CardGameEngine
 {
@@ -16,7 +17,7 @@ namespace CardGameEngine
         public EventManager EventManager { get; }
 
         public EffectsDatabase EffectsDatabase { get; }
-        
+
 
         public bool CheckHasWon(Player playerToCheck)
         {

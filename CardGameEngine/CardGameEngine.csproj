@@ -34,6 +34,10 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8">
+          <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
@@ -45,7 +49,6 @@
         <Compile Include="Cards\CardPiles\CardPile.cs" />
         <Compile Include="Cards\CardPiles\DiscardPile.cs" />
         <Compile Include="Cards\Keyword.cs" />
-        <Compile Include="EventSystem\EffectsDatabase.cs" />
         <Compile Include="EventSystem\EventManager.cs" />
         <Compile Include="EventSystem\EventProperty.cs" />
         <Compile Include="EventSystem\Events\ActionPointEditEvent.cs" />
@@ -76,8 +79,10 @@
         <Compile Include="EventSystem\Events\GameStateEvents\StartTurnEvent.cs" />
         <Compile Include="EventSystem\Events\IPropertyChangeEvent.cs" />
         <Compile Include="Game.cs" />
-        <Compile Include="GameSystems\Effect.cs" />
-        <Compile Include="GameSystems\EffectType.cs" />
+        <Compile Include="GameSystems\Effects\Effect.cs" />
+        <Compile Include="GameSystems\Effects\EffectsDatabase.cs" />
+        <Compile Include="GameSystems\Effects\EffectType.cs" />
+        <Compile Include="GameSystems\Effects\InvalidEffectException.cs" />
         <Compile Include="GameSystems\Player.cs" />
         <Compile Include="GameSystems\Targeting\Target.cs" />
         <Compile Include="GameSystems\Targeting\TargetTypes.cs" />
@@ -91,6 +96,9 @@
       <Content Include="EffectsScripts\Keywords\example.lua" />
       <Content Include="EngineClassDiagram.puml" />
       <Content Include="EventsClassDiagram.puml" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
