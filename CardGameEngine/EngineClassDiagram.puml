@@ -12,6 +12,7 @@ package Effects{
 class Effect{
 + <<property>> EffectType: EffectType {readOnly}
 + <<property>> EffectId : int {readOnly}
+_ Script : Script {readOnly}
 + DoEffect(in theGame: Game): bool
 + Effect(in effectType: EffectType, in effectId: int, in targets: Target[0..*])
 }
@@ -58,9 +59,9 @@ package Targeting{
 
 class Target{
 + <<property>> TargetType : TargetTypes {readOnly}
-+ <<property>> IsAutomatic : bool
-+ <<property>> Name: string
-
++ <<property>> IsAutomatic : bool {readOnly}
++ <<property>> Name: string {readOnly}
++ <<property>> filterMethod: DynValue {readOnly}
 }
 Effect "1" *--  "0..*" Target : <<property>> AllTargets {readOnly}
 
