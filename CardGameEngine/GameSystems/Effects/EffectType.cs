@@ -1,4 +1,4 @@
-﻿namespace CardGameEngine.GameSystems
+﻿namespace CardGameEngine.GameSystems.Effects
 {
     public enum EffectType
     {

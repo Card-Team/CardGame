@@ -1,4 +1,5 @@
 ﻿using CardGameEngine.GameSystems;
+using CardGameEngine.GameSystems.Effects;
 
 namespace CardGameEngine.EventSystem.Events
 {
