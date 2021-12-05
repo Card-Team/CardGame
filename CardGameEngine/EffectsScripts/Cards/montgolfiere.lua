@@ -6,7 +6,7 @@ image_id = 512
 name = "Montgolfière"
 pa_cost = 2
 targets = {
-    CreateTarget("La carte à remonter", TargetTypes.Card, false, cardFilter),
+    CreateTarget("La carte à remonter", TargetTypes.Card, false, cardFilter)
 }
 
 function cardFilter(aCard)
@@ -36,7 +36,7 @@ function description()
 end
 
 function do_effect()
-    local theCard = AskForTarget(targets[1])
+    local theCard = AskForTarget(1)
 
     local currentPos = EffectOwner.Deck.IndexOf(theCard)
 
