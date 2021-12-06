@@ -21,7 +21,7 @@ namespace CardGameEngine.GameSystems.Effects
                 Globals =
                 {
                     ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>) CreateTarget,
-                    // ["TargetTypes"] = typeof(TargetTypes),
+                    ["TargetTypes"] = UserData.CreateStatic<TargetTypes>(),
                 }
             };
             try
