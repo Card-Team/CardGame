@@ -27,7 +27,5 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
     - name: Build
       run: msbuild /p:Configuration=Release
-    - name: Setup VSTest
-      uses: Malcolmnixon/Setup-VSTest@v4
     - name: Test
-      run: vstest.console CardGameEngine.Tests\bin\Release\CardGameEngine.Tests.dll
+      run: packages\NUnit.ConsoleRunner.3.13.0\tools\nunit3-console.exe CardGameEngine.Tests\bin\Release\CardGameEngine.Tests.dll
