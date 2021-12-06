@@ -73,26 +73,38 @@ namespace CardGameTests
             var path = Path.GetFileNameWithoutExtension(PutScript(ExampleCardScript,EffectType.Card));
             _effectsDatabase.LoadAllEffects(_randomDir);
             var eft = _effectsDatabase[path];
-            Assert.NotNull(eft);
+            Assert.That(eft,Is.Not.Null);
 
-            Assert.AreEqual(EffectType.Card, eft.EffectType);
-            Assert.AreEqual(path, eft.EffectId);
-            // Assert.IsNotEmpty(eft.AllTargets);
-            Assert.That(eft, Has.Property(nameof(Effect.AllTargets)).Not.Empty);
+            Assert.That(eft.EffectType,Is.EqualTo(EffectType.Card));
+            Assert.That(eft.EffectId,Is.EqualTo(path));
 
-            Assert.AreEqual(2, eft.AllTargets.Count);
+   
+            Assert.That(eft.AllTargets,Is.Not.Null.And.Count.EqualTo(2).And.All.Not.Null);
+   
+            Assert.That(eft.AllTargets,Is.Unique);
+            
+            Assert.That(eft.AllTargets,Has.Exactly(1)
+                .With.Property(nameof(Target.Name))
+                .EqualTo("Une cible carte")
+                .And
+                .Property(nameof(Target.TargetType))
+                .EqualTo(TargetTypes.Card)
+                .And
+                .Property(nameof(Target.IsAutomatic))
+                .False
+            );
 
-            var tgt = eft.AllTargets[0];
-            Assert.NotNull(tgt);
-            Assert.AreEqual("Une cible carte", tgt.Name);
-            Assert.AreEqual(TargetTypes.Card, tgt.TargetType);
-            Assert.IsFalse(tgt.IsAutomatic);
-
-            var tgp = eft.AllTargets[1];
-            Assert.NotNull(tgp);
-            Assert.AreEqual("Un joueur", tgp.Name);
-            Assert.AreEqual(TargetTypes.Player, tgp.TargetType);
-            Assert.IsTrue(tgp.IsAutomatic);
+            Assert.That(eft.AllTargets,Has.Exactly(1)
+                .With.Property(nameof(Target.Name))
+                .EqualTo("Un joueur")
+                .And
+                .Property(nameof(Target.TargetType))
+                .EqualTo(TargetTypes.Player)
+                .And
+                .Property(nameof(Target.IsAutomatic))
+                .True
+            );
+            
         }
 
         #region testData

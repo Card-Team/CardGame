@@ -71,8 +71,7 @@ namespace CardGameEngine.GameSystems.Effects
                 .ToList();
 
             string effectId = Path.GetFileNameWithoutExtension(path);
-
-            //TODO Trouver la liste des cibles
+            
             _effectDictionary[effectId] = new Effect(effectType, effectId, targets);
         }
 
