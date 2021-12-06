@@ -13,7 +13,7 @@ namespace CardGameEngine.GameSystems.Effects
 
         public Effect this[string s] => _effectDictionary[s];
 
-        public Effect LoadEffect(string path, EffectType effectType)
+        private void LoadEffect(string path, EffectType effectType)
         {
             Script script = new Script
             {
@@ -56,7 +56,7 @@ namespace CardGameEngine.GameSystems.Effects
             string effectId = split[split.Length - 1];
 
             //TODO Trouver la liste des cibles
-            return new Effect(effectType, effectId, new List<Target>());
+            //return new Effect(effectType, effectId, new List<Target>());
         }
 
         public void LoadAllEffects(string path)

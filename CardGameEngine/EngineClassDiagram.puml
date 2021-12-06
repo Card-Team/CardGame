@@ -19,7 +19,8 @@ class Effect{
 
 class EffectsDatabase{
 - _effectDictionary : Dictionary<string, Effect>
-- LoadEffect(in path: string, in type: EffectType) : Effect
+- LoadEffect(in path: string, in type: EffectType)
+- LoadAllEffects(in path: string, int type:EffectType)
 + LoadAllEffects(in path: string)
 }
 

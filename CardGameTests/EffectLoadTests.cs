@@ -27,9 +27,12 @@ namespace CardGameTests
         }
 
 
-        private string PutScript(string script)
+        private string PutScript(string script,EffectType type)
         {
-            string filePath = Path.Combine(_randomDir, Path.GetRandomFileName());
+            var typePath = Path.Combine(_randomDir, type.ToString());
+            Directory.CreateDirectory(typePath);
+            
+            var filePath = Path.Combine(typePath, Path.GetRandomFileName());
             using (var f = new StreamWriter(File.Create(filePath)))
             {
                 f.Write(script);
@@ -46,9 +49,9 @@ namespace CardGameTests
         [Test]
         public void Test_Load_Effect_Good_Example(string script)
         {
-            var path = PutScript(script);
+            var path = PutScript(script,EffectType.Card);
             Console.WriteLine(script);
-            Assert.DoesNotThrow(() => _effectsDatabase.LoadEffect(_randomDir, EffectType.Card)
+            Assert.DoesNotThrow(() => _effectsDatabase.LoadAllEffects(_randomDir)
                 , "Les effets sont bien formés et ne doivent pas être rejetés");
         }
 
@@ -58,17 +61,17 @@ namespace CardGameTests
         [TestCase("dqdqs", TestName = "GarbageScript")]
         public void Test_Load_Effect_Bad_Example(string script)
         {
-            var path = PutScript(script);
+            var path = PutScript(script,EffectType.Card);
             Console.WriteLine(script);
-            Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadEffect(_randomDir, EffectType.Card)
+            Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadAllEffects(_randomDir)
                 , "Les effets sont invalides et doivent être rejetés");
         }
 
         [Test]
         public void Test_Effect_Has_Data()
         {
-            var path = PutScript(ExampleCardScript);
-            _effectsDatabase.LoadEffect(_randomDir, EffectType.Card);
+            var path = PutScript(ExampleCardScript,EffectType.Card);
+            _effectsDatabase.LoadAllEffects(_randomDir);
             var eft = _effectsDatabase[path];
             Assert.NotNull(eft);
 
