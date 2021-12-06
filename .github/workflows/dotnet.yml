@@ -21,7 +21,6 @@ jobs:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
     - name: NuGet Restore
-      if: steps.cache.outputs.cache-hit != 'true'
       run: nuget restore
     - name: Set-Up MSBuild
       uses: microsoft/setup-msbuild@v1.1
