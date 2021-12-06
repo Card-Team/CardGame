@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
-using MoonSharp.Interpreter;
 using NUnit.Framework;
 
 namespace CardGameTests
@@ -50,7 +48,7 @@ namespace CardGameTests
         {
             var path = PutScript(script);
             Console.WriteLine(script);
-            Assert.DoesNotThrow(() => _effectsDatabase.LoadEffect(_randomDir,EffectType.Card)
+            Assert.DoesNotThrow(() => _effectsDatabase.LoadEffect(_randomDir, EffectType.Card)
                 , "Les effets sont bien formés et ne doivent pas être rejetés");
         }
 
@@ -58,41 +56,39 @@ namespace CardGameTests
         [TestCase(ExampleCardScriptWithError, TestName = nameof(ExampleCardScriptWithError))]
         [TestCase("", TestName = "BlankScript")]
         [TestCase("dqdqs", TestName = "GarbageScript")]
-        [TestCase("dqdqs", TestName = "GarbageScript")]
         public void Test_Load_Effect_Bad_Example(string script)
         {
             var path = PutScript(script);
             Console.WriteLine(script);
-            Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadEffect(_randomDir,EffectType.Card)
-                , "Les effets sont invalides et doivent etres rejetés");
+            Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadEffect(_randomDir, EffectType.Card)
+                , "Les effets sont invalides et doivent être rejetés");
         }
 
         [Test]
         public void Test_Effect_Has_Data()
         {
             var path = PutScript(ExampleCardScript);
-            _effectsDatabase.LoadEffect(_randomDir,EffectType.Card);
+            _effectsDatabase.LoadEffect(_randomDir, EffectType.Card);
             var eft = _effectsDatabase[path];
             Assert.NotNull(eft);
 
             Assert.AreEqual(EffectType.Card, eft.EffectType);
             Assert.AreEqual(path, eft.EffectId);
             Assert.IsNotEmpty(eft.AllTargets);
-            
-            Assert.AreEqual(2,eft.AllTargets.Count);
+
+            Assert.AreEqual(2, eft.AllTargets.Count);
 
             var tgt = eft.AllTargets[0];
             Assert.NotNull(tgt);
-            Assert.AreEqual("Une cible carte",tgt.Name);
-            Assert.AreEqual(TargetTypes.Card,tgt.TargetType);
+            Assert.AreEqual("Une cible carte", tgt.Name);
+            Assert.AreEqual(TargetTypes.Card, tgt.TargetType);
             Assert.IsFalse(tgt.IsAutomatic);
-            
+
             var tgp = eft.AllTargets[1];
             Assert.NotNull(tgp);
-            Assert.AreEqual("Un joueur",tgp.Name);
-            Assert.AreEqual(TargetTypes.Player,tgp.TargetType);
+            Assert.AreEqual("Un joueur", tgp.Name);
+            Assert.AreEqual(TargetTypes.Player, tgp.TargetType);
             Assert.IsTrue(tgp.IsAutomatic);
-            
         }
 
         #region testData
@@ -110,9 +106,9 @@ name = ""Nom""
             CreateTarget(""Un joueur"", TargetTypes.Player, true),
         }
 
-        function cardFilter(aCard)
+        function card_filter(a_card)
             -- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
-        return aCard.Name == ""Exemple""
+        return a_card.Name == ""Exemple""
         end 
 
         -- fonction qui renvoie un booléen si la carte peut être jouée ou non
@@ -144,13 +140,13 @@ name = 5
 
         targets = {
             -- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
-            CreateTarget(""Une cible carte"", TargetTypes.Card, false, cardFilter),
+            CreateTarget(""Une cible carte"", TargetTypes.Card, false, card_filter),
             CreateTarget(""Un joueur"", TargetTypes.Player, true),
         }
 
-        function cardFilter(aCard)
+        function card_filter(a_card)
             -- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
-        return aCard.Name == ""Exemple""
+        return a_card.Name == ""Exemple""
         end 
 
         -- fonction qui renvoie un booléen si la carte peut être jouée ou non

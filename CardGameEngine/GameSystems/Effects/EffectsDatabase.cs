@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using CardGameEngine.GameSystems.Targeting;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.GameSystems.Effects
 {
@@ -19,7 +20,7 @@ namespace CardGameEngine.GameSystems.Effects
                 Globals =
                 {
                     ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>) CreateTarget,
-                    ["TargetTypes"] = typeof(TargetTypes),
+                    // ["TargetTypes"] = typeof(TargetTypes),
                 }
             };
 
@@ -37,10 +38,14 @@ namespace CardGameEngine.GameSystems.Effects
                 {"do_effect", DataType.Function},
             };
 
-            if (typeCheck.Any(keyValuePair => script.Globals.Get(keyValuePair.Key).Type != keyValuePair.Value))
+            foreach (var keyValuePair in typeCheck)
             {
-                throw new InvalidEffectException(path, effectType);
+                if (script.Globals.Get(keyValuePair.Key).Type != keyValuePair.Value)
+                {
+                    throw new InvalidEffectException(path, effectType);
+                }
             }
+
             if (script.Globals.Get("on_level_change").Type == DataType.Function ||
                 script.Globals.Get("on_level_change").Type == DataType.Nil)
             {
@@ -56,7 +61,21 @@ namespace CardGameEngine.GameSystems.Effects
 
         public void LoadAllEffects(string path)
         {
-            throw new NotImplementedException();
+            UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
+            foreach (var directory in Directory.EnumerateDirectories(path))
+            {
+                var validFile = Enum.TryParse(Path.GetDirectoryName(directory), out EffectType type);
+                if (validFile)
+                    LoadAllEffects(directory, type);
+            }
+        }
+
+        private void LoadAllEffects(string path, EffectType effectType)
+        {
+            foreach (var file in Directory.EnumerateFiles(path))
+            {
+                LoadEffect(file, effectType);
+            }
         }
 
         private static Target CreateTarget(string targetName, TargetTypes targetType, bool isAutomatic,
