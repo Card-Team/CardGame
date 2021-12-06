@@ -9,24 +9,25 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 4.8
-    - uses: actions/cache@v2
+    - name: Set-Up NuGet
+      uses: nuget/setup-nuget@v1
+    - uses: actions/cache@v1
+      id: cache
       with:
         path: ~/.nuget/packages
-        # Look to see if there is a cache hit for the corresponding requirements file
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: NuGet Restore
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: nuget restore MyProject.sln
+    - name: Set-Up MSBuild
+      uses: microsoft/setup-msbuild@v1.1
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: msbuild /p:Configuration=Release
+    - name: Setup VSTest
+      uses: Malcolmnixon/Setup-VSTest@v4
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: vstest.console CardGameEngine.Tests\bin\Release\CardGameEngine.Tests.dll
