@@ -12,7 +12,7 @@ namespace CardGameEngine.GameSystems.Effects
 
         public Effect this[string s] => _effectDictionary[s];
 
-        private Effect LoadEffect(string path, EffectType effectType)
+        public Effect LoadEffect(string path, EffectType effectType)
         {
             Script script = new Script
             {

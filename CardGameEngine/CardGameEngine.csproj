@@ -89,13 +89,12 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-      <Content Include="CardsClassDiagram.puml" />
-      <Content Include="EffectsScripts\Artefacts\example.lua" />
-      <Content Include="EffectsScripts\Cards\example.lua" />
-      <Content Include="EffectsScripts\Cards\montgolfiere.lua" />
-      <Content Include="EffectsScripts\Keywords\example.lua" />
-      <Content Include="EngineClassDiagram.puml" />
-      <Content Include="EventsClassDiagram.puml" />
+        <Content Include="*.puml"/>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="EffectsScripts\**\*.lua" >
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
     <ItemGroup>
       <None Include="packages.config" />

@@ -127,7 +127,6 @@ CardEffectIdChangeEvent --u|> CardPropertyChangeEvent : <<bind>>\nT=int
 
 package KeywordEvents{
 abstract class CardKeywordEvent extends CardEvent{
-    + <<property>> Card: Card
     + <<property>> Keyword: Keyword
 }
 
