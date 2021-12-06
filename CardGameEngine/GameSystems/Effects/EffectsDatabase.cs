@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CardGameEngine.GameSystems.Targeting;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop;
@@ -23,8 +24,16 @@ namespace CardGameEngine.GameSystems.Effects
                     // ["TargetTypes"] = typeof(TargetTypes),
                 }
             };
-
-            script.DoFile(path);
+            try
+            {
+                script.DoFile(path);
+            }
+            catch (ScriptRuntimeException e)
+            {
+                Console.WriteLine($"Le script {path} est invalide");
+                Console.WriteLine(e.DecoratedMessage);
+                throw new InvalidEffectException(path, effectType);
+            }
 
             Dictionary<string, DataType> typeCheck = new Dictionary<string, DataType>
             {
@@ -38,12 +47,9 @@ namespace CardGameEngine.GameSystems.Effects
                 {"do_effect", DataType.Function},
             };
 
-            foreach (var keyValuePair in typeCheck)
+            if (typeCheck.Any(keyValuePair => script.Globals.Get(keyValuePair.Key).Type != keyValuePair.Value))
             {
-                if (script.Globals.Get(keyValuePair.Key).Type != keyValuePair.Value)
-                {
-                    throw new InvalidEffectException(path, effectType);
-                }
+                throw new InvalidEffectException(path, effectType);
             }
 
             if (script.Globals.Get("on_level_change").Type == DataType.Function ||
@@ -52,11 +58,10 @@ namespace CardGameEngine.GameSystems.Effects
                 throw new InvalidEffectException(path, effectType);
             }
 
-            string[] split = path.Split('\\');
-            string effectId = split[split.Length - 1];
+            string effectId = Path.GetFileNameWithoutExtension(path);
 
             //TODO Trouver la liste des cibles
-            //return new Effect(effectType, effectId, new List<Target>());
+            _effectDictionary[effectId] = new Effect(effectType, effectId, new List<Target>());
         }
 
         public void LoadAllEffects(string path)
@@ -64,7 +69,7 @@ namespace CardGameEngine.GameSystems.Effects
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
             foreach (var directory in Directory.EnumerateDirectories(path))
             {
-                var validFile = Enum.TryParse(Path.GetDirectoryName(directory), out EffectType type);
+                var validFile = Enum.TryParse(Path.GetFileName(directory), out EffectType type);
                 if (validFile)
                     LoadAllEffects(directory, type);
             }

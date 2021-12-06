@@ -70,7 +70,7 @@ namespace CardGameTests
         [Test]
         public void Test_Effect_Has_Data()
         {
-            var path = PutScript(ExampleCardScript,EffectType.Card);
+            var path = Path.GetFileNameWithoutExtension(PutScript(ExampleCardScript,EffectType.Card));
             _effectsDatabase.LoadAllEffects(_randomDir);
             var eft = _effectsDatabase[path];
             Assert.NotNull(eft);
@@ -142,8 +142,9 @@ name = 5
         pa_cost = ""oui""
 
         targets = {
-            -- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
+
             CreateTarget(""Une cible carte"", TargetTypes.Card, false, card_filter),
+
             CreateTarget(""Un joueur"", TargetTypes.Player, true),
         }
 

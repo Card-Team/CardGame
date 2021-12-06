@@ -39,8 +39,8 @@ class Artefact{
 + CanBeActivated() : bool
 }
 CardPile ..u|> IEnumerable : <<bind>>\nT=Card
-Card "0..*" o--  "0..*" Keyword : <<property>> Keywords
-Artefact "0..*" o--  "0..*" Keyword : <<property>> Keywords
+Card "0..*" o-- "0..*" Keyword : <<property>> Keywords
+Artefact "0..*" o-- "0..*" Keyword : <<property>> Keywords
 
 }
 
