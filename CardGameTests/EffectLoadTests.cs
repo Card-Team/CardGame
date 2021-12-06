@@ -77,7 +77,8 @@ namespace CardGameTests
 
             Assert.AreEqual(EffectType.Card, eft.EffectType);
             Assert.AreEqual(path, eft.EffectId);
-            Assert.IsNotEmpty(eft.AllTargets);
+            // Assert.IsNotEmpty(eft.AllTargets);
+            Assert.That(eft, Has.Property(nameof(Effect.AllTargets)).Not.Empty);
 
             Assert.AreEqual(2, eft.AllTargets.Count);
 

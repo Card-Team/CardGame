@@ -28,10 +28,16 @@ namespace CardGameEngine.GameSystems.Effects
             {
                 script.DoFile(path);
             }
-            catch (ScriptRuntimeException e)
+            catch (ScriptRuntimeException sre)
             {
-                Console.WriteLine($"Le script {path} est invalide");
-                Console.WriteLine(e.DecoratedMessage);
+                Console.WriteLine($"Erreur à l'exécution de {path}");
+                Console.WriteLine(sre.DecoratedMessage);
+                throw new InvalidEffectException(path, effectType);
+            }
+            catch (SyntaxErrorException see)
+            {
+                Console.WriteLine($"Erreur de syntaxe dans {path}");
+                Console.WriteLine(see.DecoratedMessage);
                 throw new InvalidEffectException(path, effectType);
             }
 
@@ -52,16 +58,22 @@ namespace CardGameEngine.GameSystems.Effects
                 throw new InvalidEffectException(path, effectType);
             }
 
-            if (script.Globals.Get("on_level_change").Type == DataType.Function ||
-                script.Globals.Get("on_level_change").Type == DataType.Nil)
+            if (script.Globals.Get("on_level_change").Type != DataType.Function &&
+                script.Globals.Get("on_level_change").Type != DataType.Nil)
             {
                 throw new InvalidEffectException(path, effectType);
             }
 
+            var targets = script.Globals.Get("targets")
+                .Table.Values
+                .Select(t => t.UserData.Object)
+                .Cast<Target>()
+                .ToList();
+
             string effectId = Path.GetFileNameWithoutExtension(path);
 
             //TODO Trouver la liste des cibles
-            _effectDictionary[effectId] = new Effect(effectType, effectId, new List<Target>());
+            _effectDictionary[effectId] = new Effect(effectType, effectId, targets);
         }
 
         public void LoadAllEffects(string path)
