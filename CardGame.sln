@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGameEngine", "CardGameEngine\CardGameEngine.csproj", "{26BC23E2-2B9B-41E4-B281-42856C9B3252}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGameTests", "CardGameTests\CardGameTests.csproj", "{7B46E20E-0B62-4C37-8DB6-B093F75A4F10}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardGameEngine.Tests", "CardGameEngine.Tests\CardGameEngine.Tests.csproj", "{7B46E20E-0B62-4C37-8DB6-B093F75A4F10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
