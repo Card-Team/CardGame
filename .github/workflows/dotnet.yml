@@ -37,5 +37,5 @@ jobs:
         packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
-      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      if: ${{ always() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
         
