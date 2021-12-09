@@ -1,0 +1,27 @@
+﻿name: Compilation d'un projet
+
+on:
+  workflow_call: 
+    inputs:
+      project:
+        required: true
+        type: string
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set-Up NuGet
+        uses: nuget/setup-nuget@v1
+      - uses: actions/cache@v1
+        id: cache
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+      - name: NuGet Restore
+        run: nuget restore
+      - name: Set-Up MSBuild
+        uses: microsoft/setup-msbuild@v1.1
+      - name: Build
+        run: msbuild /p:Configuration=Release /target:${{ inputs.project }}
