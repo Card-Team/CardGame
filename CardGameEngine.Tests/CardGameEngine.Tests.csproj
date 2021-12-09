@@ -60,6 +60,7 @@
       </ProjectReference>
     </ItemGroup>
     <ItemGroup>
+        <Content Include="dotCoverConfig.xml" />
         <Content Include="SampleScripts\**\*.lua">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
