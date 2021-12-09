@@ -21,21 +21,21 @@ namespace CardGameTests
             Good
         }
 
-        public static IEnumerable<TestCaseData> GetNamedTestData(EffectType effectType, TestScriptType scriptType, string name)
+        public static IEnumerable<TestCaseData> GetNamedTestData(EffectType effectType, TestScriptType scriptType,
+            string name)
         {
-            string scriptFile = Path.Combine(ScriptFolder,effectType.ToString(),scriptType.ToString(), name);
-            
-            if (!File.Exists(scriptFile)) 
+            string scriptFile = Path.Combine(ScriptFolder, effectType.ToString(), scriptType.ToString(), name);
+
+            if (!File.Exists(scriptFile))
                 Assert.Inconclusive($"Script not found with path {scriptFile}");
 
             return Enumerable.Repeat(BuildTestCase(effectType, scriptFile), 1);
-
         }
 
         private static TestCaseData BuildTestCase(EffectType effectType, string scriptFile)
         {
             var text = File.ReadAllText(scriptFile);
-            return new TestCaseData(effectType,text)
+            return new TestCaseData(effectType, text)
                 .SetName(CamelToSpaces(Path.GetFileNameWithoutExtension(scriptFile)))
                 .SetCategory(effectType.ToString());
         }
@@ -47,19 +47,18 @@ namespace CardGameTests
             //.Concat(GetAllEffectTestData(EffectType.Keyword,scriptType));
         }
 
-        
-        public static IEnumerable<TestCaseData> GetAllEffectTestData(EffectType effectType,TestScriptType scriptType)
+
+        public static IEnumerable<TestCaseData> GetAllEffectTestData(EffectType effectType, TestScriptType scriptType)
         {
-            string scriptFolder = Path.Combine(ScriptFolder, effectType.ToString(),scriptType.ToString());
-            
+            string scriptFolder = Path.Combine(ScriptFolder, effectType.ToString(), scriptType.ToString());
+
             if (!Directory.Exists(scriptFolder))
             {
-                
                 Assert.Inconclusive($"Script Folder directory not found at {scriptFolder}");
             }
-            
+
             foreach (string file in Directory.EnumerateFiles(scriptFolder))
-                yield return GetNamedTestData(effectType,scriptType,Path.GetFileName(file)).First();
+                yield return GetNamedTestData(effectType, scriptType, Path.GetFileName(file)).First();
         }
 
         private static string CamelToSpaces(string str)

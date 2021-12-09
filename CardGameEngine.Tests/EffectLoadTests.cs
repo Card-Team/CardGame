@@ -30,11 +30,11 @@ namespace CardGameTests
         }
 
 
-        private string PutScript(string script,EffectType type)
+        private string PutScript(string script, EffectType type)
         {
             var typePath = Path.Combine(_randomDir, type.ToString());
             Directory.CreateDirectory(typePath);
-            
+
             var filePath = Path.Combine(typePath, Path.GetRandomFileName());
             using var f = new StreamWriter(File.Create(filePath));
             f.Write(script);
@@ -43,47 +43,46 @@ namespace CardGameTests
         }
 
 
-        
         [Test(Description = "Verifier que les effets bien formés sont acceptés")]
-        [TestCaseSource(typeof(LuaTestData),nameof(LuaTestData.GetAllTestDataOfType)
-            ,new object[]{LuaTestData.TestScriptType.Good})]
-        public void Test_Load_Effect_Good(EffectType type,string script)
+        [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetAllTestDataOfType)
+            , new object[] {LuaTestData.TestScriptType.Good})]
+        public void Test_Load_Effect_Good(EffectType type, string script)
         {
-            PutScript(script,type);
+            PutScript(script, type);
             Console.WriteLine(script);
             Assert.DoesNotThrow(() => _effectsDatabase.LoadAllEffects(_randomDir)
                 , "L'effet est valide et doit être accepté");
         }
 
         [Test(Description = "Verifier que les effets mal formés sont rejetés")]
-        [TestCaseSource(typeof(LuaTestData),nameof(LuaTestData.GetAllTestDataOfType)
-            ,new object[]{LuaTestData.TestScriptType.Bad})]
-        public void Test_Load_Effect_Bad(EffectType type,string script)
+        [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetAllTestDataOfType)
+            , new object[] {LuaTestData.TestScriptType.Bad})]
+        public void Test_Load_Effect_Bad(EffectType type, string script)
         {
-            PutScript(script,type);
+            PutScript(script, type);
             Console.WriteLine(script);
             Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadAllEffects(_randomDir)
                 , "L'effet est invalide et doit être rejeté");
         }
 
         [Test(Description = "Verifier que le chargement d'une carte contient bien les données attendues")]
-        [TestCaseSource(typeof(LuaTestData),nameof(LuaTestData.GetNamedTestData),
-            new object[]{EffectType.Card,LuaTestData.TestScriptType.Good,"example.lua"})]
-        public void Test_Effect_Card_Data(EffectType type,string scriptContent)
+        [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetNamedTestData),
+            new object[] {EffectType.Card, LuaTestData.TestScriptType.Good, "example.lua"})]
+        public void Test_Effect_Card_Data(EffectType type, string scriptContent)
         {
-            var path = Path.GetFileNameWithoutExtension(PutScript(scriptContent,type));
+            var path = Path.GetFileNameWithoutExtension(PutScript(scriptContent, type));
             _effectsDatabase.LoadAllEffects(_randomDir);
             var eft = _effectsDatabase[path];
-            Assert.That(eft,Is.Not.Null);
+            Assert.That(eft, Is.Not.Null);
 
-            Assert.That(eft.EffectType,Is.EqualTo(EffectType.Card));
-            Assert.That(eft.EffectId,Is.EqualTo(path));
-            
-            Assert.That(eft.AllTargets,Is.Not.Null.And.Count.EqualTo(2).And.All.Not.Null);
-   
-            Assert.That(eft.AllTargets,Is.Unique);
-            
-            Assert.That(eft.AllTargets,Has.Exactly(1)
+            Assert.That(eft.EffectType, Is.EqualTo(EffectType.Card));
+            Assert.That(eft.EffectId, Is.EqualTo(path));
+
+            Assert.That(eft.AllTargets, Is.Not.Null.And.Count.EqualTo(2).And.All.Not.Null);
+
+            Assert.That(eft.AllTargets, Is.Unique);
+
+            Assert.That(eft.AllTargets, Has.Exactly(1)
                 .With.Property(nameof(Target.Name))
                 .EqualTo("Une cible carte")
                 .And
@@ -94,7 +93,7 @@ namespace CardGameTests
                 .False
             );
 
-            Assert.That(eft.AllTargets,Has.Exactly(1)
+            Assert.That(eft.AllTargets, Has.Exactly(1)
                 .With.Property(nameof(Target.Name))
                 .EqualTo("Un joueur")
                 .And
@@ -104,7 +103,6 @@ namespace CardGameTests
                 .Property(nameof(Target.IsAutomatic))
                 .True
             );
-            
         }
     }
 }
