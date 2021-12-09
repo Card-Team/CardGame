@@ -35,8 +35,8 @@ jobs:
     needs: build
     steps:
       - name: Test and Cover
-      run: |
-        packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
+        run: |
+          packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
   debug:
     runs-on: windows-latest
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
