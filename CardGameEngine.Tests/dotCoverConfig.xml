@@ -6,7 +6,7 @@
     <TargetWorkingDir>bin\Release\</TargetWorkingDir>
     <TempDir><!-- Directory for auxiliary files. Set to the system temp by default. --></TempDir>
     <Output>../CoverageReport.xml</Output>
-    <ReportType>xml</ReportType>
+    <ReportType>DetailedXML</ReportType>
     <Filters>
         <IncludeFilters>
             <ModuleMask>CardGameEngine</ModuleMask>
