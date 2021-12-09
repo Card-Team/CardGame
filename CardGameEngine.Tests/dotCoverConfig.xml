@@ -5,8 +5,8 @@
     <TargetArguments>--result NUnitTestResults.xml CardGameEngine.Tests.dll</TargetArguments>
     <TargetWorkingDir>bin\Release\</TargetWorkingDir>
     <TempDir><!-- Directory for auxiliary files. Set to the system temp by default. --></TempDir>
-    <Output>CoverageReport.json</Output>
-    <ReportType>JSON</ReportType>
+    <Output>CoverageReport.xml</Output>
+    <ReportType>xml</ReportType>
     <Filters>
         <IncludeFilters>
             <ModuleMask>CardGameEngine</ModuleMask>
