@@ -39,7 +39,10 @@ jobs:
           packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
   debug:
     runs-on: windows-latest
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+    needs: 
+      - build
+      - test
+    if: "always() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled"
     steps:
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
