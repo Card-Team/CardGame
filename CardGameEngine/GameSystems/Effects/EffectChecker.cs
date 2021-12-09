@@ -79,16 +79,33 @@ namespace CardGameEngine.GameSystems.Effects
             };
 
             // Vérifie si tous les élements requis sont existants et du bon type
-            if (typeCheckReq.Any(keyValuePair => script.Globals.Get(keyValuePair.Key).Type != keyValuePair.Value))
+            foreach (var keyValuePair in typeCheckReq)
             {
-                return false;
+                var key = script.Globals.Get(keyValuePair.Key);
+                if (key.Type != keyValuePair.Value)
+                {
+                    return false;
+                }
+
+                if (key.Type == DataType.Number && (double.IsNaN(key.Number) || double.IsInfinity(key.Number)))
+                {
+                    return false;
+                }
             }
 
             // Vérifie si tous les élements optionnels du bon type ou inexistants
-            if (typeCheckOpt.Any(keyValuePair => script.Globals.Get(keyValuePair.Key).Type != keyValuePair.Value &&
-                                                 script.Globals.Get(keyValuePair.Key).Type != DataType.Nil))
+            foreach (var keyValuePair in typeCheckOpt)
             {
-                return false;
+                var key = script.Globals.Get(keyValuePair.Key);
+                if (key.Type != keyValuePair.Value && key.Type != DataType.Nil)
+                {
+                    return false;
+                }
+
+                if (key.Type == DataType.Number && (double.IsNaN(key.Number) || double.IsInfinity(key.Number)))
+                {
+                    return false;
+                }
             }
 
             // Aucun problème trouvé, effet validé
