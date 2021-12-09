@@ -2,10 +2,10 @@
 
 <CoverageParams>
     <TargetExecutable>..\packages\NUnit.ConsoleRunner.3.13.0\tools\nunit3-console.exe</TargetExecutable>
-    <TargetArguments>--result NUnitTestResults.xml CardGameEngine.Tests.dll</TargetArguments>
+    <TargetArguments>--result ../NUnitTestResults.xml CardGameEngine.Tests.dll</TargetArguments>
     <TargetWorkingDir>bin\Release\</TargetWorkingDir>
     <TempDir><!-- Directory for auxiliary files. Set to the system temp by default. --></TempDir>
-    <Output>CoverageReport.xml</Output>
+    <Output>../CoverageReport.xml</Output>
     <ReportType>xml</ReportType>
     <Filters>
         <IncludeFilters>

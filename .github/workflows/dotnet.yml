@@ -1,4 +1,4 @@
-name: .NET
+name: Compilation et tests du moteur
 
 on:
   push:
