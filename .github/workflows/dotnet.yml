@@ -37,9 +37,9 @@ jobs:
         packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
     - uses: codecov/codecov-action@v2
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         files: ./CoverageReport.xml
         fail_ci_if_error: true
+        verbose: true
     - name: Setup tmate session
       uses: mxschmitt/action-tmate@v3
       with:
