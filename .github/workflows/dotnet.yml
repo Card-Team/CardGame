@@ -14,15 +14,8 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
-
     steps:
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-      with:
-        limit-access-to-actor: true
-      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
     - uses: actions/checkout@v2
     - name: Set-Up NuGet
       uses: nuget/setup-nuget@v1
@@ -37,7 +30,19 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
     - name: Build
       run: msbuild /p:Configuration=Release
-    - name: Test and Cover
+  test:
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - name: Test and Cover
       run: |
         packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
-        
+  debug:
+    runs-on: windows-latest
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+    steps:
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        with:
+          limit-access-to-actor: true
+      
