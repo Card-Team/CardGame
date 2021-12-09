@@ -14,9 +14,7 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set-Up NuGet
@@ -32,6 +30,20 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
     - name: Build
       run: msbuild /p:Configuration=Release
+    - name: Upload compiled code
+      uses: actions/upload-artifact@master
+      with:
+        name: CardGameProject
+        path: CardGame
+  test:
+    runs-on: windows-latest
+    needs: build
+    steps:
+    - name: Download compiled code
+      uses: actions/download-artifact@master
+      with:
+        name: CardGameProject
+        path: CardGame
     - name: Test and Cover
       run: |
         packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
