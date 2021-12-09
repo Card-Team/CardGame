@@ -34,7 +34,7 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: CardGameProject
-        path: CardGame
+        path: ./
   test:
     runs-on: windows-latest
     needs: build
@@ -43,7 +43,7 @@ jobs:
       uses: actions/download-artifact@master
       with:
         name: CardGameProject
-        path: CardGame
+        path: ./
     - name: Test and Cover
       run: |
         packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
