@@ -107,7 +107,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// <summary>
         /// Méthode de création d'un objet Target
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Un objet Target</returns>
         /// <seealso cref="Target(string, TargetTypes, bool, Closure?)"/>
         private static Target CreateTarget(string targetName, TargetTypes targetType, bool isAutomatic,
             Closure? cardFilter = null)

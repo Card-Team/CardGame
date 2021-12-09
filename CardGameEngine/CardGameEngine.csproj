@@ -48,6 +48,7 @@
         <Compile Include="Cards\Card.cs" />
         <Compile Include="Cards\CardPiles\CardPile.cs" />
         <Compile Include="Cards\CardPiles\DiscardPile.cs" />
+        <Compile Include="Cards\CardPiles\NotInPileException.cs" />
         <Compile Include="Cards\Keyword.cs" />
         <Compile Include="EventSystem\EventManager.cs" />
         <Compile Include="EventSystem\EventProperty.cs" />

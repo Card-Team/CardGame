@@ -17,6 +17,11 @@ namespace CardGameEngine.Cards
         public List<Keyword> Keywords { get; set; }
 
 
+        public bool DoEffect(Game game)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public bool CanBeActivated()
         {
             throw new System.NotImplementedException();

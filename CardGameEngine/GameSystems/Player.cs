@@ -13,11 +13,11 @@ namespace CardGameEngine.GameSystems
 
         public CardPile Hand { get; set; }
 
+        public DiscardPile Discard;
+
         public Artefact[] Artefacts { get; } = new Artefact[2];
 
         public EventProperty<Player, int, ActionPointEditEvent> ActionPoints { get; }
-
-        public DiscardPile Discard;
 
 
         public void DrawCard(Card? theCard = null)

@@ -15,5 +15,11 @@ namespace CardGameEngine.Cards
         public EventProperty<Card, int, CardEffectIdChangeEvent> EffectId { get; }
 
         public List<Keyword> Keywords { get; set; }
+
+
+        public bool DoEffect(Game game)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
