@@ -28,6 +28,5 @@ jobs:
       run: msbuild /p:Configuration=Release
     - name: Test and Cover
       run: |
-        packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover \
-        CardGameEngine.Tests\dotCoverConfig.xml
+        packages\jetbrains.dotcover.commandlinetools.2021.3.0\tools\dotCover.exe cover CardGameEngine.Tests\dotCoverConfig.xml
         
