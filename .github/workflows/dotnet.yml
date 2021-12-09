@@ -28,8 +28,8 @@ jobs:
     runs-on: windows-latest
     needs: build
     uses: Tyranozomby/CardGame/.github/workflows/build-project.yml@master
-      with:
-        project: CardGameEngine.Tests
+    with:
+      project: CardGameEngine.Tests
     steps:
     - name: Download release
       uses: actions/download-artifact@master
