@@ -42,7 +42,7 @@ function do_effect()
 
     local newPos = currentPos - nb_to_move[current_level]
     if(newPos < 0 and current_level == max_level) then
-        EffectOwner.Draw(theCard)
+        EffectOwner.DrawCard(theCard)
     else
         EffectOwner.Deck.MoveInternal(theCard,math.max(0,newPos))
     end
