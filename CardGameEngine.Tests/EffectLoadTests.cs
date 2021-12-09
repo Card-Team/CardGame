@@ -49,10 +49,10 @@ namespace CardGameTests
             ,new object[]{LuaTestData.TestScriptType.Good})]
         public void Test_Load_Effect_Good(EffectType type,string script)
         {
-            var path = PutScript(script,type);
+            PutScript(script,type);
             Console.WriteLine(script);
             Assert.DoesNotThrow(() => _effectsDatabase.LoadAllEffects(_randomDir)
-                , "Les effets sont bien formés et ne doivent pas être rejetés");
+                , "L'effet est valide et doit être accepté");
         }
 
         [Test(Description = "Verifier que les effets mal formés sont rejetés")]
@@ -60,15 +60,15 @@ namespace CardGameTests
             ,new object[]{LuaTestData.TestScriptType.Bad})]
         public void Test_Load_Effect_Bad(EffectType type,string script)
         {
-            var path = PutScript(script,type);
+            PutScript(script,type);
             Console.WriteLine(script);
             Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadAllEffects(_randomDir)
-                , "Les effets sont invalides et doivent être rejetés");
+                , "L'effet est invalide et doit être rejeté");
         }
 
         [Test(Description = "Verifier que le chargement d'une carte contient bien les données attendues")]
         [TestCaseSource(typeof(LuaTestData),nameof(LuaTestData.GetNamedTestData),
-            new object[]{LuaTestData.TestScriptType.Good,EffectType.Card,"example.lua"})]
+            new object[]{EffectType.Card,LuaTestData.TestScriptType.Good,"example.lua"})]
         public void Test_Effect_Card_Data(EffectType type,string scriptContent)
         {
             var path = Path.GetFileNameWithoutExtension(PutScript(scriptContent,type));
@@ -78,8 +78,7 @@ namespace CardGameTests
 
             Assert.That(eft.EffectType,Is.EqualTo(EffectType.Card));
             Assert.That(eft.EffectId,Is.EqualTo(path));
-
-   
+            
             Assert.That(eft.AllTargets,Is.Not.Null.And.Count.EqualTo(2).And.All.Not.Null);
    
             Assert.That(eft.AllTargets,Is.Unique);

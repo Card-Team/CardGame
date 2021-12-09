@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,6 +10,7 @@ using NUnit.Framework;
 
 namespace CardGameTests
 {
+    [ExcludeFromCodeCoverage]
     public class LuaTestData
     {
         private const string ScriptFolder = "SampleScripts";
@@ -19,14 +21,15 @@ namespace CardGameTests
             Good
         }
 
-        public static IEnumerable<TestCaseData> GetNamedTestData(TestScriptType scriptType, EffectType effectType, string name)
+        public static IEnumerable<TestCaseData> GetNamedTestData(EffectType effectType, TestScriptType scriptType, string name)
         {
             string scriptFile = Path.Combine(ScriptFolder,effectType.ToString(),scriptType.ToString(), name);
-            if (File.Exists(scriptFile))
-            {
-                yield return BuildTestCase(effectType, scriptFile);
-            }
-            else throw new ArgumentException($"Script not fund with path {scriptFile}");
+            
+            if (!File.Exists(scriptFile)) 
+                Assert.Inconclusive($"Script not found with path {scriptFile}");
+
+            return Enumerable.Repeat(BuildTestCase(effectType, scriptFile), 1);
+
         }
 
         private static TestCaseData BuildTestCase(EffectType effectType, string scriptFile)
@@ -39,23 +42,24 @@ namespace CardGameTests
 
         public static IEnumerable<TestCaseData> GetAllTestDataOfType(TestScriptType scriptType)
         {
-            return GetAllEffectTestData(null, scriptType,null);
+            return GetAllEffectTestData(EffectType.Card, scriptType);
+            //.Concat(GetAllEffectTestData(EffectType.Artefact,scriptType))
+            //.Concat(GetAllEffectTestData(EffectType.Keyword,scriptType));
         }
 
-        public static IEnumerable<TestCaseData> GetAllEffectTestData(EffectType? effectType,TestScriptType scriptType,string? name)
+        
+        public static IEnumerable<TestCaseData> GetAllEffectTestData(EffectType effectType,TestScriptType scriptType)
         {
-            foreach (string currentTypeFolder in Directory.EnumerateDirectories(ScriptFolder)
-                .Where(e => effectType == null || Path.GetFileName(e) == effectType.ToString()))
+            string scriptFolder = Path.Combine(ScriptFolder, effectType.ToString(),scriptType.ToString());
+            
+            if (!Directory.Exists(scriptFolder))
             {
-                string scriptFolder = Path.Combine(currentTypeFolder, scriptType.ToString());
                 
-                if (!Directory.Exists(scriptFolder)) continue;
-                var curEffectType = (EffectType)Enum.Parse(typeof(EffectType), Path.GetFileName(currentTypeFolder));
-                
-                foreach (string file in Directory.EnumerateFiles(scriptFolder)
-                    .Where(f => name == null || Path.GetFileName(f) == name))
-                    yield return BuildTestCase(curEffectType, file);
+                Assert.Inconclusive($"Script Folder directory not found at {scriptFolder}");
             }
+            
+            foreach (string file in Directory.EnumerateFiles(scriptFolder))
+                yield return GetNamedTestData(effectType,scriptType,Path.GetFileName(file)).First();
         }
 
         private static string CamelToSpaces(string str)
