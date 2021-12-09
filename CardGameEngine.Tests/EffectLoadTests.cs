@@ -27,11 +27,11 @@ namespace CardGameTests
         }
 
 
-        private string PutScript(string script,EffectType type)
+        private string PutScript(string script, EffectType type)
         {
             var typePath = Path.Combine(_randomDir, type.ToString());
             Directory.CreateDirectory(typePath);
-            
+
             var filePath = Path.Combine(typePath, Path.GetRandomFileName());
             using (var f = new StreamWriter(File.Create(filePath)))
             {
@@ -49,7 +49,7 @@ namespace CardGameTests
         [Test]
         public void Test_Load_Effect_Good_Example(string script)
         {
-            var path = PutScript(script,EffectType.Card);
+            var path = PutScript(script, EffectType.Card);
             Console.WriteLine(script);
             Assert.DoesNotThrow(() => _effectsDatabase.LoadAllEffects(_randomDir)
                 , "Les effets sont bien formés et ne doivent pas être rejetés");
@@ -61,7 +61,7 @@ namespace CardGameTests
         [TestCase("dqdqs", TestName = "GarbageScript")]
         public void Test_Load_Effect_Bad_Example(string script)
         {
-            var path = PutScript(script,EffectType.Card);
+            var path = PutScript(script, EffectType.Card);
             Console.WriteLine(script);
             Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadAllEffects(_randomDir)
                 , "Les effets sont invalides et doivent être rejetés");
@@ -70,20 +70,20 @@ namespace CardGameTests
         [Test]
         public void Test_Effect_Has_Data()
         {
-            var path = Path.GetFileNameWithoutExtension(PutScript(ExampleCardScript,EffectType.Card));
+            var path = Path.GetFileNameWithoutExtension(PutScript(ExampleCardScript, EffectType.Card));
             _effectsDatabase.LoadAllEffects(_randomDir);
             var eft = _effectsDatabase[path];
-            Assert.That(eft,Is.Not.Null);
+            Assert.That(eft, Is.Not.Null);
 
-            Assert.That(eft.EffectType,Is.EqualTo(EffectType.Card));
-            Assert.That(eft.EffectId,Is.EqualTo(path));
+            Assert.That(eft.EffectType, Is.EqualTo(EffectType.Card));
+            Assert.That(eft.EffectId, Is.EqualTo(path));
 
-   
-            Assert.That(eft.AllTargets,Is.Not.Null.And.Count.EqualTo(2).And.All.Not.Null);
-   
-            Assert.That(eft.AllTargets,Is.Unique);
-            
-            Assert.That(eft.AllTargets,Has.Exactly(1)
+
+            Assert.That(eft.AllTargets, Is.Not.Null.And.Count.EqualTo(2).And.All.Not.Null);
+
+            Assert.That(eft.AllTargets, Is.Unique);
+
+            Assert.That(eft.AllTargets, Has.Exactly(1)
                 .With.Property(nameof(Target.Name))
                 .EqualTo("Une cible carte")
                 .And
@@ -94,7 +94,7 @@ namespace CardGameTests
                 .False
             );
 
-            Assert.That(eft.AllTargets,Has.Exactly(1)
+            Assert.That(eft.AllTargets, Has.Exactly(1)
                 .With.Property(nameof(Target.Name))
                 .EqualTo("Un joueur")
                 .And
@@ -104,7 +104,6 @@ namespace CardGameTests
                 .Property(nameof(Target.IsAutomatic))
                 .True
             );
-            
         }
 
         #region testData

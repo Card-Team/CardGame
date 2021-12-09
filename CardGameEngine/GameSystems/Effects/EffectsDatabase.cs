@@ -10,69 +10,45 @@ namespace CardGameEngine.GameSystems.Effects
 {
     public class EffectsDatabase
     {
-        private Dictionary<string, Effect> _effectDictionary = new Dictionary<string, Effect>();
+        private readonly Dictionary<string, Effect> _effectDictionary = new Dictionary<string, Effect>();
 
         public Effect this[string s] => _effectDictionary[s];
 
         private void LoadEffect(string path, EffectType effectType)
         {
-            Script script = new Script
+            string effectId = Path.GetFileNameWithoutExtension(path);
+
+            if (!EffectChecker.CheckEffect(path, effectType))
             {
-                Globals =
-                {
-                    ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>) CreateTarget,
-                    ["TargetTypes"] = UserData.CreateStatic<TargetTypes>(),
-                }
-            };
-            try
-            {
-                script.DoFile(path);
-            }
-            catch (ScriptRuntimeException sre)
-            {
-                Console.WriteLine($"Erreur à l'exécution de {path}");
-                Console.WriteLine(sre.DecoratedMessage);
-                throw new InvalidEffectException(path, effectType);
-            }
-            catch (SyntaxErrorException see)
-            {
-                Console.WriteLine($"Erreur de syntaxe dans {path}");
-                Console.WriteLine(see.DecoratedMessage);
-                throw new InvalidEffectException(path, effectType);
+                throw new InvalidEffectException(effectId, effectType);
             }
 
-            Dictionary<string, DataType> typeCheck = new Dictionary<string, DataType>
-            {
-                {"max_level", DataType.Number},
-                {"image_id", DataType.Number},
-                {"name", DataType.String},
-                {"pa_cost", DataType.Number},
-                {"targets", DataType.Table},
-                {"precondition", DataType.Function},
-                {"description", DataType.Function},
-                {"do_effect", DataType.Function},
-            };
+            var script = GetDefaultScript();
+            script.DoFile(path);
 
-            if (typeCheck.Any(keyValuePair => script.Globals.Get(keyValuePair.Key).Type != keyValuePair.Value))
-            {
-                throw new InvalidEffectException(path, effectType);
-            }
-
-            if (script.Globals.Get("on_level_change").Type != DataType.Function &&
-                script.Globals.Get("on_level_change").Type != DataType.Nil)
-            {
-                throw new InvalidEffectException(path, effectType);
-            }
-
+            // Get the targets of the effect
             var targets = script.Globals.Get("targets")
                 .Table.Values
                 .Select(t => t.UserData.Object)
                 .Cast<Target>()
                 .ToList();
 
-            string effectId = Path.GetFileNameWithoutExtension(path);
-            
+
             _effectDictionary[effectId] = new Effect(effectType, effectId, targets);
+        }
+
+        internal static Script GetDefaultScript()
+        {
+            Script script = new Script
+            {
+                // Elements c# à intégrer dans le fichier lua
+                Globals =
+                {
+                    ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>) CreateTarget,
+                    ["TargetTypes"] = UserData.CreateStatic<TargetTypes>(),
+                }
+            };
+            return script;
         }
 
         public void LoadAllEffects(string path)

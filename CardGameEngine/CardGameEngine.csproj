@@ -80,6 +80,7 @@
         <Compile Include="EventSystem\Events\IPropertyChangeEvent.cs" />
         <Compile Include="Game.cs" />
         <Compile Include="GameSystems\Effects\Effect.cs" />
+        <Compile Include="GameSystems\Effects\EffectChecker.cs" />
         <Compile Include="GameSystems\Effects\EffectsDatabase.cs" />
         <Compile Include="GameSystems\Effects\EffectType.cs" />
         <Compile Include="GameSystems\Effects\InvalidEffectException.cs" />
