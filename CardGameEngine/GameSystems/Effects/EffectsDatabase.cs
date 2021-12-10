@@ -16,9 +16,12 @@ namespace CardGameEngine.GameSystems.Effects
         /// <summary>
         /// Le dictionnaire stockant les effets valides avec leur nom comme clé
         /// </summary>
-        /// <seealso cref="Effect"/>
         private readonly Dictionary<string, Effect> _effectDictionary = new Dictionary<string, Effect>();
 
+        /// <summary>
+        /// Accède au dictionnaire des effets de l'objet
+        /// </summary>
+        /// <param name="s">Nom de l'effet</param>
         public Effect this[string s] => _effectDictionary[s];
 
 

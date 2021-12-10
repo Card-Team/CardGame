@@ -6,13 +6,11 @@ namespace CardGameEngine.GameSystems.Targeting
     /// <summary>
     /// Classe représentant une cible
     /// </summary>
-    /// <seealso cref="TargetType"/>
     public class Target
     {
         /// <summary>
         /// Type de la cible
         /// </summary>
-        /// <seealso cref="TargetTypes"/>
         public TargetTypes TargetType { get; }
 
         /// <summary>

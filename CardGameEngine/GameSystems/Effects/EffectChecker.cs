@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using CardGameEngine.Cards;
 using MoonSharp.Interpreter;
 
 namespace CardGameEngine.GameSystems.Effects
@@ -17,7 +17,6 @@ namespace CardGameEngine.GameSystems.Effects
         /// <param name="path">Nom complet du fichier de l'effet</param>
         /// <param name="effectType">Type d'effet</param>
         /// <returns>Un booléen en fonction de la validité de l'effet</returns>
-        /// <seealso cref="EffectType"/>
         /// <seealso cref="CheckArtefact(string)"/>
         /// <seealso cref="CheckCard(string)"/>
         /// <seealso cref="CheckKeyword(string)"/>
@@ -117,6 +116,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         /// <param name="path">Nom complet du fichier du mot clé</param>
         /// <returns>Un booléen en fonction de la validité</returns>
+        /// <seealso cref="Keyword"/>
         private static bool CheckKeyword(string path)
         {
             throw new NotImplementedException();
@@ -127,6 +127,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         /// <param name="path">Nom complet du fichier de l'artefact</param>
         /// <returns>Un booléen en fonction de la validité</returns>
+        /// <seealso cref="Artefact"/>
         private static bool CheckArtefact(string path)
         {
             throw new NotImplementedException();

@@ -11,7 +11,6 @@ namespace CardGameEngine.GameSystems.Effects
         /// <summary>
         /// Type de l'effet
         /// </summary>
-        /// <seealso cref="EffectType"/>
         public EffectType EffectType { get; }
 
         /// <summary>
@@ -22,7 +21,6 @@ namespace CardGameEngine.GameSystems.Effects
         /// <summary>
         /// Liste des cibles de l'effet
         /// </summary>
-        /// <seealso cref="Target"/>
         public List<Target> AllTargets { get; }
 
 

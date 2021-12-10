@@ -68,7 +68,6 @@
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordRemoveEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordTriggerEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardCostChangeEvent.cs" />
-        <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardEffectIdChangeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardLevelChangeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardNameChangeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardPropertyChangeEvent.cs" />

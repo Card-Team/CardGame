@@ -18,31 +18,26 @@ namespace CardGameEngine.GameSystems
         /// <summary>
         /// Pioche du joueur
         /// </summary>
-        /// <seealso cref="CardPile"/>
         public CardPile Deck { get; set; }
 
         /// <summary>
         /// Main du joueur
         /// </summary>
-        /// <seealso cref="CardPile"/>
         public CardPile Hand { get; set; }
 
         /// <summary>
         /// Défausse du joueur
         /// </summary>
-        /// <seealso cref="DiscardCard"/>
         public DiscardPile Discard;
 
         /// <summary>
         /// Les 2 artefacts du joueurs
         /// </summary>
-        /// <seealso cref="Artefact"/>
         public Artefact[] Artefacts { get; } = new Artefact[2];
 
         /// <summary>
         /// Points d'action du joueur
         /// </summary>
-        /// <seealso cref="EventProperty{S,T,ET}"/>
         public EventProperty<Player, int, ActionPointEditEvent> ActionPoints { get; }
 
 
@@ -50,7 +45,6 @@ namespace CardGameEngine.GameSystems
         /// Piocher une carte
         /// </summary>
         /// <param name="card">La carte à piocher</param>
-        /// <seealso cref="Card"/>
         public void DrawCard(Card? card = null)
         {
             throw new System.NotImplementedException();
@@ -60,7 +54,6 @@ namespace CardGameEngine.GameSystems
         /// Déplace une carte vers la défausse en mode upgrade
         /// </summary>
         /// <param name="card">La carte à défausser</param>
-        /// <seealso cref="Card"/>
         public void PrepareCardUpgrade(Card card)
         {
             throw new System.NotImplementedException();
@@ -69,8 +62,8 @@ namespace CardGameEngine.GameSystems
         /// <summary>
         /// Transfère toutes les cartes de la défausse dans la pioche
         /// </summary>
-        /// <seealso cref="CardPile"/>
         /// <seealso cref="DiscardPile"/>
+        /// <seealso cref="CardPile"/>
         public void LoopDeck()
         {
             throw new System.NotImplementedException();
@@ -80,6 +73,7 @@ namespace CardGameEngine.GameSystems
         /// Déplace une carte vers la défausse
         /// </summary>
         /// <param name="card">La carte à défausser</param>
+        /// <seealso cref="DiscardPile"/>
         public void DiscardCard(Card card)
         {
             throw new System.NotImplementedException();
