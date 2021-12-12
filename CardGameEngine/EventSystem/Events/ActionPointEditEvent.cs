@@ -2,13 +2,27 @@
 
 namespace CardGameEngine.EventSystem.Events
 {
+    /// <summary>
+    /// Évènement annulable correspondant au changement du nombre de points d'action d'un joueur
+    /// </summary>
     public class ActionPointEditEvent : CancellableEvent, IPropertyChangeEvent<Player, int>
     {
+        /// <summary>
+        /// Le joueur touché
+        /// </summary>
         public Player Player { get; set; }
 
+        /// <summary>
+        /// Niveau nombre de points
+        /// </summary>
         public int OldPointCount { get; private set; }
-        public int NewPointCount { get; set; }
 
+        /// <summary>
+        /// Ancien nombre de points
+        /// </summary>
+        public int NewPointCount { get; set; }
+     
+        
         Player IPropertyChangeEvent<Player, int>.Sender
         {
             get => Player;
