@@ -4,7 +4,7 @@ using CardGameEngine.GameSystems.Targeting;
 namespace CardGameEngine.GameSystems
 {
     /// <summary>
-    /// Interface que le moteur utilise pour interagir a
+    /// Interface que le moteur utilise pour interagir avec l'application externe
     /// </summary>
     public interface IExternCallbacks
     {
@@ -15,7 +15,6 @@ namespace CardGameEngine.GameSystems
         /// <returns>La cible demandée</returns>
         public T ExternAskForTarget<T>(Target target);
         
-        
         /// <summary>
         /// Délégué appelé lorsque le moteur du jeu veut demander à l'application externe de montrer une carte a un joueur
         /// </summary>
@@ -25,7 +24,7 @@ namespace CardGameEngine.GameSystems
         public void ExternShowCard(Player player, Card card);
         
         /// <summary>
-        /// Délégué appelé lorsque le moteur du jeu veut signaler à l'application externe que la partie c'est terminée
+        /// Délégué appelé lorsque le moteur du jeu veut signaler à l'application externe que la partie s'est terminée
         /// </summary>
         /// <param name="winner">Le joueur qui a gagné la partie</param>
         public void ExternGameEnded(Player winner);
