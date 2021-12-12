@@ -13,12 +13,12 @@ namespace CardGameEngine.EventSystem.Events
         public Player Player { get; set; }
 
         /// <summary>
-        /// Niveau nombre de points
+        /// Ancien nombre de points
         /// </summary>
         public int OldPointCount { get; private set; }
 
         /// <summary>
-        /// Ancien nombre de points
+        /// Nouveau nombre de points
         /// </summary>
         public int NewPointCount { get; set; }
      
