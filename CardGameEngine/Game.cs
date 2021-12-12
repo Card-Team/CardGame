@@ -4,6 +4,7 @@ using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
+using CardGameEngine.GameSystems.Targeting;
 
 namespace CardGameEngine
 {
@@ -38,7 +39,13 @@ namespace CardGameEngine
         /// <seealso cref="Effect"/>
         public EffectsDatabase EffectsDatabase { get; }
 
-
+        
+        /// <summary>
+        /// Callbacks externes au moteurs, ce champ va etre donné par l'application externe.
+        /// </summary>
+        public readonly IExternCallbacks ExternCallbacks;
+        
+        
         /// <summary>
         /// Teste si un joueur a gagné la partie
         /// </summary>
