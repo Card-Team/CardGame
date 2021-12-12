@@ -47,6 +47,3 @@ function do_effect()
         EffectOwner.Deck.MoveInternal(theCard, math.max(0, newPos))
     end
 end
-
-
---todo CreateTarget, AskForTarget(target,predicate for card),currentLevel,TargetTypes,TargetsExists,EffectOwner
