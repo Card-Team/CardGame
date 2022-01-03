@@ -1,4 +1,4 @@
-﻿max_level = 10 --TODO--
+﻿max_level = 10 --TODO-- A définir
 image_id = 519
 
 
