@@ -6,7 +6,7 @@ name = "Extracteur"
 pa_cost = 3
 --TODO a definir le nombre de cout
 targets = {
-    CreateTarget("Carte a gagner ses pointchrome://resources/css/ction", TargetTypes.Card, false, cardFilter),
+    CreateTarget("Carte a gagner ses point d'action", TargetTypes.Card, false, cardFilter),
 }
 --fonction qui recupere toute les cartes de sa main sauf celle ci est lui demande d'en selectionné une
 function cardFilter(aCard)
