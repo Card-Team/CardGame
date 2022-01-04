@@ -39,13 +39,13 @@ namespace CardGameEngine
         /// <seealso cref="Effect"/>
         public EffectsDatabase EffectsDatabase { get; }
 
-        
+
         /// <summary>
         /// Callbacks externes au moteurs, ce champ va etre donné par l'application externe.
         /// </summary>
-        public readonly IExternCallbacks ExternCallbacks;
-        
-        
+        private readonly IExternCallbacks ExternCallbacks;
+
+
         /// <summary>
         /// Teste si un joueur a gagné la partie
         /// </summary>
@@ -82,6 +82,17 @@ namespace CardGameEngine
         {
             throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Révele une la carte card au joueur playre <b>une seule fois</b>
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="card"></param>
+        public void RevealCard(Player player, Card card)
+        {
+            throw new NotImplementedException();
+        }
+
 
         /// <summary>
         /// Un joueur active un artefact
