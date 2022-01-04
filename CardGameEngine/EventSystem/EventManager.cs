@@ -30,8 +30,7 @@ namespace CardGameEngine.EventSystem
         /// <param name="postEvent">Veut recevoir l'information <i>après</i> l'exécution (défaut = false)</param>
         /// <typeparam name="T">Le type d'évènement à écouter</typeparam>
         /// <seealso cref="Event"/>
-        public IEventHandler<T> SubscribeToEvent<T>(OnEvent<T> deleg, bool evenIfCancelled = false,
-            bool postEvent = false)
+        public IEventHandler<T> SubscribeToEvent<T>(OnEvent<T> deleg, bool evenIfCancelled = false, bool postEvent = false)
             where T : Event
         {
             if(!_eventHandlersDict.ContainsKey(typeof(T)))
@@ -62,7 +61,7 @@ namespace CardGameEngine.EventSystem
         /// <typeparam name="T">Le type d'évènement</typeparam>
         /// <returns></returns>
         /// <seealso cref="Event"/>
-        public IPostEventSender<T> SendEvent<T>(T evt) where T : Event
+        public IPostEventSender SendEvent<T>(T evt) where T : Event
         {
             if (!_eventHandlersDict.ContainsKey(typeof(T))) return new PostEventSenderImpl(evt, this);
             foreach (var eventHandler in _eventHandlersDict[typeof(T)])
@@ -76,7 +75,7 @@ namespace CardGameEngine.EventSystem
             }
             return new PostEventSenderImpl(evt, this);
         }
-
+        
         /// <summary>
         /// Déclenche l'évènement donné en mode POST
         /// </summary>
@@ -84,7 +83,7 @@ namespace CardGameEngine.EventSystem
         /// <typeparam name="T">Le type d'évènement</typeparam>
         /// <returns></returns>
         /// <seealso cref="Event"/>
-        private void SendEventPost<T>(T evt) where T : Event
+        private void SendEventPost<T>(T evt) where T: Event
         {
             if (!_eventHandlersDict.ContainsKey(typeof(T))) return;
             foreach (var eventHandler in _eventHandlersDict[typeof(T)].Where(eventHandler => eventHandler.PostEvent))
@@ -92,7 +91,7 @@ namespace CardGameEngine.EventSystem
                 eventHandler.HandleEvent(evt);
             }
         }
-
+        
         /// <summary>
         /// Interface qui permet d'empaqueter les délégués d'évenements avec comme parametre générique <see cref="Event"/>.<br/>
         /// <see cref="T"/> est contravariant et il est donc
@@ -108,12 +107,10 @@ namespace CardGameEngine.EventSystem
             /// <see cref="EventManager.SubscribeToEvent{T}"/>
             /// </value>
             public bool EvenIfCancelled { get; }
-
             /// <value>
             /// <see cref="EventManager.SubscribeToEvent{T}"/>
             /// </value>
             public bool PostEvent { get; }
-
             /// <summary>
             /// Envoi l'évent <paramref name="evt"/> au délégué
             /// </summary>
@@ -132,7 +129,7 @@ namespace CardGameEngine.EventSystem
                 PostEvent = postEvent;
                 _evt = evt;
             }
-
+            
             public bool EvenIfCancelled { get; }
             public bool PostEvent { get; }
 
@@ -146,16 +143,16 @@ namespace CardGameEngine.EventSystem
         /// <summary>
         /// Classe qui permet d'envoyer un event en version "post" plus simplement
         /// </summary>
-        public interface IPostEventSender<out T> : IDisposable where T : Event
+        public interface IPostEventSender : IDisposable
         {
             /// <value>L'event a renvoyer</value>
-            public T Event { get; }
+            public Event Event { get; }
         }
 
         /// <inheritdoc cref="IPostEventSender"/>
-        private class PostEventSenderImpl<T> : IPostEventSender<T> where T : Event
+        private class PostEventSenderImpl : IPostEventSender
         {
-            public T Event { get; }
+            public Event Event { get; }
 
             private EventManager _eventManager;
 
@@ -173,5 +170,6 @@ namespace CardGameEngine.EventSystem
                 _eventManager.SendEventPost(Event);
             }
         }
+        
     }
 }
