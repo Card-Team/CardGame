@@ -6,10 +6,10 @@ name = "Echange inversé"
 pa_cost = 2
 
 targets = {
-    CreateTarget("Echange inverse", TargetTypes.Card, false, card_filter),
+    CreateTarget("la carte avec laquelle elle s'échange dans la défausse", TargetTypes.Card, true, card_filter),
 }
 
-function card_filter(a_card)
+function card_filter()
     -- Verifier quand pas de carte dans la défausse
     local DiscardPile = EffectOwner.Player.Discard
     math.randomseed(os.time())
@@ -31,7 +31,7 @@ function do_effect()
     local theCard = AskForTarget(1)
     -- TODO échanger leur position aussi ( donc pas 0)
     EffectOwner.Player.Discard.MoveTo(EffectOwner.Hand, theCard, 0)
-    EffectOwner.Hand.MoveTo(EffectOwner.Player.Discard, ThisCard, 0)
+    EffectOwner.Hand.MoveTo(EffectOwner.Player.Discard, This, 0)
 end
 
 

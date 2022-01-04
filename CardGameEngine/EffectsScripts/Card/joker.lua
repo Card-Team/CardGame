@@ -1,4 +1,4 @@
-﻿max_level = 2 
+﻿max_level = 1 
 image_id = 520
 
 
@@ -6,7 +6,7 @@ name = "Joker"
 pa_cost = 2
 
 targets = {
-    CreateTarget("Prendre l'effet d'une ou de plusieurs cartes du deck et les applique ", TargetTypes.Card, false, card_filter),
+    CreateTarget("la carte en laquelle se transformer", TargetTypes.Card, false, card_filter),
 }
 
 function card_filter(a_card)
@@ -15,7 +15,7 @@ function card_filter(a_card)
 end
 
 
---Joker : Carte qui permet au joueur de choisir parmi une de ses cartes contenue dans le deck et en appliquer l'effet lvl 1.
+--Joker : Carte copie l'effet d'une carte aléatoirement contenue dans le deck et en appliquer l'effet lvl 1.
 --lvl 2 le joueur applique deux effets parmi les cartes de son deck aléatoirement et simultanément.
 function precondition()
     return TargetsExists({1})

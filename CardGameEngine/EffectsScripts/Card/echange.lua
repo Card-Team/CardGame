@@ -29,6 +29,6 @@ function do_effect()
     local theCard = AskForTarget(1)
     -- TODO échanger leur position aussi ( donc pas 0)
     EffectOwner.OtherPlayer.Hand.MoveTo(EffectOwner.Hand, theCard, 0)
-    EffectOwner.Hand.MoveTo(EffectOwner.OtherPlayer.Hand, ThisCard, 0)
+    EffectOwner.Hand.MoveTo(EffectOwner.OtherPlayer.Hand, This, 0)
 end
 
