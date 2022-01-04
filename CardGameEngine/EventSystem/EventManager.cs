@@ -30,20 +30,20 @@ namespace CardGameEngine.EventSystem
         /// <param name="postEvent">Veut recevoir l'information <i>après</i> l'exécution (défaut = false)</param>
         /// <typeparam name="T">Le type d'évènement à écouter</typeparam>
         /// <seealso cref="Event"/>
-        public void SubscribeToEvent<T>(OnEvent<T> deleg, bool evenIfCancelled = false, bool postEvent = false)
+        public IEventHandler<T> SubscribeToEvent<T>(OnEvent<T> deleg, bool evenIfCancelled = false, bool postEvent = false)
             where T : Event
         {
             throw new NotImplementedException();
         }
+        //todo subscribe lua
 
         /// <summary>
         /// Désabonne le délégué fourni de l'évènement T 
         /// </summary>
         /// <param name="deleg">Le délégué à désinscrire</param>
-        /// <param name="postEvent">Se désabonner de l'évènement post (défaut = false)</param>
         /// <typeparam name="T">Le type d'évènement à retirer</typeparam>
         /// <seealso cref="Event"/>
-        public void UnsubscribeFromEvent<T>(OnEvent<T> deleg, bool postEvent = false) where T : Event
+        public void UnsubscribeFromEvent<T>(IEventHandler<T> deleg) where T : Event
         {
             throw new NotImplementedException();
         }
@@ -52,11 +52,22 @@ namespace CardGameEngine.EventSystem
         /// Déclenche l'évènement donné
         /// </summary>
         /// <param name="evt">L'évènement à déclencher</param>
-        /// <param name="postEvent">Indique si vient de se finir (défaut = false)</param>
         /// <typeparam name="T">Le type d'évènement</typeparam>
         /// <returns></returns>
         /// <seealso cref="Event"/>
-        public IPostEventSender SendEvent<T>(T evt, bool postEvent = false) where T : Event
+        public IPostEventSender SendEvent<T>(T evt) where T : Event
+        {
+            throw new NotImplementedException();
+        }
+        
+        /// <summary>
+        /// Déclenche l'évènement donné en mode POST
+        /// </summary>
+        /// <param name="evt">L'évènement à déclencher</param>
+        /// <typeparam name="T">Le type d'évènement</typeparam>
+        /// <returns></returns>
+        /// <seealso cref="Event"/>
+        private void SendEventPost<T>(T evt) where T: Event
         {
             throw new NotImplementedException();
         }
@@ -70,7 +81,7 @@ namespace CardGameEngine.EventSystem
         /// </code>
         /// </summary>
         /// <typeparam name="T">Le sous type de <see cref="Event"/> que le délégué demande</typeparam>
-        private interface IEventHandler<out T> where T : Event
+        public interface IEventHandler<out T> where T : Event
         {
             /// <value>
             /// <see cref="EventManager.SubscribeToEvent{T}"/>
@@ -121,13 +132,16 @@ namespace CardGameEngine.EventSystem
         {
             public Event Event { get; }
 
+            private EventManager _eventManager;
+
             /// <summary>
             /// Envoi l'event post
             /// </summary>
             public void Dispose()
             {
-                throw new NotImplementedException();
+                _eventManager.SendEventPost(Event);
             }
         }
+        
     }
 }
