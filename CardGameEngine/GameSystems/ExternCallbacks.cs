@@ -1,4 +1,5 @@
-﻿using CardGameEngine.Cards;
+﻿using System.Collections.Generic;
+using CardGameEngine.Cards;
 using CardGameEngine.GameSystems.Targeting;
 
 namespace CardGameEngine.GameSystems
@@ -23,6 +24,14 @@ namespace CardGameEngine.GameSystems
         /// <returns>La cible demandée</returns>
         public void ExternShowCard(Player player, Card card);
 
+        /// <summary>
+        /// Délégué appelé lorsque le moteur du jeu veut demander à l'application externe de faire choisir une carte parmis une liste a un joueur
+        /// </summary>
+        ///<param name="player">Le joueur auquel demander</param>
+        ///<param name="card">La liste parmis la quelle choisir</param>
+        /// <returns>Un choix</returns>
+        public Card ExternChooseBetween(Player player, List<Card> card);
+        
         /// <summary>
         /// Délégué appelé lorsque le moteur du jeu veut signaler à l'application externe que la partie s'est terminée
         /// </summary>

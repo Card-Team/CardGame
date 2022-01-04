@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using CardGameEngine.Cards;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
@@ -101,6 +102,19 @@ namespace CardGameEngine
         /// <param name="artefact">L'artefact activé</param>
         public void ActivateArtifact(Player player, Artefact artefact)
         {
+            throw new NotImplementedException();
+        }
+
+
+        /// <summary>
+        /// Demande au joueur player de choisir une carte parmis la liste cards et renvoi son choix
+        /// </summary>
+        /// <param name="player">Le joueur a qui demander</param>
+        /// <param name="cards">La liste de cartes parmis lesquelles choisir</param>
+        /// <returns></returns>
+        public Card ChooseBetween(Player player,List<Card> cards)
+        {
+            //todo cartes virtuelles
             throw new NotImplementedException();
         }
     }
