@@ -27,6 +27,7 @@ end
 
 function do_effect()
     --on recupere les points d'action de la carte choisis et on modifie grace a TryChangeValue son cout actuelle
-    local coutCart = aCard.Cost();
-    EffectOwner.ActionPoints.TryChangeValue(coutCart);
+    local coutCard = AskForTarget(1).Cost.Value                         --cout de la carte 
+    local pointActionAdv = EffectOwner.ActionPoints.Value               --point d'action du joueur 
+    EffectOwner.ActionPoints.TryChangeValue(pointActionAdv+coutCard)    --ajout du cout de la carte sur les points d'action
 end
