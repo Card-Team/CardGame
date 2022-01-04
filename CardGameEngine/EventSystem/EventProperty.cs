@@ -28,6 +28,7 @@ namespace CardGameEngine.EventSystem
         /// <param name="sender">L'objet lié à l'évènement</param>
         public EventProperty(S sender)
         {
+            //todo passer eventManager et creer dans les constructeurs du coup
             _sender = sender;
         }
 

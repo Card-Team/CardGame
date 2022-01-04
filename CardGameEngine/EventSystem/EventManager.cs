@@ -36,6 +36,7 @@ namespace CardGameEngine.EventSystem
             throw new NotImplementedException();
         }
         //todo subscribe lua
+        //todo retourner interface sans methodes pour éviter l'envoi manuel
 
         /// <summary>
         /// Désabonne le délégué fourni de l'évènement T 
