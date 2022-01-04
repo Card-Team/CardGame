@@ -1,4 +1,4 @@
-﻿max_level = 3
+﻿max_level = 1
 image_id = 613
 
 
