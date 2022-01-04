@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CardGameEngine.EventSystem.Events;
 
 namespace CardGameEngine.EventSystem
@@ -19,9 +20,8 @@ namespace CardGameEngine.EventSystem
         /// <summary>
         /// Dictionnaire contenant tous les évènements
         /// </summary>
-        private Dictionary<Type, List<IEventHandler<Event>>> _eventHandlersDict;
-
-
+        private Dictionary<Type, List<IEventHandler<Event>>> _eventHandlersDict = new Dictionary<Type, List<IEventHandler<Event>>>();
+        
         /// <summary>
         /// Abonne le délégué fourni à l'évènement T donné
         /// </summary>
@@ -34,7 +34,11 @@ namespace CardGameEngine.EventSystem
             bool postEvent = false)
             where T : Event
         {
-            throw new NotImplementedException();
+            if(!_eventHandlersDict.ContainsKey(typeof(T)))
+                _eventHandlersDict.Add(typeof(T), new List<IEventHandler<Event>>());
+            IEventHandler<T> eventHandler = new EventHandlerImpl<T>(deleg, evenIfCancelled, postEvent);
+            _eventHandlersDict[typeof(T)].Add(eventHandler);
+            return eventHandler;
         }
         //todo subscribe lua
         //todo retourner interface sans methodes pour éviter l'envoi manuel
@@ -47,7 +51,8 @@ namespace CardGameEngine.EventSystem
         /// <seealso cref="Event"/>
         public void UnsubscribeFromEvent<T>(IEventHandler<T> deleg) where T : Event
         {
-            throw new NotImplementedException();
+            if(_eventHandlersDict.ContainsKey(typeof(T))) 
+                _eventHandlersDict[typeof(T)].Remove(deleg);
         }
 
         /// <summary>
@@ -59,7 +64,17 @@ namespace CardGameEngine.EventSystem
         /// <seealso cref="Event"/>
         public IPostEventSender<T> SendEvent<T>(T evt) where T : Event
         {
-            throw new NotImplementedException();
+            if (!_eventHandlersDict.ContainsKey(typeof(T))) return new PostEventSenderImpl(evt, this);
+            foreach (var eventHandler in _eventHandlersDict[typeof(T)])
+            {
+                if (!eventHandler.PostEvent && (evt is CancellableEvent == false ||
+                                                (evt is CancellableEvent cancelled && (!cancelled.Cancelled ||
+                                                    eventHandler.EvenIfCancelled))))
+                {
+                    eventHandler.HandleEvent(evt);
+                }
+            }
+            return new PostEventSenderImpl(evt, this);
         }
 
         /// <summary>
@@ -71,7 +86,11 @@ namespace CardGameEngine.EventSystem
         /// <seealso cref="Event"/>
         private void SendEventPost<T>(T evt) where T : Event
         {
-            throw new NotImplementedException();
+            if (!_eventHandlersDict.ContainsKey(typeof(T))) return;
+            foreach (var eventHandler in _eventHandlersDict[typeof(T)].Where(eventHandler => eventHandler.PostEvent))
+            {
+                eventHandler.HandleEvent(evt);
+            }
         }
 
         /// <summary>
@@ -107,8 +126,10 @@ namespace CardGameEngine.EventSystem
         {
             private OnEvent<T> _evt;
 
-            public EventHandlerImpl(OnEvent<T> evt)
+            public EventHandlerImpl(OnEvent<T> evt, bool evenIfCancelled, bool postEvent)
             {
+                EvenIfCancelled = evenIfCancelled;
+                PostEvent = postEvent;
                 _evt = evt;
             }
 
@@ -137,6 +158,12 @@ namespace CardGameEngine.EventSystem
             public T Event { get; }
 
             private EventManager _eventManager;
+
+            public PostEventSenderImpl(Event evt, EventManager eventManager)
+            {
+                Event = evt;
+                _eventManager = eventManager;
+            }
 
             /// <summary>
             /// Envoi l'event post
