@@ -16,7 +16,7 @@ namespace CardGameEngine.EventSystem.Events.ArtefactEvents
         /// Valeur de l'ancienne charge
         /// </summary>
         public int OldChargeCount { get; private set; }
-        
+
         Artefact IPropertyChangeEvent<Artefact, int>.Sender
         {
             get => Artefact;

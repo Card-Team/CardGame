@@ -1,4 +1,5 @@
-﻿using CardGameEngine.Cards;
+﻿using System.Runtime.CompilerServices;
+using CardGameEngine.Cards;
 using CardGameEngine.Cards.CardPiles;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
@@ -39,6 +40,12 @@ namespace CardGameEngine.GameSystems
         /// Points d'action du joueur
         /// </summary>
         public EventProperty<Player, int, ActionPointEditEvent> ActionPoints { get; }
+
+
+        public Player(EventManager evtManager)
+        {
+            ActionPoints = new EventProperty<Player, int, ActionPointEditEvent>(this, evtManager);
+        }
 
 
         /// <summary>

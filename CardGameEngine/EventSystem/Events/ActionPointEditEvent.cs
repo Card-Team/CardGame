@@ -21,8 +21,8 @@ namespace CardGameEngine.EventSystem.Events
         /// Nouveau nombre de points
         /// </summary>
         public int NewPointCount { get; set; }
-     
-        
+
+
         Player IPropertyChangeEvent<Player, int>.Sender
         {
             get => Player;

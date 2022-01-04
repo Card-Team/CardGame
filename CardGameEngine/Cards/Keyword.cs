@@ -16,6 +16,5 @@ namespace CardGameEngine.Cards
         /// Effet du mot clé
         /// </summary>
         public Effect Effect { get; }
-        
     }
 }

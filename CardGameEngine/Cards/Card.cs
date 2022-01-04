@@ -13,7 +13,7 @@ namespace CardGameEngine.Cards
         /// <summary>
         /// Nom de la carte
         /// </summary>
-        public string Name { get; }
+        public EventProperty<Card, string, CardNameChangeEvent> Name { get; }
 
         /// <summary>
         /// Niveau maximum de la carte
@@ -26,6 +26,11 @@ namespace CardGameEngine.Cards
         public EventProperty<Card, int, CardCostChangeEvent> Cost { get; }
 
         /// <summary>
+        /// Niveau de la carte
+        /// </summary>
+        public EventProperty<Card, int, CardLevelChangeEvent> CurrentLevel { get; }
+
+        /// <summary>
         /// Effet de la carte
         /// </summary>
         public Effect Effect { get; }
@@ -34,6 +39,14 @@ namespace CardGameEngine.Cards
         /// Mots clé appliqués à la carte
         /// </summary>
         public List<Keyword> Keywords { get; set; }
+
+
+        public Card(EventManager evtManager)
+        {
+            Name = new EventProperty<Card, string, CardNameChangeEvent>(this, evtManager);
+            Cost = new EventProperty<Card, int, CardCostChangeEvent>(this, evtManager);
+            CurrentLevel = new EventProperty<Card, int, CardLevelChangeEvent>(this, evtManager);
+        }
 
 
         /// <summary>

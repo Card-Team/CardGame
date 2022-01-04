@@ -74,8 +74,10 @@ namespace CardGameTests
 
             var postSender = _eventManager.SendEvent(originalEvent);
 
-            Assert.That(receivedEvent, Is.SameAs(originalEvent), "L'évenement recu par l'écouteur n'est pas celui qui a été émis");
-            Assert.That(postSender.Event, Is.SameAs(originalEvent), "L'évenement renvoyé n'est pas celui qui a été émis");
+            Assert.That(receivedEvent, Is.SameAs(originalEvent),
+                "L'évenement recu par l'écouteur n'est pas celui qui a été émis");
+            Assert.That(postSender.Event, Is.SameAs(originalEvent),
+                "L'évenement renvoyé n'est pas celui qui a été émis");
         }
 
 
@@ -188,12 +190,13 @@ namespace CardGameTests
             _eventManager.SubscribeToEvent(onEventFirstPost, postEvent: true);
 
             var postEventSender = _eventManager.SendEvent(expectedEvent);
-            
-            Assert.That(receivedEvent,Is.Null,"L'évenement pré a été recu alors que l'écouteur est abonné pour les post");
-            
+
+            Assert.That(receivedEvent, Is.Null,
+                "L'évenement pré a été recu alors que l'écouteur est abonné pour les post");
+
             postEventSender.Dispose();
-            
-            Assert.That(receivedEvent,Is.SameAs(expectedEvent),"L'évenement post n'a pas été recu");
+
+            Assert.That(receivedEvent, Is.SameAs(expectedEvent), "L'évenement post n'a pas été recu");
         }
 
         [Test(Description = "Verification que l'évent post n'est pas recu par les écouteurs pré")]
@@ -211,25 +214,25 @@ namespace CardGameTests
             {
                 Assert.Inconclusive("L'évenement pré n'a pas été recu, impossible de verifier l'évenement post");
             }
-            receivedEvent = null;
-            
-            postEventSender.Dispose();
-            
-            Assert.That(receivedEvent,Is.Null,"L'évenement POST a été recu par un écouteur PRE");
-        }
-        
 
-        private class TestCancellableEvent: CancellableEvent
-        {
-            
+            receivedEvent = null;
+
+            postEventSender.Dispose();
+
+            Assert.That(receivedEvent, Is.Null, "L'évenement POST a été recu par un écouteur PRE");
         }
-        
+
+
+        private class TestCancellableEvent : CancellableEvent
+        {
+        }
+
         [Test(Description = "Verification de l'annulation d'un évenement")]
         public void TestCancelEvent()
         {
             var notExpected = new TestCancellableEvent();
             TestCancellableEvent? received = null;
-            
+
             EventManager.OnEvent<TestCancellableEvent> eventCancellator = evt => evt.Cancelled = true;
             EventManager.OnEvent<TestCancellableEvent> eventConsumer = evt => received = evt;
 
@@ -237,8 +240,9 @@ namespace CardGameTests
             _eventManager.SubscribeToEvent(eventConsumer);
 
             _eventManager.SendEvent(notExpected);
-            
-            Assert.That(received,Is.Null,"Un évenement annulé en amont a été recu par un écouteur qui ne veut pas les évenements annulés");
+
+            Assert.That(received, Is.Null,
+                "Un évenement annulé en amont a été recu par un écouteur qui ne veut pas les évenements annulés");
         }
 
         [Test(Description = "Verification de l'écoute des évenements annulés")]
@@ -246,7 +250,7 @@ namespace CardGameTests
         {
             var expected = new TestCancellableEvent();
             TestCancellableEvent? received = null;
-            
+
             EventManager.OnEvent<TestCancellableEvent> eventCancellator = evt => evt.Cancelled = true;
             EventManager.OnEvent<TestCancellableEvent> eventConsumer = evt => received = evt;
 
@@ -254,17 +258,18 @@ namespace CardGameTests
             _eventManager.SubscribeToEvent(eventConsumer, true);
 
             _eventManager.SendEvent(expected);
-            
-            Assert.That(received,Is.SameAs(expected),"Un écouteur d'évenements annulé n'a pas recu un évenement annulé");
+
+            Assert.That(received, Is.SameAs(expected),
+                "Un écouteur d'évenements annulé n'a pas recu un évenement annulé");
         }
-        
-        
+
+
         [Test(Description = "Verification de la dé-annulation")]
         public void TestUnCancelEvent()
         {
             var expected = new TestCancellableEvent();
             TestCancellableEvent? received = null;
-            
+
             EventManager.OnEvent<TestCancellableEvent> eventCancellator = evt => evt.Cancelled = true;
             EventManager.OnEvent<TestCancellableEvent> eventMisser = evt => received = evt;
             EventManager.OnEvent<TestCancellableEvent> eventUnCancellator = evt => evt.Cancelled = false;
@@ -276,8 +281,9 @@ namespace CardGameTests
             _eventManager.SubscribeToEvent(eventConsumer);
 
             _eventManager.SendEvent(expected);
-            
-            Assert.That(received,Is.SameAs(expected),"Un écouteur d'évenements n'a pas recu l'évenement apres ca dé-annulation");
+
+            Assert.That(received, Is.SameAs(expected),
+                "Un écouteur d'évenements n'a pas recu l'évenement apres ca dé-annulation");
         }
 
         [Test(Description = "Verification qu'un évenement annulé a la fin ne déclenche pas de post")]
@@ -285,27 +291,27 @@ namespace CardGameTests
         {
             var notExpected = new TestCancellableEvent();
             TestCancellableEvent? received = null;
-            
+
             EventManager.OnEvent<TestCancellableEvent> eventCancellator = evt => evt.Cancelled = true;
             EventManager.OnEvent<TestCancellableEvent> postMisser = evt => received = evt;
 
             _eventManager.SubscribeToEvent(eventCancellator);
-            _eventManager.SubscribeToEvent(postMisser,postEvent:true);
-            
+            _eventManager.SubscribeToEvent(postMisser, postEvent: true);
+
             var postSender = _eventManager.SendEvent(notExpected);
             postSender.Dispose();
-            
-            Assert.That(received,Is.Null,"Un évent annulé a quand meme envoyé un postEvent");
+
+            Assert.That(received, Is.Null, "Un évent annulé a quand meme envoyé un postEvent");
         }
-        
+
         [Test(Description = "Vérification que deux évenements a la suite recoivent la meme instance")]
         public void TestChainEventsSameInstance()
         {
             var expectedEvent = new TestEventType();
-            
+
             TestEventType? firstReceived = null;
             TestEventType? secondReceived = null;
-            
+
             EventManager.OnEvent<TestEventType> firstConsumer = evt => firstReceived = evt;
             EventManager.OnEvent<TestEventType> secondConsumer = evt => secondReceived = evt;
 
@@ -313,10 +319,9 @@ namespace CardGameTests
             _eventManager.SubscribeToEvent(secondConsumer);
 
             _eventManager.SendEvent(expectedEvent);
-            
-            Assert.That(firstReceived,Is.Not.Null.And.SameAs(secondReceived),"Les deux écouteurs a la chaine n'ont pas recu le meme object Evenement");
 
+            Assert.That(firstReceived, Is.Not.Null.And.SameAs(secondReceived),
+                "Les deux écouteurs a la chaine n'ont pas recu le meme object Evenement");
         }
-
     }
 }

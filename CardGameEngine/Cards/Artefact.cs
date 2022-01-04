@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CardGameEngine.EventSystem;
+﻿using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events.ArtefactEvents;
 using CardGameEngine.GameSystems.Effects;
 
@@ -29,6 +28,12 @@ namespace CardGameEngine.Cards
         /// Effet de l'artefact
         /// </summary>
         public Effect Effect { get; }
+
+
+        public Artefact(EventManager evtManager)
+        {
+            CurrentCharge = new EventProperty<Artefact, int, ArtefactChargeEditEvent>(this, evtManager);
+        }
 
 
         /// <summary>
