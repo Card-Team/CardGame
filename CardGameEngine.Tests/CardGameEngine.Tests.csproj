@@ -47,7 +47,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="EffectLoadTests.cs" />
-        <Compile Include="EventmanagerTests.cs" />
+        <Compile Include="EventManagerTests.cs" />
         <Compile Include="LuaTestData.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
