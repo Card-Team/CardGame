@@ -14,10 +14,6 @@ Vous retrouverez ici la documentation nécessaire pour faire de scripts d'effets
 | SubscribeTo()   |                  ✔                   |                      ✔                       |                     ✔                      |
 | UnsubscribeTo() |                  ✔                   |                      ✔                       |                     ✔                      |
 |                 |                                      |                                              |                                            |
-| CurrentCharge   |                  ❌                   |                      ✔                       |                     ❌                      |
-| CurrentLevel    |                  ✔                   |                      ❌                       |                     ❌                      |
-| CurrentName     |                  ✔                   |                      ✔                       |                     ✔                      |
-| CurrentPACost   |                  ✔                   |                      ❌                       |                     ❌                      |
 | EffectOwner     |                  ✔                   |                      ✔                       |                     ✔                      |
 | Event*          |                  ✔                   |                      ✔                       |                     ✔                      |
 | Game            |                  ✔                   |                      ✔                       |                     ✔                      |
@@ -50,10 +46,6 @@ d'un évènement
 
 | Nom           | Type                                                                  |
 |---------------|:----------------------------------------------------------------------|
-| CurrentCharge | [EventProperty\<int>](CardGameEngine/EventSystem/EventProperty.cs)    |
-| CurrentLevel  | [EventProperty\<int>](CardGameEngine/EventSystem/EventProperty.cs)    |
-| CurrentName   | [EventProperty\<string>](CardGameEngine/EventSystem/EventProperty.cs) |
-| CurrentPACost | [EventProperty\<int>](CardGameEngine/EventSystem/EventProperty.cs)    |
 | EffectOwner   | [EventProperty\<int>](CardGameEngine/GameSystems/Player.cs)           |
 | Game          | [EventProperty\<int>](CardGameEngine/Game.cs)                         |
 | This*         | Card/Artefact/Keyword                                                 |
