@@ -45,7 +45,7 @@ namespace CardGameTests
 
             _eventManager.SendEvent(new TestEventType());
 
-            Assert.That(called, Is.True, "L'évenement n'a pas été appelé");
+            Assert.That(called, Is.True, "L'évenement n'a pas été recu");
         }
 
         [Test(Description = "Vérification du désabonnement")]
