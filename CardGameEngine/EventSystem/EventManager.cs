@@ -20,8 +20,9 @@ namespace CardGameEngine.EventSystem
         /// <summary>
         /// Dictionnaire contenant tous les évènements
         /// </summary>
-        private Dictionary<Type, List<IEventHandler<Event>>> _eventHandlersDict = new Dictionary<Type, List<IEventHandler<Event>>>();
-        
+        private Dictionary<Type, List<IEventHandler<Event>>> _eventHandlersDict =
+            new Dictionary<Type, List<IEventHandler<Event>>>();
+
         /// <summary>
         /// Abonne le délégué fourni à l'évènement T donné
         /// </summary>
@@ -30,17 +31,18 @@ namespace CardGameEngine.EventSystem
         /// <param name="postEvent">Veut recevoir l'information <i>après</i> l'exécution (défaut = false)</param>
         /// <typeparam name="T">Le type d'évènement à écouter</typeparam>
         /// <seealso cref="Event"/>
-        public IEventHandler<T> SubscribeToEvent<T>(OnEvent<T> deleg, bool evenIfCancelled = false, bool postEvent = false)
+        public IEventHandler<T> SubscribeToEvent<T>(OnEvent<T> deleg, bool evenIfCancelled = false,
+            bool postEvent = false)
             where T : Event
         {
-            if(!_eventHandlersDict.ContainsKey(typeof(T)))
+            if (!_eventHandlersDict.ContainsKey(typeof(T)))
                 _eventHandlersDict.Add(typeof(T), new List<IEventHandler<Event>>());
             IEventHandler<T> eventHandler = new EventHandlerImpl<T>(deleg, evenIfCancelled, postEvent);
             _eventHandlersDict[typeof(T)].Add(eventHandler);
             return eventHandler;
         }
         //todo subscribe lua
-        //todo retourner interface sans methodes pour éviter l'envoi manuel
+        //todo retourner interface sans méthode pour éviter l'envoi manuel
 
         /// <summary>
         /// Désabonne le délégué fourni de l'évènement T 
@@ -50,7 +52,7 @@ namespace CardGameEngine.EventSystem
         /// <seealso cref="Event"/>
         public void UnsubscribeFromEvent<T>(IEventHandler<T> deleg) where T : Event
         {
-            if(_eventHandlersDict.ContainsKey(typeof(T))) 
+            if (_eventHandlersDict.ContainsKey(typeof(T)))
                 _eventHandlersDict[typeof(T)].Remove(deleg);
         }
 
@@ -61,9 +63,9 @@ namespace CardGameEngine.EventSystem
         /// <typeparam name="T">Le type d'évènement</typeparam>
         /// <returns></returns>
         /// <seealso cref="Event"/>
-        public IPostEventSender SendEvent<T>(T evt) where T : Event
+        public IPostEventSender<T> SendEvent<T>(T evt) where T : Event
         {
-            if (!_eventHandlersDict.ContainsKey(typeof(T))) return new PostEventSenderImpl(evt, this);
+            if (!_eventHandlersDict.ContainsKey(typeof(T))) return new PostEventSenderImpl<T>(evt, this);
             foreach (var eventHandler in _eventHandlersDict[typeof(T)])
             {
                 if (!eventHandler.PostEvent && (evt is CancellableEvent == false ||
@@ -73,9 +75,10 @@ namespace CardGameEngine.EventSystem
                     eventHandler.HandleEvent(evt);
                 }
             }
-            return new PostEventSenderImpl(evt, this);
+
+            return new PostEventSenderImpl<T>(evt, this);
         }
-        
+
         /// <summary>
         /// Déclenche l'évènement donné en mode POST
         /// </summary>
@@ -83,7 +86,7 @@ namespace CardGameEngine.EventSystem
         /// <typeparam name="T">Le type d'évènement</typeparam>
         /// <returns></returns>
         /// <seealso cref="Event"/>
-        private void SendEventPost<T>(T evt) where T: Event
+        private void SendEventPost<T>(T evt) where T : Event
         {
             if (!_eventHandlersDict.ContainsKey(typeof(T))) return;
             foreach (var eventHandler in _eventHandlersDict[typeof(T)].Where(eventHandler => eventHandler.PostEvent))
@@ -91,7 +94,7 @@ namespace CardGameEngine.EventSystem
                 eventHandler.HandleEvent(evt);
             }
         }
-        
+
         /// <summary>
         /// Interface qui permet d'empaqueter les délégués d'évenements avec comme parametre générique <see cref="Event"/>.<br/>
         /// <see cref="T"/> est contravariant et il est donc
@@ -101,16 +104,19 @@ namespace CardGameEngine.EventSystem
         /// </code>
         /// </summary>
         /// <typeparam name="T">Le sous type de <see cref="Event"/> que le délégué demande</typeparam>
+        // ReSharper disable once UnusedTypeParameter
         public interface IEventHandler<out T> where T : Event
         {
             /// <value>
             /// <see cref="EventManager.SubscribeToEvent{T}"/>
             /// </value>
             public bool EvenIfCancelled { get; }
+
             /// <value>
             /// <see cref="EventManager.SubscribeToEvent{T}"/>
             /// </value>
             public bool PostEvent { get; }
+
             /// <summary>
             /// Envoi l'évent <paramref name="evt"/> au délégué
             /// </summary>
@@ -129,7 +135,7 @@ namespace CardGameEngine.EventSystem
                 PostEvent = postEvent;
                 _evt = evt;
             }
-            
+
             public bool EvenIfCancelled { get; }
             public bool PostEvent { get; }
 
@@ -143,20 +149,20 @@ namespace CardGameEngine.EventSystem
         /// <summary>
         /// Classe qui permet d'envoyer un event en version "post" plus simplement
         /// </summary>
-        public interface IPostEventSender : IDisposable
+        public interface IPostEventSender<out T> : IDisposable where T : Event
         {
             /// <value>L'event a renvoyer</value>
-            public Event Event { get; }
+            public T Event { get; }
         }
 
-        /// <inheritdoc cref="IPostEventSender"/>
-        private class PostEventSenderImpl : IPostEventSender
+        /// <inheritdoc cref="IPostEventSender{T}"/>
+        private class PostEventSenderImpl<T> : IPostEventSender<T> where T : Event
         {
-            public Event Event { get; }
+            public T Event { get; }
 
             private EventManager _eventManager;
 
-            public PostEventSenderImpl(Event evt, EventManager eventManager)
+            public PostEventSenderImpl(T evt, EventManager eventManager)
             {
                 Event = evt;
                 _eventManager = eventManager;
@@ -170,6 +176,5 @@ namespace CardGameEngine.EventSystem
                 _eventManager.SendEventPost(Event);
             }
         }
-        
     }
 }

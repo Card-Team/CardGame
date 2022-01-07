@@ -84,7 +84,7 @@ namespace CardGameEngine
         }
 
         /// <summary>
-        /// Révele une la carte card au joueur playre <b>une seule fois</b>
+        /// Révèle une la carte card au joueur player <b>une seule fois</b>
         /// </summary>
         /// <param name="player"></param>
         /// <param name="card"></param>

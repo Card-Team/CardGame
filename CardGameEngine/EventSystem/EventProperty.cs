@@ -20,7 +20,7 @@ namespace CardGameEngine.EventSystem
         /// Valeur de la propriété
         /// </summary>
         public T Value { get; private set; }
-        
+
         private EventManager EvtManager;
 
 
