@@ -277,7 +277,7 @@ namespace CardGameTests
 
             _eventManager.SubscribeToEvent(eventCancellator);
             _eventManager.SubscribeToEvent(eventMisser);
-            _eventManager.SubscribeToEvent(eventUnCancellator);
+            _eventManager.SubscribeToEvent(eventUnCancellator, true);
             _eventManager.SubscribeToEvent(eventConsumer);
 
             _eventManager.SendEvent(expected);

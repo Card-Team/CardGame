@@ -91,7 +91,9 @@ namespace CardGameEngine.EventSystem
             if (!_eventHandlersDict.ContainsKey(typeof(T))) return;
             foreach (var eventHandler in _eventHandlersDict[typeof(T)].Where(eventHandler => eventHandler.PostEvent))
             {
-                eventHandler.HandleEvent(evt);
+                if(evt is CancellableEvent == false || (evt is CancellableEvent cancelled && (!cancelled.Cancelled || eventHandler.EvenIfCancelled))){
+                    eventHandler.HandleEvent(evt);
+                }
             }
         }
 
