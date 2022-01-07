@@ -7,6 +7,6 @@ namespace CardGameEngine.EventSystem.Events.CardEvents.KeywordEvents
     /// </summary>
     public class CardKeywordEvent : CardEvent
     {
-        public Keyword Keyword { get; set; }
+        public Keyword Keyword { get; internal set; }
     }
 }

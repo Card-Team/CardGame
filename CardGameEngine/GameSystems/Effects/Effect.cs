@@ -6,22 +6,22 @@ namespace CardGameEngine.GameSystems.Effects
     /// <summary>
     /// Classe représentant un effet
     /// </summary>
-    public class Effect
+    internal class Effect
     {
         /// <summary>
         /// Type de l'effet
         /// </summary>
-        public EffectType EffectType { get; }
+        internal EffectType EffectType { get; }
 
         /// <summary>
         /// Nom/référence de l'effet
         /// </summary>
-        public string EffectId { get; }
+        internal string EffectId { get; }
 
         /// <summary>
         /// Liste des cibles de l'effet
         /// </summary>
-        public List<Target> AllTargets { get; }
+        internal List<Target> AllTargets { get; }
 
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// <param name="effectType">Type de l'effet</param>
         /// <param name="effectId">Nom/référence de l'effet</param>
         /// <param name="targets">Liste des cibles de l'effet</param>
-        public Effect(EffectType effectType, string effectId, List<Target> targets)
+        internal Effect(EffectType effectType, string effectId, List<Target> targets)
         {
             EffectType = effectType;
             EffectId = effectId;

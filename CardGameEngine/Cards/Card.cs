@@ -33,7 +33,7 @@ namespace CardGameEngine.Cards
         /// <summary>
         /// Effet de la carte
         /// </summary>
-        public Effect Effect { get; }
+        internal Effect Effect { get; }
 
         /// <summary>
         /// Mots clé appliqués à la carte
@@ -41,7 +41,7 @@ namespace CardGameEngine.Cards
         public List<Keyword> Keywords { get; set; }
 
 
-        public Card(EventManager evtManager)
+        internal Card(EventManager evtManager)
         {
             Name = new EventProperty<Card, string, CardNameChangeEvent>(this, evtManager);
             Cost = new EventProperty<Card, int, CardCostChangeEvent>(this, evtManager);
@@ -54,7 +54,7 @@ namespace CardGameEngine.Cards
         /// </summary>
         /// <param name="game">La partie en cours</param>
         /// <returns>Un booléen en fonction de la réussite</returns>
-        public bool DoEffect(Game game)
+        internal bool DoEffect(Game game)
         {
             throw new System.NotImplementedException();
         }

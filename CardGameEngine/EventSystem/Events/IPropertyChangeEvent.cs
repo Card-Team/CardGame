@@ -10,16 +10,16 @@
         /// <summary>
         /// L'objet qui subit le changement
         /// </summary>
-        public S Sender { get; set; }
+        internal S Sender { get; set; }
 
         /// <summary>
         /// Nouvelle valeur de la propriété
         /// </summary>
-        public T NewValue { get; set; }
+        internal T NewValue { get; set; }
 
         /// <summary>
         /// Ancienne valeur de la propriété
         /// </summary>
-        public T OldValue { get; set; }
+        internal T OldValue { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace CardGameEngine.GameSystems.Targeting
         /// <param name="targetType">Type de la cible</param>
         /// <param name="isAutomatic">Choix de la cible manuel ou non</param>
         /// <param name="cardFilter">Prédicat indiquant si une carte peut être ciblée</param>
-        public Target(string name, TargetTypes targetType, bool isAutomatic, Closure? cardFilter = null)
+        internal Target(string name, TargetTypes targetType, bool isAutomatic, Closure? cardFilter = null)
         {
             Name = name;
             TargetType = targetType;

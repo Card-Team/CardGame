@@ -27,10 +27,10 @@ namespace CardGameEngine.Cards
         /// <summary>
         /// Effet de l'artefact
         /// </summary>
-        public Effect Effect { get; }
+        internal Effect Effect { get; }
 
 
-        public Artefact(EventManager evtManager)
+        internal Artefact(EventManager evtManager)
         {
             CurrentCharge = new EventProperty<Artefact, int, ArtefactChargeEditEvent>(this, evtManager);
         }
@@ -41,7 +41,7 @@ namespace CardGameEngine.Cards
         /// </summary>
         /// <param name="game">La partie en cours</param>
         /// <returns>Un booléen en fonction de la réussite</returns>
-        public bool DoEffect(Game game)
+        internal bool DoEffect(Game game)
         {
             throw new System.NotImplementedException();
         }

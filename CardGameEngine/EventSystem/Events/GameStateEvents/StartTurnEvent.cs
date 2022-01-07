@@ -10,6 +10,6 @@ namespace CardGameEngine.EventSystem.Events.GameStateEvents
         /// <summary>
         /// Joueur en train de jouer
         /// </summary>
-        public Player Player { get; set; }
+        public Player Player { get; internal set; }
     }
 }

@@ -11,7 +11,7 @@ namespace CardGameEngine.GameSystems.Effects
     /// <summary>
     /// Classe lisant, vérifiant et stockant tous les effets valides
     /// </summary>
-    public class EffectsDatabase
+    internal class EffectsDatabase
     {
         /// <summary>
         /// Le dictionnaire stockant les effets valides avec leur nom comme clé
@@ -22,7 +22,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// Accède au dictionnaire des effets de l'objet
         /// </summary>
         /// <param name="s">Nom de l'effet</param>
-        public Effect this[string s] => _effectDictionary[s];
+        internal Effect this[string s] => _effectDictionary[s];
 
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         /// <param name="path">Nom complet du dossier</param>
         /// <seealso cref="LoadAllEffects(string, EffectType)"/>
-        public void LoadAllEffects(string path)
+        internal void LoadAllEffects(string path)
         {
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
             foreach (var directory in Directory.EnumerateDirectories(path))

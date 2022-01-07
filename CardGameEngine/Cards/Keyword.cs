@@ -15,6 +15,6 @@ namespace CardGameEngine.Cards
         /// <summary>
         /// Effet du mot clé
         /// </summary>
-        public Effect Effect { get; }
+        internal Effect Effect { get; }
     }
 }

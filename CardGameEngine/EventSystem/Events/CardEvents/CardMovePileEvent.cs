@@ -10,21 +10,21 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
         /// <summary>
         /// Pile d'origine
         /// </summary>
-        public CardPile SourcePile { get; set; }
+        public CardPile SourcePile { get; }
 
         /// <summary>
         /// Position dans la pile d'origine
         /// </summary>
-        public int SourceIndex { get; set; }
+        public int SourceIndex { get; }
 
         /// <summary>
         /// Pile de destination
         /// </summary>
-        public CardPile DestPile { get; set; }
+        public CardPile DestPile { get; internal set; }
 
         /// <summary>
         /// Position dans la pile de destination
         /// </summary>
-        public int DestIndex { get; set; }
+        public int DestIndex { get; internal set; }
     }
 }

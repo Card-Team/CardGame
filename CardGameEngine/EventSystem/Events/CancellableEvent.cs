@@ -8,6 +8,6 @@
         /// <summary>
         /// Booléen indiquant l'annulation de l'évènement
         /// </summary>
-        public bool Cancelled { get; set; }
+        internal bool Cancelled { get; set; }
     }
 }

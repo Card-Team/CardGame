@@ -7,7 +7,7 @@ namespace CardGameEngine.Cards.CardPiles
     /// </summary>
     public class NotInPileException : Exception
     {
-        public NotInPileException(Card card) :
+        internal NotInPileException(Card card) :
             base($"La carte {card.Name} n'est pas dans la pile")
         {
         }

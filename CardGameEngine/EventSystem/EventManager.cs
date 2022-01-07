@@ -63,7 +63,7 @@ namespace CardGameEngine.EventSystem
         /// <typeparam name="T">Le type d'évènement</typeparam>
         /// <returns></returns>
         /// <seealso cref="Event"/>
-        public IPostEventSender<T> SendEvent<T>(T evt) where T : Event
+        internal IPostEventSender<T> SendEvent<T>(T evt) where T : Event
         {
             if (!_eventHandlersDict.ContainsKey(typeof(T))) return new PostEventSenderImpl<T>(evt, this);
             foreach (var eventHandler in _eventHandlersDict[typeof(T)])
@@ -151,7 +151,7 @@ namespace CardGameEngine.EventSystem
         /// <summary>
         /// Classe qui permet d'envoyer un event en version "post" plus simplement
         /// </summary>
-        public interface IPostEventSender<out T> : IDisposable where T : Event
+        internal interface IPostEventSender<out T> : IDisposable where T : Event
         {
             /// <value>L'event a renvoyer</value>
             public T Event { get; }

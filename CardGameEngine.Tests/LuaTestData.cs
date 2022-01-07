@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -21,7 +19,7 @@ namespace CardGameTests
             Good
         }
 
-        public static IEnumerable<TestCaseData> GetNamedTestData(EffectType effectType, TestScriptType scriptType,
+        internal static IEnumerable<TestCaseData> GetNamedTestData(EffectType effectType, TestScriptType scriptType,
             string name)
         {
             string scriptFile = Path.Combine(ScriptFolder, effectType.ToString(), scriptType.ToString(), name);
@@ -48,7 +46,7 @@ namespace CardGameTests
         }
 
 
-        public static IEnumerable<TestCaseData> GetAllEffectTestData(EffectType effectType, TestScriptType scriptType)
+        private static IEnumerable<TestCaseData> GetAllEffectTestData(EffectType effectType, TestScriptType scriptType)
         {
             string scriptFolder = Path.Combine(ScriptFolder, effectType.ToString(), scriptType.ToString());
 

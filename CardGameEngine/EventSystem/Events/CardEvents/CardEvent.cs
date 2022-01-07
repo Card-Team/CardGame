@@ -10,6 +10,6 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
         /// <summary>
         /// La carte concernée
         /// </summary>
-        public Card Card { get; set; }
+        public Card Card { get; internal set; }
     }
 }

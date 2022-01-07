@@ -10,6 +10,6 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
         /// <summary>
         /// La cible enregistrée
         /// </summary>
-        public Target TargetData { get; set; }
+        public Target TargetData { get; internal set; }
     }
 }

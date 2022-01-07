@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using CardGameEngine.Cards;
+﻿using CardGameEngine.Cards;
 using CardGameEngine.Cards.CardPiles;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
@@ -52,7 +51,7 @@ namespace CardGameEngine.GameSystems
         /// Piocher une carte
         /// </summary>
         /// <param name="card">La carte à piocher</param>
-        public void DrawCard(Card? card = null)
+        internal void DrawCard(Card? card = null)
         {
             throw new System.NotImplementedException();
         }
@@ -61,7 +60,7 @@ namespace CardGameEngine.GameSystems
         /// Déplace une carte vers la défausse en mode upgrade
         /// </summary>
         /// <param name="card">La carte à défausser</param>
-        public void PrepareCardUpgrade(Card card)
+        internal void PrepareCardUpgrade(Card card)
         {
             throw new System.NotImplementedException();
         }

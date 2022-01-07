@@ -10,7 +10,7 @@ namespace CardGameEngine.EventSystem.Events.ArtefactEvents
         /// <summary>
         /// Valeur de la nouvelle charge
         /// </summary>
-        public int NewChargeCount { get; set; }
+        public int NewChargeCount { get; internal set; }
 
         /// <summary>
         /// Valeur de l'ancienne charge

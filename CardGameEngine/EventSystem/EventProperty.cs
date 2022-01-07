@@ -29,7 +29,7 @@ namespace CardGameEngine.EventSystem
         /// </summary>
         /// <param name="sender">L'objet lié à l'évènement</param>
         /// <param name="evtManager"></param>
-        public EventProperty(S sender, EventManager evtManager)
+        internal EventProperty(S sender, EventManager evtManager)
         {
             _sender = sender;
             EvtManager = evtManager;
@@ -39,7 +39,7 @@ namespace CardGameEngine.EventSystem
         /// Essaye de changer la valeur de la propriété par la nouvelle entrée
         /// </summary>
         /// <param name="newVal">La nouvelle valeur</param>
-        public T TryChangeValue(T newVal)
+        internal T TryChangeValue(T newVal)
         {
             var evt = new ET
             {

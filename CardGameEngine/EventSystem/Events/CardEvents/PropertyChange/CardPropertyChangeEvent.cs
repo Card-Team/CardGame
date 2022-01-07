@@ -16,12 +16,18 @@ namespace CardGameEngine.EventSystem.Events.CardEvents.PropertyChange
         /// <summary>
         /// Nouvelle valeur de la propriété
         /// </summary>
-        public T NewValue { get; set; }
+        public T NewValue { get; private set; }
 
         T IPropertyChangeEvent<Card, T>.OldValue
         {
             get => OldValue;
             set => OldValue = value;
+        }
+
+        T IPropertyChangeEvent<Card, T>.NewValue
+        {
+            get => NewValue;
+            set => NewValue = value;
         }
 
         Card IPropertyChangeEvent<Card, T>.Sender

@@ -46,8 +46,9 @@ namespace CardGameTests
         [Test(Description = "Verifier que les effets bien formés sont acceptés")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetAllTestDataOfType)
             , new object[] {LuaTestData.TestScriptType.Good})]
-        public void Test_Load_Effect_Good(EffectType type, string script)
+        public void Test_Load_Effect_Good(object effectType, string script)
         {
+            var type = (EffectType) effectType;
             PutScript(script, type);
             Console.WriteLine(script);
             Assert.DoesNotThrow(() => _effectsDatabase.LoadAllEffects(_randomDir)
@@ -57,8 +58,9 @@ namespace CardGameTests
         [Test(Description = "Verifier que les effets mal formés sont rejetés")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetAllTestDataOfType)
             , new object[] {LuaTestData.TestScriptType.Bad})]
-        public void Test_Load_Effect_Bad(EffectType type, string script)
+        public void Test_Load_Effect_Bad(object effectType, string script)
         {
+            var type = (EffectType) effectType;
             PutScript(script, type);
             Console.WriteLine(script);
             Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadAllEffects(_randomDir)
@@ -68,8 +70,9 @@ namespace CardGameTests
         [Test(Description = "Verifier que le chargement d'une carte contient bien les données attendues")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetNamedTestData),
             new object[] {EffectType.Card, LuaTestData.TestScriptType.Good, "example.lua"})]
-        public void Test_Effect_Card_Data(EffectType type, string scriptContent)
+        public void Test_Effect_Card_Data(object effectType, string scriptContent)
         {
+            var type = (EffectType) effectType;
             var path = Path.GetFileNameWithoutExtension(PutScript(scriptContent, type));
             _effectsDatabase.LoadAllEffects(_randomDir);
             var eft = _effectsDatabase[path];

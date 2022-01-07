@@ -10,7 +10,7 @@ namespace CardGameEngine.EventSystem.Events
         /// <summary>
         /// Le joueur touché
         /// </summary>
-        public Player Player { get; set; }
+        public Player Player { get; internal set; }
 
         /// <summary>
         /// Ancien nombre de points
@@ -20,7 +20,7 @@ namespace CardGameEngine.EventSystem.Events
         /// <summary>
         /// Nouveau nombre de points
         /// </summary>
-        public int NewPointCount { get; set; }
+        public int NewPointCount { get; internal set; }
 
 
         Player IPropertyChangeEvent<Player, int>.Sender

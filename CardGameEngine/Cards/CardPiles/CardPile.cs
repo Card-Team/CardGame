@@ -81,7 +81,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <param name="card">La carte à bouger</param>
         /// <param name="newPosition">La position à prendre</param>
         /// <exception cref="NotInPileException">Si la carte n'est pas dans la pile</exception>
-        public void MoveTo(CardPile newCardPile, Card card, int newPosition)
+        internal void MoveTo(CardPile newCardPile, Card card, int newPosition)
         {
             if (!_cardList.Contains(card)) throw new NotInPileException(card);
 
@@ -95,7 +95,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <param name="card">La carte à bouger</param>
         /// <param name="newPosition">La position à prendre</param>
         /// <exception cref="NotInPileException">Si la carte n'est pas dans la pile</exception>
-        public void MoveInternal(Card card, int newPosition)
+        internal void MoveInternal(Card card, int newPosition)
         {
             if (!_cardList.Contains(card)) throw new NotInPileException(card);
 

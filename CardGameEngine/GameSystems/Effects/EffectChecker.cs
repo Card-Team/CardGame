@@ -9,7 +9,7 @@ namespace CardGameEngine.GameSystems.Effects
     /// Classe statique ayant pour but de vérifier la validité d'un script d'effet lua
     /// </summary>
     /// <seealso cref="Effect"/>
-    public static class EffectChecker
+    internal static class EffectChecker
     {
         /// <summary>
         /// Méthode principale de la classe, elle appelle la méthode correspondante au type d'effet donné.
@@ -20,7 +20,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// <seealso cref="CheckArtefact(string)"/>
         /// <seealso cref="CheckCard(string)"/>
         /// <seealso cref="CheckKeyword(string)"/>
-        public static bool CheckEffect(string path, EffectType effectType)
+        internal static bool CheckEffect(string path, EffectType effectType)
         {
             return effectType switch
             {

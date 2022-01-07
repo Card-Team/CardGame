@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using CardGameEngine.Cards;
 using CardGameEngine.EventSystem;
-using CardGameEngine.EventSystem.Events;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
-using CardGameEngine.GameSystems.Targeting;
 
 namespace CardGameEngine
 {
@@ -17,7 +15,7 @@ namespace CardGameEngine
         /// <summary>
         /// Le joueur en train de jouer
         /// </summary>
-        public Player CurrentPlayerTurn { get; }
+        public Player CurrentPlayer { get; }
 
         /// <summary>
         /// Le joueur 1
@@ -32,19 +30,18 @@ namespace CardGameEngine
         /// <summary>
         /// Gestionnaire des évènements de la partie
         /// </summary>
-        public EventManager EventManager { get; }
+        internal EventManager EventManager { get; }
 
         /// <summary>
         /// Base de données de tous les effets
         /// </summary>
         /// <seealso cref="Effect"/>
-        public EffectsDatabase EffectsDatabase { get; }
-
+        internal EffectsDatabase EffectsDatabase { get; }
 
         /// <summary>
-        /// Callbacks externes au moteurs, ce champ va etre donné par l'application externe.
+        /// Callbacks externes au moteurs, ce champ va être donné par l'application externe.
         /// </summary>
-        private readonly IExternCallbacks ExternCallbacks;
+        private readonly IExternCallbacks _externCallbacks;
 
 
         /// <summary>
@@ -52,7 +49,7 @@ namespace CardGameEngine
         /// </summary>
         /// <param name="playerToCheck">La joueur à tester</param>
         /// <returns>True si le joueur a gagné</returns>
-        public bool CheckHasWon(Player playerToCheck)
+        private bool CheckHasWon(Player playerToCheck)
         {
             throw new NotImplementedException();
         }
@@ -61,7 +58,7 @@ namespace CardGameEngine
         /// Lance le tour d'un joueur
         /// </summary>
         /// <param name="player">Le joueur qui doit jouer</param>
-        public void StartPlayerTurn(Player player)
+        private void StartPlayerTurn(Player player)
         {
             throw new NotImplementedException();
         }
@@ -79,17 +76,19 @@ namespace CardGameEngine
         /// </summary>
         /// <param name="player">Le joueur</param>
         /// <param name="card">La carte jouée</param>
-        public void PlayCard(Player player, Card card)
+        /// <param name="upgrade">Améliore ou joue</param>
+        public void PlayCard(Player player, Card card, bool upgrade)
         {
             throw new NotImplementedException();
         }
+
 
         /// <summary>
         /// Révèle une la carte card au joueur player <b>une seule fois</b>
         /// </summary>
         /// <param name="player"></param>
         /// <param name="card"></param>
-        public void RevealCard(Player player, Card card)
+        private void RevealCard(Player player, Card card)
         {
             throw new NotImplementedException();
         }
