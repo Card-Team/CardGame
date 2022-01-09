@@ -118,15 +118,24 @@ namespace CardGameTests
         {
             var originalSubClassEvent = new SubClassEvent();
             SuperClassEvent? receivedEvent = null;
+            Event? megaReceived = null;
+            Event? postReceived = null;
 
             EventManager.OnEvent<SuperClassEvent> superHandler = evt => receivedEvent = evt;
+            EventManager.OnEvent<Event> megaHandler = evt => megaReceived = evt;
+            EventManager.OnEvent<Event> postHandler = evt => postReceived = evt;
 
             _eventManager.SubscribeToEvent(superHandler);
+            _eventManager.SubscribeToEvent(megaHandler);
+            _eventManager.SubscribeToEvent(postHandler,postEvent:true);
 
-            _eventManager.SendEvent(originalSubClassEvent);
+            var postsender = _eventManager.SendEvent(originalSubClassEvent);
+            postsender.Dispose();
 
-            Assert.That(receivedEvent, Is.Not.Null.And.SameAs(originalSubClassEvent),
+            Assert.That(receivedEvent, Is.Not.Null.And.SameAs(megaReceived).And.SameAs(originalSubClassEvent),
                 "L'évènement de type classe fille n'est pas reçu par un écouteur de la classe parente");
+            
+            Assert.That(postReceived,Is.Not.Null.And.SameAs(originalSubClassEvent), "L'évenement POST de type classe fille n'est pas recu par un écouteur POST de la classe parente");
         }
 
 

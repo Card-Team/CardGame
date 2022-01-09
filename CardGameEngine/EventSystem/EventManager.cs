@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.EventSystem.Events;
@@ -65,8 +66,7 @@ namespace CardGameEngine.EventSystem
         /// <seealso cref="Event"/>
         internal IPostEventSender<T> SendEvent<T>(T evt) where T : Event
         {
-            if (!_eventHandlersDict.ContainsKey(typeof(T))) return new PostEventSenderImpl<T>(evt, this);
-            foreach (var eventHandler in _eventHandlersDict[typeof(T)])
+            foreach (var eventHandler in GetHandlerOfAssignableFrom<T>())
             {
                 if (!eventHandler.PostEvent && (evt is CancellableEvent == false ||
                                                 (evt is CancellableEvent cancelled && (!cancelled.Cancelled ||
@@ -80,6 +80,30 @@ namespace CardGameEngine.EventSystem
         }
 
         /// <summary>
+        /// Récupere la liste des <see cref="IEventHandler{T}"/> de la classe <see cref="T"/> ainsi que de ses classes parentes
+        /// </summary>
+        /// <typeparam name="T">Le type demandé</typeparam>
+        /// <returns>Un <see cref="IEnumerable{T}"/> contenant les  <see cref="IEventHandler{T}"/> de <see cref="T"/> et de ses classes parentes</returns>
+        private IEnumerable<IEventHandler<Event>> GetHandlerOfAssignableFrom<T>() where T : Event
+        {
+            var currentType = typeof(T);
+
+            do
+            {
+                if (_eventHandlersDict.TryGetValue(currentType, out var handlerList))
+                {
+                    foreach (var eventHandler in handlerList)
+                    {
+                        yield return eventHandler;
+                    }
+                }
+
+                currentType = currentType.BaseType;
+            } while (currentType != null &&
+                     currentType != typeof(object));
+        }
+
+        /// <summary>
         /// Déclenche l'évènement donné en mode POST
         /// </summary>
         /// <param name="evt">L'évènement à déclencher</param>
@@ -88,10 +112,11 @@ namespace CardGameEngine.EventSystem
         /// <seealso cref="Event"/>
         private void SendEventPost<T>(T evt) where T : Event
         {
-            if (!_eventHandlersDict.ContainsKey(typeof(T))) return;
-            foreach (var eventHandler in _eventHandlersDict[typeof(T)].Where(eventHandler => eventHandler.PostEvent))
+            foreach (var eventHandler in GetHandlerOfAssignableFrom<T>().Where(eventHandler => eventHandler.PostEvent))
             {
-                if(evt is CancellableEvent == false || (evt is CancellableEvent cancelled && (!cancelled.Cancelled || eventHandler.EvenIfCancelled))){
+                if (evt is CancellableEvent == false || (evt is CancellableEvent cancelled &&
+                                                         (!cancelled.Cancelled || eventHandler.EvenIfCancelled)))
+                {
                     eventHandler.HandleEvent(evt);
                 }
             }
@@ -143,7 +168,7 @@ namespace CardGameEngine.EventSystem
 
             public void HandleEvent(Event evt)
             {
-                _evt.Invoke((T) evt);
+                _evt.Invoke((T)evt);
             }
         }
 
