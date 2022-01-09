@@ -108,6 +108,7 @@
         <Compile Include="GameSystems\Effects\InvalidEffectException.cs" />
         <Compile Include="GameSystems\ExternCallbacks.cs" />
         <Compile Include="GameSystems\Player.cs" />
+        <Compile Include="GameSystems\Targeting\ITargetable.cs" />
         <Compile Include="GameSystems\Targeting\Target.cs" />
         <Compile Include="GameSystems\Targeting\TargetTypes.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

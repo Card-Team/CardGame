@@ -11,5 +11,7 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
         /// La cible enregistrée
         /// </summary>
         public Target TargetData { get; internal set; }
+
+        public ITargetable ResolvedTarget { get; internal set; }
     }
 }

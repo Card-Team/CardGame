@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.EventSystem;
+using CardGameEngine.EventSystem.Events.CardEvents;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
+using CardGameEngine.GameSystems.Targeting;
 
 namespace CardGameEngine
 {
@@ -111,10 +114,55 @@ namespace CardGameEngine
         /// <param name="player">Le joueur a qui demander</param>
         /// <param name="cards">La liste de cartes parmis lesquelles choisir</param>
         /// <returns></returns>
-        public Card ChooseBetween(Player player,List<Card> cards)
+        public Card ChooseBetween(Player player, List<Card> cards)
         {
             //todo cartes virtuelles
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Fonction lua qui résout une cible
+        /// </summary>
+        /// <param name="effect"></param>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        internal ITargetable LuaAskForTarget(Effect effect, Player effectOwner, int i)
+        {
+            var target = effect.AllTargets[i];
+            ITargetable resolved;
+
+            if (target.IsAutomatic)
+            {
+                resolved = target.GetAutomaticTarget();
+            }
+            else
+            {
+                if (target.TargetType == TargetTypes.Card)
+                {
+                    var allCards = Player1.Hand
+                        .Concat(Player1.Deck)
+                        .Concat(Player1.Discard)
+                        .Concat(Player2.Hand)
+                        .Concat(Player2.Deck)
+                        .Concat(Player2.Discard);
+
+                    var cards = allCards.Where(c => target.IsValidTarget(c)).ToList();
+                    resolved = _externCallbacks.ExternCardAskForTarget(effectOwner, target.Name, cards);
+                }
+                else
+                {
+                    resolved = _externCallbacks.ExternPlayerAskForTarget(effectOwner, target.Name);
+                }
+            }
+
+            var targetingEvent = new TargetingEvent
+            {
+                ResolvedTarget = resolved, 
+                TargetData = target
+            };
+            using var postSender = EventManager.SendEvent(targetingEvent);
+            resolved = postSender.Event.ResolvedTarget;
+            return resolved;
         }
     }
 }

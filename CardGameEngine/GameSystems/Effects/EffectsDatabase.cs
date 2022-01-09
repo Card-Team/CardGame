@@ -86,7 +86,7 @@ namespace CardGameEngine.GameSystems.Effects
                 .ToList();
 
             // Enregistre l'effet dans le dictionnaire
-            _effectDictionary[effectId] = new Effect(effectType, effectId, targets);
+            _effectDictionary[effectId] = new Effect(effectType, effectId, targets, script);
         }
 
         /// <summary>

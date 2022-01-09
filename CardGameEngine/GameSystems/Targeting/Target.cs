@@ -1,4 +1,6 @@
-﻿using CardGameEngine.Cards;
+﻿using System;
+using CardGameEngine.Cards;
+using CardGameEngine.GameSystems.Effects;
 using MoonSharp.Interpreter;
 
 namespace CardGameEngine.GameSystems.Targeting
@@ -51,6 +53,17 @@ namespace CardGameEngine.GameSystems.Targeting
         public bool IsValidTarget(Card card)
         {
             return _cardFilter == null || _cardFilter.Call(card).Boolean;
+        }
+
+        public ITargetable GetAutomaticTarget()
+        {
+            if (!this.IsAutomatic)
+                throw new InvalidOperationException("la target n'est pas automatique");
+            var cardFilter = this._cardFilter;
+            if (cardFilter != null) return (ITargetable) cardFilter.Call().UserData.Object;
+            else
+                throw new InvalidEffectException("l'effet est invalide car la  cible est automatique mais n'a pas de carte filter");
+            //TODO afficher l'effet
         }
     }
 }

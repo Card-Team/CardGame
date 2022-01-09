@@ -2,13 +2,14 @@
 using CardGameEngine.Cards.CardPiles;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
+using CardGameEngine.GameSystems.Targeting;
 
 namespace CardGameEngine.GameSystems
 {
     /// <summary>
     /// Classe représentant un joueur
     /// </summary>
-    public class Player
+    public class Player : ITargetable
     {
         /// <summary>
         /// Nom du joueur

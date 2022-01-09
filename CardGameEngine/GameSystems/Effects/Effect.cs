@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CardGameEngine.GameSystems.Targeting;
+using MoonSharp.Interpreter;
 
 namespace CardGameEngine.GameSystems.Effects
 {
@@ -23,6 +24,8 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         internal List<Target> AllTargets { get; }
 
+        internal Script Script { get; }
+
 
         /// <summary>
         /// Constructeur de la classe
@@ -30,11 +33,12 @@ namespace CardGameEngine.GameSystems.Effects
         /// <param name="effectType">Type de l'effet</param>
         /// <param name="effectId">Nom/référence de l'effet</param>
         /// <param name="targets">Liste des cibles de l'effet</param>
-        internal Effect(EffectType effectType, string effectId, List<Target> targets)
+        internal Effect(EffectType effectType, string effectId, List<Target> targets, Script script)
         {
             EffectType = effectType;
             EffectId = effectId;
             AllTargets = targets;
+            Script = script;
         }
     }
 }

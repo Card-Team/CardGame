@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
+using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
+using CardGameEngine.GameSystems.Targeting;
 
 namespace CardGameEngine.Cards
 {
     /// <summary>
     /// Classe représentant une carte
     /// </summary>
-    public class Card
+    public class Card : ITargetable
     {
         /// <summary>
         /// Nom de la carte
@@ -54,8 +57,11 @@ namespace CardGameEngine.Cards
         /// </summary>
         /// <param name="game">La partie en cours</param>
         /// <returns>Un booléen en fonction de la réussite</returns>
-        internal bool DoEffect(Game game)
+        internal bool DoEffect(Game game, Player effectOwner)
         {
+            var effectScript = this.Effect.Script;
+            //début injection global lua
+            effectScript.Globals["AskForTarget"] = (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
             throw new System.NotImplementedException();
         }
 

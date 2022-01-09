@@ -146,7 +146,7 @@ Le booleen `automatic` change de maniere important la résolution d'une cible
 Au moment ou une cible doit etre résolue, si `automatic` vaut false :
 
 1. **tous** les "elements" en jeu sont passés par la fonction de filtre de la cible, si elle en a une
-2. La fonction de filtre renvoit `true` ou `false` pour chaqune des cibles
+2. La fonction de filtre renvoit `true` ou `false` pour chacune des cibles
 3. Le moteur du jeu garde uniquement celles qui ont renvoyé `true`
 4. Le moteur du jeu demande au joueur de choisir parmi les cibles gardés
 5. Le joueur choisit
@@ -160,4 +160,3 @@ Par contre, si `automatic` vaut vrai, l'effet lui meme doit donner une cible com
 Comme vous pouvez le voir, dans le cas d'une cible automatique, la fonction de filtre n'est en fait plus une fonction de filtre du tout,
 
 mais une fonction qui renvoit la cible.
-
