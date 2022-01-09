@@ -142,24 +142,22 @@ namespace CardGameTests
         [Test(Description = "Vérification de l'ordre de réception des évènements")]
         public void TestEventReceiverOrder()
         {
-            DateTime? firstEventTime = null;
-            DateTime? secondEventTime = null;
+            TestEventType? firstEvent = null;
+            bool? wasFirstEventNotNull = null;
 
-            EventManager.OnEvent<TestEventType> onEventFirst = evt => firstEventTime = DateTime.Now;
-            EventManager.OnEvent<TestEventType> onEventSecond = evt => secondEventTime = DateTime.Now;
+            EventManager.OnEvent<TestEventType> onEventFirst = evt => firstEvent = evt;
+            EventManager.OnEvent<TestEventType> onEventSecond = evt => wasFirstEventNotNull = firstEvent != null;
 
             _eventManager.SubscribeToEvent(onEventFirst);
             _eventManager.SubscribeToEvent(onEventSecond);
 
             _eventManager.SendEvent(new TestEventType());
 
-            Assert.That(firstEventTime, Is.Not.Null, "L'évènement n'a pas été reçu par le premier écouteur");
-            Assert.That(secondEventTime, Is.Not.Null, "L'évènement n'a pas été reçu par le deuxième écouteur");
-
-
-            // < 0 signifie que firstEvent est avant secondEvent
-            Assert.That(DateTime.Compare(firstEventTime!.Value, secondEventTime!.Value),
-                Is.Negative, "Le premier évènement n'a pas été reçu avant le second évènement");
+            Assert.That(firstEvent, Is.Not.Null, "L'évènement n'a pas été reçu par le premier écouteur");
+            Assert.That(wasFirstEventNotNull, Is.Not.Null, "L'évènement n'a pas été reçu par le deuxième écouteur");
+            
+            Assert.That(wasFirstEventNotNull,
+                Is.True, "Le premier évènement n'a pas été reçu avant le second évènement");
         }
 
         [Test(Description = "Vérification qu'un même écouteur reçoit plusieurs évènements jusqu'au désabonnement")]
