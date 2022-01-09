@@ -10,11 +10,19 @@ namespace CardGameEngine.GameSystems
     public interface IExternCallbacks
     {
         /// <summary>
-        /// Délégué appelé lorsque le moteur du jeu veut demander à l'application externe de choisir une cible
+        /// Délégué appelé lorsque le moteur du jeu veut demander à l'application externe de cibler une carte
         /// </summary>
-        /// <param name="target">Une description de la cible demandée</param>
-        /// <returns>La cible demandée</returns>
-        public T ExternAskForTarget<T>(Target target);
+        /// <param name="targetName">Une description de la cible demandée</param>
+        /// <param name="cardList">La liste des cibles valides</param>
+        /// <returns>Une cible parmi la liste</returns>
+        public Card ExternCardAskForTarget(string targetName,List<Card> cardList);
+        
+        /// <summary>
+        /// Délégué appelé lorsque le moteur du jeu veut demander a l'application externe de cibler un joueur
+        /// </summary>
+        /// <param name="targetName">Une description de la cible demandée</param>
+        /// <returns>Le joueur ciblé</returns>
+        public Player ExternPlayerAskForTarget(string targetName);
 
         /// <summary>
         /// Délégué appelé lorsque le moteur du jeu veut demander à l'application externe de montrer une carte a un joueur
