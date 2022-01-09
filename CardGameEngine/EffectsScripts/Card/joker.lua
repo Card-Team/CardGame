@@ -1,4 +1,4 @@
-﻿max_level = 1 
+﻿max_level = 2
 image_id = 520
 
 
@@ -6,48 +6,38 @@ name = "Joker"
 pa_cost = 2
 
 targets = {
-    CreateTarget("la carte en laquelle se transformer", TargetTypes.Card, false, card_filter),
+    CreateTarget("Effet d'une carte aléatoire de ton deck", TargetTypes.Card, false, card_filter),
+    CreateTarget("Effet de 2 cartes aléatoires de ton deck", TargetTypes.Card, false, card_filter)
 }
 
 function card_filter(a_card)
-    return EffectOwner.Hand.Contains(a_card)
-            and a_card ~= ThisCard
+    local cardDeckPlayer = EffectOwner.Deck
+    local random = math.random(0, cardDeckPlayer .Count() - 1)
+    return cardDeckPlayer[random]
 end
 
-
---Joker : Carte copie l'effet d'une carte aléatoirement contenue dans le deck et en appliquer l'effet lvl 1.
---lvl 2 le joueur applique deux effets parmi les cartes de son deck aléatoirement et simultanément.
+--Joker : lv1 : Carte copie l'effet d'une carte aléatoirement contenue dans son deck.
+--        lv2 : le joueur applique deux effets parmi les cartes de son deck aléatoirement et simultanément.
 function precondition()
     return TargetsExists({1})
 end
 
-carte_copie = nil
-
 function description()
-    if(carte_copie==nil)
-    then
-        if(current_level == max_level)then
-            return"Cette carte peut copier l'effet de plusieurs cartes du deck"
-        end
-        else
-            return"Cette carte peut copier l'effet d'une carte dans le deck".carte_copie.Name
+    if(current_level==max_level) then
+        return "Cette carte peut copier l'effet de 2 cartes"
     end
-    return 
+    return"Cette carte peut copier l'effet d'une carte du deck"
 end
-function description()
-
-end
-
 
 function do_effect()
-    if(current_level ~= max_level)then
-        
-    end
-    if(carte_copie==nil) then
-        carte_copie= AskForTarget(1)
-        ThisCard.Cost = carte_copie.Cost
+    if(current_level == max_level)then
+        --application des 2 effets cartes lvl2
+        effet1 = AskForTarget(1)          --var qui recuper l'effet 1
+        effet2 = AskForTarget(2)          --var qui recuper l'effet 2
+        Game.PlayCard(EffectOwner,effet1)       --joue l'effet de la 1 carte
+        Game.PlayCard(EffectOwner,effet2)       --joue l'effet de la 2 carte
     else
-        Game.PlayCard(EffectOwner,carte_copie)
+        effet1 = AskForTarget(1)
+        Game.PlayCard(EffectOwner,effet1)
     end
-    
 end  

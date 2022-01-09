@@ -12,7 +12,6 @@ targets = {
 function card_filter()
     -- carte choisis aleatoirement depuis ton deck
     local CardPile = EffectOwner.Player.Deck
-    math.randomseed(os.time())
     local random = math.random(0, CardPile.Count() - 1)
     return CardPile[random]
 end

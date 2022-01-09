@@ -11,7 +11,6 @@ targets = {
 function cardFilter()
     -- carte choisis aleatoirement depuis sa main
     local OtherPlayerHand = EffectOwner.OtherPlayer.Hand
-    math.randomseed(os.time())
     local random = math.random(0, OtherPlayerHand.Count() - 1)
     return OtherPlayerHand[random]
 end

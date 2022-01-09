@@ -12,7 +12,6 @@ targets = {
 function card_filter()
     -- Verifier quand pas de carte dans la défausse
     local DiscardPile = EffectOwner.Player.Discard
-    math.randomseed(os.time())
     local random = math.random(0, DiscardPile.Count() - 1)
     return DiscardPile[random]
 end

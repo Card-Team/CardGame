@@ -11,7 +11,7 @@ targets = {
 --fonction qui recupere toute les cartes de sa main sauf celle ci est lui demande d'en selectionné une
 function cardFilter(aCard)
     return EffectOwner.Hand.Contains(aCard) 
-    and ThisCard ~= aCard
+        and ThisCard ~= aCard
 end
 
 --Extracteur  : Carte qui permet au joueur de choisir parmi une de ses cartes en main et d'en gagner le cout en points d'action.

@@ -25,7 +25,6 @@ carte_copie = nil
 function description()
     if(carte_copie==nil)
     then
-    
        return"Cette carte peut copier l'effet d'une carte"
     end
     return "Cette carte prend l'effet de la carte".carte_copie.Name
