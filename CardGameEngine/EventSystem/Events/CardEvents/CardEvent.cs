@@ -11,5 +11,10 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
         /// La carte concernée
         /// </summary>
         public Card Card { get; internal set; }
+
+        protected CardEvent(Card card)
+        {
+            Card = card;
+        }
     }
 }

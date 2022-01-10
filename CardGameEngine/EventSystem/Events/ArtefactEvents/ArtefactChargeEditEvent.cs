@@ -34,5 +34,11 @@ namespace CardGameEngine.EventSystem.Events.ArtefactEvents
             get => OldChargeCount;
             set => OldChargeCount = value;
         }
+
+        internal ArtefactChargeEditEvent(Artefact artefact, int newChargeCount) : base(artefact)
+        {
+            OldChargeCount = artefact.CurrentCharge.Value;
+            NewChargeCount = newChargeCount;
+        }
     }
 }

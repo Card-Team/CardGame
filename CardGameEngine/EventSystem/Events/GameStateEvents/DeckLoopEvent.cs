@@ -11,5 +11,10 @@ namespace CardGameEngine.EventSystem.Events.GameStateEvents
         /// Joueur en train de jouer
         /// </summary>
         public Player Player { get; internal set; }
+
+        internal DeckLoopEvent(Player player)
+        {
+            Player = player;
+        }
     }
 }

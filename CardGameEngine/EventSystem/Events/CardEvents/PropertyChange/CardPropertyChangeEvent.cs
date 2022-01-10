@@ -6,7 +6,7 @@ namespace CardGameEngine.EventSystem.Events.CardEvents.PropertyChange
     /// Classe représentant les évènements liés à la modification d'une propriété d'une carte
     /// </summary>
     /// <typeparam name="T">Le type de la valeur changée</typeparam>
-    public class CardPropertyChangeEvent<T> : CardEvent, IPropertyChangeEvent<Card, T>
+    public abstract class CardPropertyChangeEvent<T> : CardEvent, IPropertyChangeEvent<Card, T>
     {
         /// <summary>
         /// Ancienne valeur de la propriété
@@ -34,6 +34,10 @@ namespace CardGameEngine.EventSystem.Events.CardEvents.PropertyChange
         {
             get => Card;
             set => Card = value;
+        }
+
+        protected CardPropertyChangeEvent() : base(null!)
+        {
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.EventSystem.Events;
@@ -80,7 +79,7 @@ namespace CardGameEngine.EventSystem
         }
 
         /// <summary>
-        /// Récupere la liste des <see cref="IEventHandler{T}"/> de la classe <see cref="T"/> ainsi que de ses classes parentes
+        /// Récupère la liste des <see cref="IEventHandler{T}"/> de la classe <see cref="T"/> ainsi que de ses classes parentes
         /// </summary>
         /// <typeparam name="T">Le type demandé</typeparam>
         /// <returns>Un <see cref="IEnumerable{T}"/> contenant les  <see cref="IEventHandler{T}"/> de <see cref="T"/> et de ses classes parentes</returns>
@@ -123,14 +122,14 @@ namespace CardGameEngine.EventSystem
         }
 
         /// <summary>
-        /// Interface qui permet d'empaqueter les délégués d'évenements avec comme parametre générique <see cref="Event"/>.<br/>
+        /// Interface qui permet d'empaqueter les délégués d'évènements avec comme paramètre générique <see cref="Event"/>.<br/>
         /// <see cref="T"/> est contravariant et il est donc
         /// possible de faire :
         /// <code>
         /// IEventHandler&lt;Event&gt; handler = new EventHandlerImpl&lt;CardNameChangeEvent&gt;();
         /// </code>
         /// </summary>
-        /// <typeparam name="T">Le sous type de <see cref="Event"/> que le délégué demande</typeparam>
+        /// <typeparam name="T">Le sous-type de <see cref="Event"/> que le délégué demande</typeparam>
         // ReSharper disable once UnusedTypeParameter
         public interface IEventHandler<out T> where T : Event
         {
@@ -147,7 +146,7 @@ namespace CardGameEngine.EventSystem
             /// <summary>
             /// Envoi l'évent <paramref name="evt"/> au délégué
             /// </summary>
-            /// <param name="evt">L'event a envoyer au délégué</param>
+            /// <param name="evt">L'event à envoyer au délégué</param>
             public void HandleEvent(Event evt);
         }
 

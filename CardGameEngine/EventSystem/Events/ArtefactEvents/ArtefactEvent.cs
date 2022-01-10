@@ -11,5 +11,10 @@ namespace CardGameEngine.EventSystem.Events.ArtefactEvents
         /// L'artefact concerné
         /// </summary>
         public Artefact Artefact { get; internal set; }
+
+        protected ArtefactEvent(Artefact artefact)
+        {
+            Artefact = artefact;
+        }
     }
 }

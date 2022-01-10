@@ -40,5 +40,12 @@ namespace CardGameEngine.EventSystem.Events
             get => OldPointCount;
             set => OldPointCount = value;
         }
+
+        internal ActionPointEditEvent(Player player, int newPointCount)
+        {
+            Player = player;
+            OldPointCount = Player.ActionPoints.Value;
+            NewPointCount = newPointCount;
+        }
     }
 }

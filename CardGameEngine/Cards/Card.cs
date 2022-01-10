@@ -61,7 +61,8 @@ namespace CardGameEngine.Cards
         {
             var effectScript = this.Effect.Script;
             //début injection global lua
-            effectScript.Globals["AskForTarget"] = (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
+            effectScript.Globals["AskForTarget"] =
+                (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
             throw new System.NotImplementedException();
         }
 

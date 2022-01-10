@@ -1,4 +1,5 @@
-﻿using CardGameEngine.Cards.CardPiles;
+﻿using CardGameEngine.Cards;
+using CardGameEngine.Cards.CardPiles;
 
 namespace CardGameEngine.EventSystem.Events.CardEvents
 {
@@ -26,5 +27,13 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
         /// Position dans la pile de destination
         /// </summary>
         public int DestIndex { get; internal set; }
+
+        internal CardMovePileEvent(Card card, CardPile sourcePile, int sourceIndex, CardPile destPile, int destIndex) : base(card)
+        {
+            SourcePile = sourcePile;
+            SourceIndex = sourceIndex;
+            DestPile = destPile;
+            DestIndex = destIndex;
+        }
     }
 }
