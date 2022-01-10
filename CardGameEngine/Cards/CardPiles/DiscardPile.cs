@@ -12,7 +12,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <summary>
         /// Set des cartes à améliorer au prochain roulement
         /// </summary>
-        public HashSet<Card> MarkedForUpgrade { get; }
+        private HashSet<Card> MarkedForUpgrade { get; }
 
         // TODO 
         internal DiscardPile(EventManager eventManager) : base(eventManager)
@@ -42,6 +42,11 @@ namespace CardGameEngine.Cards.CardPiles
             }
 
             return moveResult;
+        }
+
+        public bool IsMarkedForUpgrade(Card card)
+        {
+            return MarkedForUpgrade.Contains(card);
         }
     }
 }

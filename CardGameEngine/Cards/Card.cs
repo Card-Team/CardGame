@@ -51,27 +51,30 @@ namespace CardGameEngine.Cards
 
         public bool IsMaxLevel => CurrentLevel.Value == MaxLevel;
 
+        private readonly Game _game;
 
-        internal Card(Effect effect, EventManager evtManager)
+
+        internal Card(Game game, Effect effect)
         {
             if (effect.EffectType != EffectType.Card)
                 throw new InvalidOperationException(
                     $"Tentative de création d'une carte à partir de l'effet {effect} alors que son type est de {effect.EffectType}");
+            _game = game;
 
             Effect = effect;
 
-            Name = new EventProperty<Card, string, CardNameChangeEvent>(this, evtManager,
+            Name = new EventProperty<Card, string, CardNameChangeEvent>(this, game.EventManager,
                 effect.GetProperty<string>(LuaStrings.Card.NameProperty));
 
-            Cost = new EventProperty<Card, int, CardCostChangeEvent>(this, evtManager,
+            Cost = new EventProperty<Card, int, CardCostChangeEvent>(this, game.EventManager,
                 effect.GetProperty<int>(LuaStrings.Card.CostProperty));
 
             MaxLevel = effect.GetProperty<int>(LuaStrings.Card.MaxLevelProperty);
 
-            Description = new EventProperty<Card, string, CardDescriptionChangeEvent>(this, evtManager,
+            Description = new EventProperty<Card, string, CardDescriptionChangeEvent>(this, game.EventManager,
                 effect.GetProperty<string>(LuaStrings.Card.DescriptionProperty));
 
-            CurrentLevel = new EventProperty<Card, int, CardLevelChangeEvent>(this, evtManager, 1);
+            CurrentLevel = new EventProperty<Card, int, CardLevelChangeEvent>(this, game.EventManager, 1);
 
             Keywords = new List<Keyword>();
         }
@@ -96,7 +99,7 @@ namespace CardGameEngine.Cards
             {
                 //globals spécifique au cartes :
                 script.Globals["AskForTarget"] =
-                    (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
+                    (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
             });
         }
 
@@ -107,7 +110,7 @@ namespace CardGameEngine.Cards
         /// <returns>Un booléen en fonction de la validité</returns>
         public bool CanBePlayed(Game game, Player effectOwner)
         {
-            SetUpScriptBeforeRunning(game,effectOwner);
+            SetUpScriptBeforeRunning(game, effectOwner);
             return Effect.RunMethod<bool>("precondition");
             SetUpScriptBeforeRunning(game, effectOwner);
             throw new NotImplementedException();
@@ -116,6 +119,18 @@ namespace CardGameEngine.Cards
         public override string ToString()
         {
             return $"{Name.Value} : Lvl {CurrentLevel.Value}/{MaxLevel}, Cost {Cost.Value}";
+        }
+
+        public bool Upgrade()
+        {
+            if (CurrentLevel.Value == MaxLevel)
+            {
+                throw new InvalidOperationException(
+                    $"Tentative d'upgrade de la carte {this} alors qu'elle est a son niveau maximum ({MaxLevel})");
+            }
+            var newLevel = CurrentLevel.Value + 1;
+            CurrentLevel.TryChangeValue(newLevel);
+            return newLevel == CurrentLevel.Value;
         }
     }
 }

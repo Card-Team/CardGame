@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.Cards.CardPiles;
@@ -54,18 +55,29 @@ namespace CardGameEngine
         private readonly IExternCallbacks _externCallbacks;
 
 
-        public Game(string effectFolder, string name1, List<string> deck1, string name2, List<string> deck2)
+        [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
+        public struct PlayerDefinition
+        {
+            public string Name { get; }
+            public IEnumerable<string> Deck { get; }
+        }
+        public Game(string effectFolder, IExternCallbacks externCallbacks, PlayerDefinition player1, PlayerDefinition player2)
         {
             EventManager = new EventManager();
 
+            _externCallbacks = externCallbacks;
+            
             EffectsDatabase = new EffectsDatabase(effectFolder);
-            List<Card> cards1 = deck1.Select(s => EffectsDatabase[s]()).Select(e => new Card(e, EventManager)).ToList();
-            List<Card> cards2 = deck2.Select(s => EffectsDatabase[s]()).Select(e => new Card(e, EventManager)).ToList();
+            var cards1 = player1.Deck.Select(s => EffectsDatabase[s]()).Select(e => new Card(this,e)).ToList();
+            var cards2 = player2.Deck.Select(s => EffectsDatabase[s]()).Select(e => new Card(this,e)).ToList();
 
+            
             //TODO Add carte victoire
 
-            Player1 = new Player(this, name1, cards1);
-            Player2 = new Player(this, name2, cards2);
+            Player1 = new Player(this, player1.Name, cards1);
+            Player2 = new Player(this, player2.Name, cards2);
+
+            CurrentPlayer = Player1;
         }
 
         /// <summary>
@@ -83,11 +95,15 @@ namespace CardGameEngine
         /// <param name="player">Le joueur qui doit jouer</param>
         private void StartPlayerTurn(Player player)
         {
-            StartTurnEvent turnEvent = new StartTurnEvent(player);
+            var turnEvent = new StartTurnEvent(player);
             using (var postSender = EventManager.SendEvent(turnEvent))
             {
                 CurrentPlayer = postSender.Event.Player;
                 CurrentPlayer.ActionPoints.TryChangeValue(CurrentPlayer.MaxActionPoints.Value);
+                if (CurrentPlayer.Deck.IsEmpty)
+                {
+                    CurrentPlayer.LoopDeck();
+                }
                 CurrentPlayer.DrawCard();
             }
         }
@@ -97,7 +113,7 @@ namespace CardGameEngine
         /// </summary>
         internal bool TryEndPlayerTurn()
         {
-            EndTurnEvent turnEvent = new EndTurnEvent(CurrentPlayer);
+            var turnEvent = new EndTurnEvent(CurrentPlayer);
             using (var postEvent = EventManager.SendEvent(turnEvent))
             {
                 if (postEvent.Event.Cancelled)
@@ -313,5 +329,6 @@ namespace CardGameEngine
             resolved = postSender.Event.ResolvedTarget;
             return resolved;
         }
+        
     }
 }

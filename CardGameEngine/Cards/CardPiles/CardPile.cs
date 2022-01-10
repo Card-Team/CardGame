@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.EventSystem;
@@ -30,6 +31,8 @@ namespace CardGameEngine.Cards.CardPiles
         /// Propriété renvoyant le nombre de cartes
         /// </summary>
         public int Count => _cardList.Count;
+
+        public bool IsEmpty => Count == 0;
 
         /// <summary>
         /// Accesseur de la liste
@@ -131,7 +134,11 @@ namespace CardGameEngine.Cards.CardPiles
                     return false;
                 }
 
-                _cardList.Remove(postEvent.Event.Card);
+                if (!_cardList.Remove(postEvent.Event.Card))
+                {
+                    throw new InvalidOperationException(
+                        $"La carte {card} a disparue de la pile {this} pendant l'opération de déplacement vers {postEvent.Event.DestPile}");
+                }
                 postEvent.Event.DestPile.Insert(postEvent.Event.DestIndex, postEvent.Event.Card);
             }
 

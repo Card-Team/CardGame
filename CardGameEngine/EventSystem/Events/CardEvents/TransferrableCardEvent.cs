@@ -5,16 +5,19 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
     /// <summary>
     /// Classe abstraite représentant les évènements liés à une carte
     /// </summary>
-    public abstract class CardEvent : CancellableEvent
+    public abstract class TransferrableCardEvent : CardEvent
     {
         /// <summary>
         /// La carte concernée
         /// </summary>
-        public Card Card { get; protected set; }
-
-        protected CardEvent(Card card)
+        public new Card Card
         {
-            Card = card;
+            get => base.Card;
+            internal set => base.Card = value;
+        }
+
+        protected TransferrableCardEvent(Card card) : base(card)
+        {
         }
     }
 }

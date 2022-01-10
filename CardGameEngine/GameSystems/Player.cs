@@ -5,6 +5,7 @@ using CardGameEngine.Cards;
 using CardGameEngine.Cards.CardPiles;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
+using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems.Targeting;
 
 namespace CardGameEngine.GameSystems
@@ -39,6 +40,8 @@ namespace CardGameEngine.GameSystems
         /// </summary>
         private readonly Game _game;
 
+        private readonly EventManager _eventManager;
+
         /// <summary>
         /// Les 2 artefacts du joueurs
         /// </summary>
@@ -65,6 +68,7 @@ namespace CardGameEngine.GameSystems
         public Player(Game game, string name, List<Card> cards)
         {
             _game = game;
+            _eventManager = game.EventManager;
             Name = name;
             Deck = new CardPile(game.EventManager, cards);
             ActionPoints = new EventProperty<Player, int, ActionPointsEditEvent>(this, game.EventManager, 0);
@@ -91,17 +95,21 @@ namespace CardGameEngine.GameSystems
         /// <seealso cref="CardPile"/>
         public void LoopDeck()
         {
-            throw new System.NotImplementedException();
-        }
+            var evt = new DeckLoopEvent(this);
+            using (var post = _eventManager.SendEvent(evt))
+            {
+                var toLoop = post.Event.Player;
+                foreach (Card card in toLoop.Discard)
+                {
+                    if (toLoop.Discard.IsMarkedForUpgrade(card))
+                    {
+                        card.Upgrade();
+                    }
 
-        /// <summary>
-        /// Déplace une carte vers la défausse
-        /// </summary>
-        /// <param name="card">La carte à défausser</param>
-        /// <seealso cref="DiscardPile"/>
-        public void DiscardCard(Card card)
-        {
-            throw new System.NotImplementedException();
+                    toLoop.Discard.MoveTo(toLoop.Deck, card, 0);
+                }
+            }
+            
         }
     }
 }

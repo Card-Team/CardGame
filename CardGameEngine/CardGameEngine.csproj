@@ -84,11 +84,11 @@
         <Compile Include="EventSystem\Events\CardEvents\CardMarkUpgradeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\CardMovePileEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\CardPlayEvent.cs" />
-        <Compile Include="EventSystem\Events\CardEvents\CardUpgradeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordAddEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordRemoveEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordTriggerEvent.cs" />
+        <Compile Include="EventSystem\Events\CardEvents\TransferrableCardEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardCostChangeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardDescriptionChangeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardLevelChangeEvent.cs" />
