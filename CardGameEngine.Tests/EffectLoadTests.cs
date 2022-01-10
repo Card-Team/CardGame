@@ -75,8 +75,12 @@ namespace CardGameTests
             var type = (EffectType) effectType;
             var path = Path.GetFileNameWithoutExtension(PutScript(scriptContent, type));
             _effectsDatabase.LoadAllEffects(_randomDir);
-            var eft = _effectsDatabase[path];
-            Assert.That(eft, Is.Not.Null);
+            var supplier = _effectsDatabase[path];
+            Assert.That(supplier, Is.Not.Null);
+
+            var eft = supplier();
+            
+            Assert.That(eft,Is.Not.Null);
 
             Assert.That(eft.EffectType, Is.EqualTo(EffectType.Card));
             Assert.That(eft.EffectId, Is.EqualTo(path));

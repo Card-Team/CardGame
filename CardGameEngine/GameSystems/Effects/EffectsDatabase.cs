@@ -16,13 +16,15 @@ namespace CardGameEngine.GameSystems.Effects
         /// <summary>
         /// Le dictionnaire stockant les effets valides avec leur nom comme clé
         /// </summary>
-        private readonly Dictionary<string, Effect> _effectDictionary = new Dictionary<string, Effect>();
+        private readonly Dictionary<string, EffectSupplier> _effectDictionary = new Dictionary<string, EffectSupplier>();
 
+        internal delegate Effect EffectSupplier();
+        
         /// <summary>
         /// Accède au dictionnaire des effets de l'objet
         /// </summary>
         /// <param name="s">Nom de l'effet</param>
-        internal Effect this[string s] => _effectDictionary[s];
+        internal EffectSupplier this[string s] => _effectDictionary[s];
 
 
         /// <summary>
@@ -74,19 +76,24 @@ namespace CardGameEngine.GameSystems.Effects
                 throw new InvalidEffectException(effectId, effectType);
             }
 
-            // Charge le script de l'effet
-            var script = GetDefaultScript();
-            script.DoFile(path);
+            var fileContent = File.ReadAllText(path);
 
-            // Récupère les cibles de l'effet
-            var targets = script.Globals.Get("targets")
-                .Table.Values
-                .Select(t => t.UserData.Object)
-                .Cast<Target>()
-                .ToList();
+            _effectDictionary[effectId] = () =>
+            {
+                // Charge le script de l'effet
+                var script = GetDefaultScript();
+                script.DoString(fileContent);
 
-            // Enregistre l'effet dans le dictionnaire
-            _effectDictionary[effectId] = new Effect(effectType, effectId, targets, script);
+                // Récupère les cibles de l'effet
+                var targets = script.Globals.Get("targets")
+                    .Table.Values
+                    .Select(t => t.UserData.Object)
+                    .Cast<Target>()
+                    .ToList();
+
+                // Enregistre l'effet dans le dictionnaire
+                return new Effect(effectType, effectId, targets, script);
+            };
         }
 
         /// <summary>
@@ -95,7 +102,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// <returns>L'objet script créé</returns>
         internal static Script GetDefaultScript()
         {
-            Script script = new Script
+            var script = new Script
             {
                 // Élements c# à intégrer dans le fichier lua
                 Globals =
