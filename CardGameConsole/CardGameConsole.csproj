@@ -11,6 +11,8 @@
         <AssemblyName>CardGameConsole</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
+        <LangVersion>8</LangVersion>
+        <Nullable>enable</Nullable>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
         <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,7 +42,9 @@
     <ItemGroup>
         <Compile Include="ConsoleExternCallbacks.cs" />
         <Compile Include="InputUtils.cs" />
-        <Compile Include="Program.cs" />
+        <Compile Include="ConsoleGame.cs" />
+        <Compile Include="PileUtils.cs" />
+        <Compile Include="PlayerUtils.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

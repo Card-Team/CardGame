@@ -23,7 +23,7 @@ namespace CardGameEngine.GameSystems
         /// <summary>
         /// Main du joueur
         /// </summary>
-        public CardPile Hand { get; set; }
+        public CardPile Hand { get; }
 
         /// <summary>
         /// Défausse du joueur

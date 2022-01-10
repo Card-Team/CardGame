@@ -10,27 +10,34 @@ namespace CardGameConsole
         public Card ExternCardAskForTarget(Player effectOwner, string targetName, List<Card> cardList)
         {
             Console.WriteLine($"Choisissez une carte pour {targetName}");
-            
+
+            var result = InputUtils.ChooseFrom(effectOwner, cardList);
+
+            return result;
         }
 
         public Player ExternPlayerAskForTarget(Player effectOwner, string targetName)
         {
-            throw new System.NotImplementedException();
+            return InputUtils.ChooseList(new List<(string, Player)>
+            {
+                (ConsoleGame.Player1Name, ConsoleGame.Game.Player1),
+                (ConsoleGame.Player2Name, ConsoleGame.Game.Player2)
+            });
         }
 
         public void ExternShowCard(Player player, Card card)
         {
-            throw new System.NotImplementedException();
+            Console.Write($"La carte suivante vous est montré : {card}");
         }
 
         public Card ExternChooseBetween(Player player, List<Card> card)
         {
-            throw new System.NotImplementedException();
+            return InputUtils.ChooseList(card);
         }
 
         public void ExternGameEnded(Player winner)
         {
-            throw new System.NotImplementedException();
+            Console.Write($"Le joueur {winner.GetName()} a gagné !");
         }
     }
 }
