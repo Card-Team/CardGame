@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events.CardEvents;
 
@@ -23,6 +22,11 @@ namespace CardGameEngine.Cards.CardPiles
         private EventManager EventManager { get; }
 
         /// <summary>
+        /// Nombre de cartes maximal dans la pile
+        /// </summary>
+        private int? LimitSize { get; }
+
+        /// <summary>
         /// Propriété renvoyant le nombre de cartes
         /// </summary>
         public int Count => _cardList.Count;
@@ -38,20 +42,24 @@ namespace CardGameEngine.Cards.CardPiles
         /// Constructeur de la pile vide
         /// </summary>
         /// <param name="eventManager">EventManager de la partie</param>
-        internal CardPile(EventManager eventManager)
+        /// <param name="limitSize">Taille limite de la pile, null pour aucune limite</param>
+        internal CardPile(EventManager eventManager, int? limitSize = null)
         {
             EventManager = eventManager;
             _cardList = new List<Card>();
+            LimitSize = limitSize;
         }
 
         /// <summary>
         /// Constructeur de la pile remplie
         /// </summary>
         /// <param name="eventManager">EventManager de la partie</param>
+        /// <param name="cards"></param>
         internal CardPile(EventManager eventManager, List<Card> cards)
         {
             EventManager = eventManager;
             _cardList = cards;
+            LimitSize = null;
         }
 
 
@@ -113,6 +121,7 @@ namespace CardGameEngine.Cards.CardPiles
         internal virtual bool MoveTo(CardPile newCardPile, Card card, int newPosition)
         {
             if (!_cardList.Contains(card)) throw new NotInPileException(card);
+            if (Count + 1 > LimitSize) return false;
 
             CardMovePileEvent moveEvent = new CardMovePileEvent(card, this, IndexOf(card), newCardPile, newPosition);
             using (var postEvent = EventManager.SendEvent(moveEvent))
