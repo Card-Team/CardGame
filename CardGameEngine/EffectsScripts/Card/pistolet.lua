@@ -4,6 +4,8 @@ image_id = 569
 name = "Pistolet"
 pa_cost = 2
 
+description = "met une carte dans sa deffause (1 -> carte avec cout d'action plus bas 2 -> carte avec cout d'action plus haut"
+
 targets = {
     CreateTarget("met une carte dans sa deffause (1 -> carte avec cout d'action plus bas 2 -> carte avec cout d'action plus haut", TargetTypes.Card, true, cardFilter),
 }
@@ -33,10 +35,6 @@ end
 
 function precondition()
     return TargetsExists({ 1 })
-end
-
-function description()
-    return "met une carte dans sa deffause (1 -> carte avec cout d'action plus bas 2 -> carte avec cout d'action plus haut"
 end
 
 function do_effect()

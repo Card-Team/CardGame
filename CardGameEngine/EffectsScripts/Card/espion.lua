@@ -4,6 +4,8 @@ image_id = 626
 name = "Espion"
 pa_cost = 3
 
+description = "voir une carte de la main de l'adversaire"
+
 targets = {
     CreateTarget("carte qui fait voir", TargetTypes.Card, true, cardFilter),
 }
@@ -18,10 +20,6 @@ end
 
 function precondition()
     return TargetsExists({ 1 })
-end
-
-function description()
-    return "voir une carte de la main de ton adversaire"
 end
 
 function do_effect()

@@ -4,6 +4,8 @@ image_id = 518
 name = "Echange inversé"
 pa_cost = 2
 
+description = "Echange cette carte avec une carte aléatoire dans votre défausse."
+
 targets = {
     CreateTarget("la carte avec laquelle elle s'échange dans la défausse", TargetTypes.Card, true, card_filter),
 }
@@ -18,10 +20,6 @@ end
 --- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
     return TargetsExists({ 1 })
-end
-
-function description()
-    return "Echange cette carte avec une carte aléatoire dans votre défausse."
 end
 
 function do_effect()

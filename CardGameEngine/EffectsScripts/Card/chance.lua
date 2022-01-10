@@ -4,6 +4,8 @@ image_id = 709
 name = "chance"
 pa_cost = 2
 
+description = "Devine une carte de la main du joueurs si c'est bon elle va dans sa defausse"
+
 targets = {
     CreateTarget("Devine une carte de la main du joueurs", TargetTypes.Card, true, cardFilter),
 }
@@ -19,10 +21,6 @@ end
 
 function precondition()
     return TargetsExists({ 1 })
-end
-
-function description()
-    return "Devine une carte de la main du joueurs si c'est bon elle va dans sa defausse"
 end
 
 function do_effect()

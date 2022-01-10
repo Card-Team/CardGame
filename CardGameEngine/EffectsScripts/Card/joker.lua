@@ -4,6 +4,9 @@ image_id = 520
 name = "Joker"
 pa_cost = 2
 
+base_description = "Cette carte peut copier l'effet d'une carte du deck"
+description = base_description
+
 targets = {
     CreateTarget("Effet d'une carte aléatoire de ton deck", TargetTypes.Card, false, card_filter),
     CreateTarget("Effet de 2 cartes aléatoires de ton deck", TargetTypes.Card, false, card_filter)
@@ -11,7 +14,7 @@ targets = {
 
 function card_filter(a_card)
     local cardDeckPlayer = EffectOwner.Deck
-    local random = math.random(0, cardDeckPlayer .Count() - 1)
+    local random = math.random(0, cardDeckPlayer.Count() - 1)
     return cardDeckPlayer[random]
 end
 
@@ -19,13 +22,6 @@ end
 --        lv2 : le joueur applique deux effets parmi les cartes de son deck aléatoirement et simultanément.
 function precondition()
     return TargetsExists({ 1 })
-end
-
-function description()
-    if (current_level == max_level) then
-        return "Cette carte peut copier l'effet de 2 cartes"
-    end
-    return "Cette carte peut copier l'effet d'une carte du deck"
 end
 
 function do_effect()
@@ -39,4 +35,12 @@ function do_effect()
         effet1 = AskForTarget(1)
         Game.PlayCard(EffectOwner, effet1)
     end
-end  
+end
+
+function on_level_change(old, new)
+    if (new == max_level) then
+        This.Description.TryChangeValue("Cette carte peut copier l'effet d'une carte du deck")
+    else
+        This.Description.TryChangeValue(base_description)
+    end
+end

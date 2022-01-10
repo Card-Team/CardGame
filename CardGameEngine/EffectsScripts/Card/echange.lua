@@ -4,6 +4,8 @@ image_id = 514
 name = "Échange"
 pa_cost = 2
 
+description = "Echange cette carte avec une carte aléatoire de la main de votre adversaire."
+
 targets = {
     CreateTarget("La carte que l'on veut échanger", TargetTypes.Card, true, card_filter),
 }
@@ -18,10 +20,6 @@ end
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
     return TargetsExists({ 1 })
-end
-
-function description()
-    return "Echange cette carte avec une carte aléatoire de la main de votre adversaire."
 end
 
 function do_effect()

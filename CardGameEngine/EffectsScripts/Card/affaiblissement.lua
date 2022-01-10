@@ -4,6 +4,8 @@ image_id = 523
 name = "affaiblissement"
 pa_cost = 3
 
+description = "Fait baisser le coût d'action de l'adversaire avec le cout d'une carte aleatoire"
+
 targets = {
     CreateTarget("points d'action baisser aleatoirement", TargetTypes.Card, true, card_filter),
 }
@@ -18,10 +20,6 @@ end
 --- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
     return TargetsExists({ 1 })
-end
-
-function description()
-    return "faire baisser le cout d'action de l'adversaire avec le cout d'une carte aleatoire"
 end
 
 function do_effect()

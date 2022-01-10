@@ -5,6 +5,8 @@ name = "Extracteur"
 pa_cost = 3
 --TODO a definir le nombre de cout
 
+description = "Gagner les points d'action d'une carte de ton deck selectionné"
+
 targets = {
     CreateTarget("Carte a gagner ses point d'action", TargetTypes.Card, false, cardFilter),
 }
@@ -19,10 +21,6 @@ end
 
 function precondition()
     return TargetsExists({ 1 })
-end
-
-function description()
-    return "Gagner les points d'action d'une carte de ton deck selectionné"
 end
 
 function do_effect()

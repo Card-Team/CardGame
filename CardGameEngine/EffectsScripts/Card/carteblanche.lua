@@ -4,6 +4,9 @@ image_id = 517
 name = "Carte Blanche"
 pa_cost = 2
 
+base_description = "Cette carte peut copier l'effet d'une carte"
+description = base_description
+
 targets = {
     CreateTarget("Prendre l'effet d'une carte de la main", TargetTypes.Card, false, card_filter),
 }
@@ -20,21 +23,14 @@ function precondition()
 end
 
 carte_copie = nil
-
-function description()
-    if (carte_copie == nil)
-    then
-        return "Cette carte peut copier l'effet d'une carte"
-    end
-    return "Cette carte prend l'effet de la carte" .. carte_copie.Name
-end
-
 function do_effect()
     if (carte_copie == nil) then
         carte_copie = AskForTarget(1)
-        ThisCard.Cost = carte_copie.Cost
+        This.Cost = carte_copie.Cost
+        This.Description.TryChangeValue("Cette carte prend l'effet de la carte " .. carte_copie.Name)
     else
         Game.PlayCard(EffectOwner, carte_copie)
+        This.Description.TryChangeValue(base_description)
     end
 
 end
