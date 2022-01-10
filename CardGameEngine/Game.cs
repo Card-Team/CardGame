@@ -38,9 +38,14 @@ namespace CardGameEngine
         public Player Player2 { get; }
 
         /// <summary>
+        /// Est-ce que la partie est terminée
+        /// </summary>
+        private Player? _winner = null;
+
+        /// <summary>
         /// Gestionnaire des évènements de la partie
         /// </summary>
-        internal EventManager EventManager { get; }
+        public EventManager EventManager { get; }
 
         /// <summary>
         /// Base de données de tous les effets
@@ -71,7 +76,28 @@ namespace CardGameEngine
             Player1 = new Player(this, cards1);
             Player2 = new Player(this, cards2);
 
-            CurrentPlayer = Player1;
+            CurrentPlayer = Player2;
+        }
+
+        public Player StartGame()
+        {
+            for (var i = 0; i < 3; i++)
+            {
+                Player1.DrawCard();
+                Player2.DrawCard();
+            }
+
+            foreach (var card in Player1.Cards.Concat(Player2.Cards))
+            {
+                card.OnCardCreate();
+            }
+
+            while (_winner == null)
+            {
+                StartPlayerTurn(CurrentPlayer.OtherPlayer);
+            }
+
+            return _winner;
         }
 
         /// <summary>
@@ -80,7 +106,7 @@ namespace CardGameEngine
         /// <param name="playerToWin">La joueur à faire gagner</param>
         internal void MakeWin(Player playerToWin)
         {
-            _externCallbacks.ExternGameEnded(playerToWin);
+            _winner = playerToWin;
         }
 
         /// <summary>
@@ -128,8 +154,6 @@ namespace CardGameEngine
             using (EventManager.SendEvent(turnEvent))
             {
             }
-
-            StartPlayerTurn(CurrentPlayer.OtherPlayer);
         }
 
         /// <summary>

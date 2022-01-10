@@ -6,6 +6,7 @@ using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
+using MoonSharp.Interpreter;
 
 namespace CardGameEngine.Cards
 {
@@ -89,8 +90,8 @@ namespace CardGameEngine.Cards
         {
             var effectActivateEvent = new EffectActivateEvent();
             SetUpScriptBeforeRunning(game, effectOwner);
-
-            throw new System.NotImplementedException();
+            Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
+            return true;
         }
 
         private void SetUpScriptBeforeRunning(Game game, Player effectOwner)
@@ -99,7 +100,7 @@ namespace CardGameEngine.Cards
             {
                 //globals spécifique au cartes :
                 script.Globals["AskForTarget"] =
-                    (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
+                    (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
             });
         }
 
@@ -116,11 +117,6 @@ namespace CardGameEngine.Cards
             throw new NotImplementedException();
         }
 
-        public override string ToString()
-        {
-            return $"{Name.Value} : Lvl {CurrentLevel.Value}/{MaxLevel}, Cost {Cost.Value}";
-        }
-
         public bool Upgrade()
         {
             if (CurrentLevel.Value == MaxLevel)
@@ -128,9 +124,20 @@ namespace CardGameEngine.Cards
                 throw new InvalidOperationException(
                     $"Tentative d'upgrade de la carte {this} alors qu'elle est a son niveau maximum ({MaxLevel})");
             }
+
             var newLevel = CurrentLevel.Value + 1;
             CurrentLevel.TryChangeValue(newLevel);
             return newLevel == CurrentLevel.Value;
+        }
+
+        internal void OnCardCreate()
+        {
+            Effect.RunMethodOptional(LuaStrings.Card.OnCardCreateMethod);
+        }
+
+        public override string ToString()
+        {
+            return $"{Name.Value} : Lvl {CurrentLevel.Value}/{MaxLevel}, Cost {Cost.Value}";
         }
     }
 }

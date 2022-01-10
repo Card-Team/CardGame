@@ -60,7 +60,7 @@ namespace CardGameEngine.GameSystems
         public IEnumerable<Card> Cards => Hand.Concat(Deck).Concat(Discard);
 
 
-        public Player(Game game, List<Card> cards)
+        internal Player(Game game, List<Card> cards)
         {
             _game = game;
             _eventManager = game.EventManager;
@@ -91,7 +91,7 @@ namespace CardGameEngine.GameSystems
         /// </summary>
         /// <seealso cref="DiscardPile"/>
         /// <seealso cref="CardPile"/>
-        public void LoopDeck()
+        internal void LoopDeck()
         {
             var evt = new DeckLoopEvent(this);
             using (var post = _eventManager.SendEvent(evt))

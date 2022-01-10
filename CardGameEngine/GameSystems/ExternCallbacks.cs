@@ -41,11 +41,5 @@ namespace CardGameEngine.GameSystems
         ///<param name="card">La liste parmis la quelle choisir</param>
         /// <returns>Un choix</returns>
         public Card ExternChooseBetween(Player player, List<Card> card);
-        
-        /// <summary>
-        /// Délégué appelé lorsque le moteur du jeu veut signaler à l'application externe que la partie s'est terminée
-        /// </summary>
-        /// <param name="winner">Le joueur qui a gagné la partie</param>
-        public void ExternGameEnded(Player winner);
     }
 }

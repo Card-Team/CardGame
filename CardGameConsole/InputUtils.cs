@@ -13,10 +13,10 @@ namespace CardGameConsole
             Console.WriteLine("Veuillez sélectionner une carte parmi la liste suivante : ");
 
 
-            var splitted = list.SplitIntoPiles().ToList();
-            var flattened = splitted.SelectMany(s => s).ToList();
+            var split = list.SplitIntoPiles().ToList();
+            var flattened = split.SelectMany(s => s).ToList();
             var index = 0;
-            foreach (var pile in splitted)
+            foreach (var pile in split)
             {
                 if (pile.Key != PileIdentifier.Unknown)
                     Console.WriteLine($"{pile.Key} : ");
@@ -26,12 +26,12 @@ namespace CardGameConsole
                     index++;
                 }
             }
-            
+
             return ChooseList(flattened);
         }
 
 
-        public static T ChooseList<T>(List<(string,T)> elements) where T: class
+        public static T ChooseList<T>(List<(string, T)> elements) where T : class
         {
             for (var i = 0; i < elements.Count; i++)
             {
@@ -40,32 +40,32 @@ namespace CardGameConsole
 
             return ChooseFromList(elements.Select(s => s.Item2).ToList());
         }
-        
-        public static T ChooseList<T>(List<T> elements) where T: class
+
+        public static T ChooseList<T>(List<T> elements) where T : class
         {
-            for (var i = 0; i < elements.Count; i++)
+            foreach (var elem in elements)
             {
-                Console.WriteLine($" - {elements[i]}");
+                Console.WriteLine($" - {elem}");
             }
 
             return ChooseFromList(elements);
         }
-        public static T ChooseFromList<T>(List<T> elements) where T: class
-        {
 
-            T? chosen = null;
+        public static T ChooseFromList<T>(List<T> elements)
+        {
+            var chosen = false;
+            T res = default;
             do
             {
-                Console.WriteLine("Choix : ");
+                Console.Write("Choix : ");
                 if (!int.TryParse(Console.ReadLine()?.Trim(), out var result)) continue;
-                
-                if (result >= 0 && result < elements.Count)
-                {
-                    chosen = elements[result];
-                }
-            } while (chosen == null);
 
-            return chosen;
+                if (result < 0 || result >= elements.Count) continue;
+                res = elements[result];
+                chosen = true;
+            } while (!chosen);
+
+            return res ?? throw new InvalidOperationException();
         }
     }
 }

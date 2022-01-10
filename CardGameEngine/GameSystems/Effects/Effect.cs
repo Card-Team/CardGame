@@ -50,10 +50,10 @@ namespace CardGameEngine.GameSystems.Effects
         {
             //fonctions
             Script.Globals["SubscribeTo"] =
-                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>)game.EventManager.LuaSubscribeToEvent;
+                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>) game.EventManager.LuaSubscribeToEvent;
 
             Script.Globals["UnsubscribeTo"] =
-                (Action<EventManager.IEventHandler>)game.EventManager.LuaUnsubscribeFromEvent;
+                (Action<EventManager.IEventHandler>) game.EventManager.LuaUnsubscribeFromEvent;
 
             //propriétés
 
@@ -83,9 +83,20 @@ namespace CardGameEngine.GameSystems.Effects
 
         internal T RunMethod<T>(string methodName, params object[] parameters)
         {
+            return RunMethod(methodName, parameters).ToObject<T>();
+        }
+
+        internal DynValue RunMethod(string methodName, params object[] parameters)
+        {
             var method = Script.Globals.Get(methodName).CheckType(nameof(RunMethod), DataType.Function);
 
-            return method.Function.Call(parameters).ToObject<T>();
+            return method.Function.Call(parameters);
+        }
+
+        internal DynValue RunMethodOptional(string methodName, params object[] parameters)
+        {
+            var dynValue = Script.Globals.Get(methodName);
+            return dynValue.Type == DataType.Function ? dynValue.Function.Call(parameters) : DynValue.Nil;
         }
 
         public T GetProperty<T>(string propertyName)
