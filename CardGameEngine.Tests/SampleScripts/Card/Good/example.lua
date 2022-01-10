@@ -5,6 +5,8 @@ image_id = 500
 name = "Nom"
 pa_cost = 2
 
+description = "une description de la carte qui peut changer"
+
 targets = {
     -- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
     CreateTarget("Une cible carte", TargetTypes.Card, false, card_filter),
@@ -22,9 +24,6 @@ function precondition()
     return true
 end 
 
-function description()
-    return "une description de la carte qui peut changer"
-end
 
 function do_effect()
     -- le code de l'effet de la carte

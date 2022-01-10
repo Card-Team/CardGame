@@ -81,16 +81,16 @@ namespace CardGameEngine.GameSystems.Effects
             filler(Script);
         }
 
-        internal T RunMethod<T>(string name, params object[] parameters)
+        internal T RunMethod<T>(string methodName, params object[] parameters)
         {
-            var method = Script.Globals.Get(name).CheckType(nameof(RunMethod), DataType.Function);
+            var method = Script.Globals.Get(methodName).CheckType(nameof(RunMethod), DataType.Function);
 
             return method.Function.Call(parameters).ToObject<T>();
         }
 
         public T GetProperty<T>(string propertyName)
         {
-            throw new NotImplementedException();
+            return Script.Globals.Get(propertyName).ToObject<T>();
         }
     }
 }

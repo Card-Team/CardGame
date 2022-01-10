@@ -20,7 +20,6 @@ namespace CardGameTests
         public void SetUp()
         {
             Directory.CreateDirectory(_randomDir);
-            _effectsDatabase = new EffectsDatabase();
         }
 
         [TearDown]
@@ -45,42 +44,47 @@ namespace CardGameTests
 
         [Test(Description = "Verifier que les effets bien formés sont acceptés")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetAllTestDataOfType)
-            , new object[] {LuaTestData.TestScriptType.Good})]
+            , new object[] { LuaTestData.TestScriptType.Good })]
         public void Test_Load_Effect_Good(object effectType, string script)
         {
-            var type = (EffectType) effectType;
+            var type = (EffectType)effectType;
             PutScript(script, type);
             Console.WriteLine(script);
-            Assert.DoesNotThrow(() => _effectsDatabase.LoadAllEffects(_randomDir)
-                , "L'effet est valide et doit être accepté");
+            Assert.DoesNotThrow(() =>
+            {
+                var unused = new EffectsDatabase(_randomDir);
+            }, "L'effet est valide et doit être accepté");
         }
 
         [Test(Description = "Verifier que les effets mal formés sont rejetés")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetAllTestDataOfType)
-            , new object[] {LuaTestData.TestScriptType.Bad})]
+            , new object[] { LuaTestData.TestScriptType.Bad })]
         public void Test_Load_Effect_Bad(object effectType, string script)
         {
-            var type = (EffectType) effectType;
+            var type = (EffectType)effectType;
             PutScript(script, type);
             Console.WriteLine(script);
-            Assert.Throws<InvalidEffectException>(() => _effectsDatabase.LoadAllEffects(_randomDir)
+            Assert.Throws<InvalidEffectException>(() =>
+                {
+                    var unused = new EffectsDatabase(_randomDir);
+                }
                 , "L'effet est invalide et doit être rejeté");
         }
 
         [Test(Description = "Verifier que le chargement d'une carte contient bien les données attendues")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetNamedTestData),
-            new object[] {EffectType.Card, LuaTestData.TestScriptType.Good, "example.lua"})]
+            new object[] { EffectType.Card, LuaTestData.TestScriptType.Good, "example.lua" })]
         public void Test_Effect_Card_Data(object effectType, string scriptContent)
         {
-            var type = (EffectType) effectType;
+            var type = (EffectType)effectType;
             var path = Path.GetFileNameWithoutExtension(PutScript(scriptContent, type));
-            _effectsDatabase.LoadAllEffects(_randomDir);
+            _effectsDatabase = new EffectsDatabase(_randomDir);
             var supplier = _effectsDatabase[path];
             Assert.That(supplier, Is.Not.Null);
 
             var eft = supplier();
-            
-            Assert.That(eft,Is.Not.Null);
+
+            Assert.That(eft, Is.Not.Null);
 
             Assert.That(eft.EffectType, Is.EqualTo(EffectType.Card));
             Assert.That(eft.EffectId, Is.EqualTo(path));
@@ -108,7 +112,7 @@ namespace CardGameTests
                 .EqualTo(TargetTypes.Player)
                 .And
                 .Property(nameof(Target.IsAutomatic))
-                .True 
+                .True
             );
         }
     }

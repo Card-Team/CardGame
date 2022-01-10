@@ -5,6 +5,8 @@ image_id = 500
 name = "Nom"
 pa_cost = 2
 
+description = "une description de la carte qui peut changer"
+
 targets = {
     -- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
     CreateTarget("Une cible carte", TargetTypes.Card, false, card_filter),
@@ -20,10 +22,6 @@ end
 function precondition()
     -- la carte peut être jouée sans aucun critère spécifiques
     return true
-end 
-
-function description()
-    return "une description de la carte qui peut changer"
 end
 
 function do_effect()

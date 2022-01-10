@@ -17,8 +17,10 @@ namespace CardGameEngine
     /// </summary>
     public class Game
     {
-        public const int DefaultMaxActionPoint = 5;
 
+        private const string VictoryCardEffectId = "_victory";
+        
+        public const int DefaultMaxActionPoint = 5;
 
         /// <summary>
         /// Le joueur en train de jouer
@@ -67,13 +69,12 @@ namespace CardGameEngine
         }
 
         /// <summary>
-        /// Teste si un joueur a gagné la partie
+        /// Fait gagner la partie a un joueur
         /// </summary>
-        /// <param name="playerToCheck">La joueur à tester</param>
-        /// <returns>True si le joueur a gagné</returns>
-        private bool CheckHasWon(Player playerToCheck)
+        /// <param name="playerToWin">La joueur à faire gagner</param>
+        internal void MakeWin(Player playerToWin)
         {
-            throw new NotImplementedException();
+            _externCallbacks.ExternGameEnded(playerToWin);
         }
 
         /// <summary>
