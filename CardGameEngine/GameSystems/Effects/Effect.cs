@@ -46,39 +46,46 @@ namespace CardGameEngine.GameSystems.Effects
             Script = script;
         }
 
-        internal void FillCommonGlobals(Game game,Player effectOwner, object theThis)
+        private void FillCommonGlobals(Game game, Player effectOwner, object theThis)
         {
             //fonctions
             Script.Globals["SubscribeTo"] =
                 (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>)game.EventManager.LuaSubscribeToEvent;
-            
+
             Script.Globals["UnsubscribeTo"] =
                 (Action<EventManager.IEventHandler>)game.EventManager.LuaUnsubscribeFromEvent;
-            
+
             //propriétés
 
             Script.Globals["EffectOwner"] = effectOwner;
             Script.Globals["Game"] = game;
             Script.Globals["This"] = theThis;
-            
+
             //types des évenements
 
             var typeInfos = Assembly.GetExecutingAssembly()
                 .DefinedTypes
                 .Where(t => string.Equals(t.Namespace, nameof(EventSystem.Events), StringComparison.Ordinal))
                 .Where(t => t.IsAssignableFrom(typeof(Event)));
-            
+
             foreach (var typeInfo in typeInfos)
             {
                 Script.Globals[typeInfo.Name] = typeInfo;
             }
         }
 
-        internal void FillGlobals(Game game, Player effectOwner,object theThis, Action<Script> filler)
+        internal void FillGlobals(Game game, Player effectOwner, object theThis, Action<Script> filler)
         {
-            FillCommonGlobals(game,effectOwner,theThis);
+            FillCommonGlobals(game, effectOwner, theThis);
 
             filler(Script);
+        }
+
+        internal T RunMethod<T>(string name, params object[] parameters)
+        {
+            var method = Script.Globals.Get(name).CheckType(nameof(RunMethod), DataType.Function);
+
+            return method.Function.Call(parameters).ToObject<T>();
         }
 
         public T GetProperty<T>(string propertyName)

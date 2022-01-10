@@ -1,4 +1,5 @@
 ﻿using CardGameEngine.Cards;
+using CardGameEngine.GameSystems;
 
 namespace CardGameEngine.EventSystem.Events.CardEvents
 {
@@ -7,8 +8,11 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
     /// </summary>
     public class CardPlayEvent : CardEvent
     {
-        internal CardPlayEvent(Card card) : base(card)
+        public Player WhoPlayed { get; internal set; }
+
+        internal CardPlayEvent(Player whoPlayed,Card card) : base(card)
         {
+            WhoPlayed = whoPlayed;
         }
     }
 }

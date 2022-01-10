@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CardGameEngine.EventSystem;
+using CardGameEngine.EventSystem.Events;
 using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
@@ -48,6 +49,8 @@ namespace CardGameEngine.Cards
         /// </summary>
         public List<Keyword> Keywords { get; }
 
+        public bool IsMaxLevel => CurrentLevel.Value == MaxLevel;
+
 
         internal Card(Effect effect, EventManager evtManager)
         {
@@ -81,6 +84,7 @@ namespace CardGameEngine.Cards
         /// <returns>Un booléen en fonction de la réussite</returns>
         internal bool DoEffect(Game game, Player effectOwner)
         {
+            var effectActivateEvent = new EffectActivateEvent();
             SetUpScriptBeforeRunning(game, effectOwner);
 
             throw new System.NotImplementedException();
@@ -103,6 +107,8 @@ namespace CardGameEngine.Cards
         /// <returns>Un booléen en fonction de la validité</returns>
         public bool CanBePlayed(Game game, Player effectOwner)
         {
+            SetUpScriptBeforeRunning(game,effectOwner);
+            return Effect.RunMethod<bool>("precondition");
             SetUpScriptBeforeRunning(game, effectOwner);
             throw new NotImplementedException();
         }

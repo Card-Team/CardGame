@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.Cards;
+using CardGameEngine.Cards.CardPiles;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events.CardEvents;
 using CardGameEngine.EventSystem.Events.GameStateEvents;
@@ -125,14 +126,120 @@ namespace CardGameEngine
         /// <param name="player">Le joueur</param>
         /// <param name="card">La carte jouée</param>
         /// <param name="upgrade">Améliore ou joue</param>
-        public void PlayCard(Player player, Card card, bool upgrade)
+        public bool PlayCard(Player player, Card card, bool upgrade)
         {
-            throw new NotImplementedException();
+            if (CurrentPlayer != player)
+            {
+                throw new InvalidOperationException(
+                    $"Player {player} tried to play a card when it's turn of {CurrentPlayer}");
+            }
+
+            if (!player.Hand.Contains(card))
+            {
+                throw new InvalidOperationException(
+                    $"Player {player} tried to play card {card} but it's not in their hand");
+            }
+
+            if (card.IsMaxLevel)
+            {
+                throw new InvalidOperationException(
+                    $"Tentative d'amélioration de la carte {card} alors qu'elle est au niveau maximum ({card.CurrentLevel})");
+            }
+
+            var newVal = Math.Max(0, player.ActionPoints.Value - card.Cost.Value);
+            player.ActionPoints.TryChangeValue(newVal);
+
+            return upgrade ? UpgradeCard(card) : PlayCardEffect(player, card, player.Hand, player.Discard);
+        }
+
+        private bool PlayCardEffect(Player originalPlayer, Card card, CardPile? discardSource, DiscardPile? discardGoal)
+        {
+            var playResult = true;
+            var playEvent = new CardPlayEvent(originalPlayer, card);
+
+            using (var post = EventManager.SendEvent(playEvent))
+            {
+                if (post.Event.Cancelled)
+                {
+                    return false;
+                }
+
+                if (!post.Event.Card.DoEffect(this, post.Event.WhoPlayed))
+                {
+                    playResult = false;
+                }
+
+                //défaussement
+
+                if (discardSource != null && discardSource.Contains(post.Event.Card))
+                {
+                    if (discardGoal == null)
+                    {
+                        throw new InvalidOperationException(
+                            $"La carte {post.Event.Card} doit etre défaussé de {discardSource} mais aucune déstination n'a été donnée");
+                    }
+
+                    if (!discardSource.MoveTo(discardGoal, post.Event.Card, 0))
+                    {
+                        playResult = false;
+                    }
+                }
+                else
+                {
+                    playResult = false;
+                }
+            }
+
+            return playResult;
+        }
+
+        private bool UpgradeCard(Card card)
+        {
+            var evt = new CardMarkUpgradeEvent(card);
+            using (var post = EventManager.SendEvent(evt))
+            {
+                if (post.Event.Cancelled)
+                {
+                    return false;
+                }
+
+                var toUp = post.Event.Card;
+
+                var location = GetPileOf(toUp);
+                var owner = GetCurrentOwner(toUp);
+
+                return owner.Discard.MoveForUpgrade(location, toUp);
+            }
+        }
+        
+        internal Player GetCurrentOwner(Card card)
+        {
+            if (Player1.Cards.Contains(card))
+            {
+                return Player1;
+            }
+
+            if (Player2.Cards.Contains(card))
+            {
+                return Player2;
+            }
+
+            throw new InvalidOperationException($"La carte {card} n'appartient a aucun joueur");
+        }
+
+        internal CardPile GetPileOf(Card card)
+        {
+            var currentOwner = GetCurrentOwner(card);
+            if (currentOwner.Hand.Contains(card)) return currentOwner.Hand;
+            if (currentOwner.Deck.Contains(card)) return currentOwner.Deck;
+            if (currentOwner.Discard.Contains(card)) return currentOwner.Discard;
+            
+            throw new InvalidOperationException($"La carte {card} n'appartient a aucun joueur");
         }
 
 
         /// <summary>
-        /// Révèle une la carte card au joueur player <b>une seule fois</b>
+        /// Révèle une la carte card au joueur originalPlayer <b>une seule fois</b>
         /// </summary>
         /// <param name="player"></param>
         /// <param name="card"></param>
@@ -154,7 +261,7 @@ namespace CardGameEngine
 
 
         /// <summary>
-        /// Demande au joueur player de choisir une carte parmi la liste cards et renvoie son choix
+        /// Demande au joueur originalPlayer de choisir une carte parmi la liste cards et renvoie son choix
         /// </summary>
         /// <param name="player">Le joueur a qui demander</param>
         /// <param name="cards">La liste de cartes parmi lesquelles choisir</param>

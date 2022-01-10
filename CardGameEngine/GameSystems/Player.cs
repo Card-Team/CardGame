@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Collections.Generic;
 using CardGameEngine.Cards;
 using CardGameEngine.Cards.CardPiles;
 using CardGameEngine.EventSystem;
@@ -57,6 +59,8 @@ namespace CardGameEngine.GameSystems
         /// </summary>
         public Player OtherPlayer => this == _game.Player1 ? _game.Player2 : _game.Player1;
 
+        public IEnumerable<Card> Cards => Hand.Concat(Deck).Concat(Discard);
+
 
         public Player(Game game, string name, List<Card> cards)
         {
@@ -73,18 +77,6 @@ namespace CardGameEngine.GameSystems
         /// </summary>
         /// <param name="card">La carte à piocher</param>
         internal void DrawCard()
-        {
-            if (Deck.Count > 0)
-            {
-                Deck.MoveTo(Hand, Deck[0], Hand.Count);
-            }
-        }
-
-        /// <summary>
-        /// Déplace une carte vers la défausse en mode upgrade
-        /// </summary>
-        /// <param name="card">La carte à défausser</param>
-        internal void PrepareCardUpgrade(Card card)
         {
             if (Deck.Count > 0)
             {

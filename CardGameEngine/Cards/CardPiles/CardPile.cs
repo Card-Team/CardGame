@@ -110,7 +110,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <param name="card">La carte à bouger</param>
         /// <param name="newPosition">La position à prendre</param>
         /// <exception cref="NotInPileException">Si la carte n'est pas dans la pile</exception>
-        internal void MoveTo(CardPile newCardPile, Card card, int newPosition)
+        internal virtual bool MoveTo(CardPile newCardPile, Card card, int newPosition)
         {
             if (!_cardList.Contains(card)) throw new NotInPileException(card);
 
@@ -119,12 +119,14 @@ namespace CardGameEngine.Cards.CardPiles
             {
                 if (postEvent.Event.Cancelled)
                 {
-                    return;
+                    return false;
                 }
 
                 _cardList.Remove(postEvent.Event.Card);
                 postEvent.Event.DestPile.Insert(postEvent.Event.DestIndex, postEvent.Event.Card);
             }
+
+            return true;
         }
 
         /// <summary>
@@ -133,9 +135,9 @@ namespace CardGameEngine.Cards.CardPiles
         /// <param name="card">La carte à bouger</param>
         /// <param name="newPosition">La position à prendre</param>
         /// <exception cref="NotInPileException">Si la carte n'est pas dans la pile</exception>
-        internal void MoveInternal(Card card, int newPosition)
+        internal bool MoveInternal(Card card, int newPosition)
         {
-            MoveTo(this, card, newPosition);
+            return MoveTo(this, card, newPosition);
         }
 
         public override string ToString()

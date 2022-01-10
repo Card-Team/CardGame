@@ -19,5 +19,29 @@ namespace CardGameEngine.Cards.CardPiles
         {
             MarkedForUpgrade = new HashSet<Card>();
         }
+
+        public bool MoveForUpgrade(CardPile oldLocation, Card toUp)
+        {
+            var moveResult = oldLocation.MoveTo(this, toUp, 0);
+            if (moveResult == false) return false;
+            MarkedForUpgrade.Add(toUp);
+
+            return true;
+        }
+
+        internal override bool MoveTo(CardPile newCardPile, Card card, int newPosition)
+        {
+            var moveResult = base.MoveTo(newCardPile, card, newPosition);
+            switch (moveResult)
+            {
+                case false:
+                    return false;
+                case true when newCardPile != this:
+                    MarkedForUpgrade.Remove(card);
+                    break;
+            }
+
+            return moveResult;
+        }
     }
 }

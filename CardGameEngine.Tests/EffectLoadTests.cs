@@ -108,7 +108,7 @@ namespace CardGameTests
                 .EqualTo(TargetTypes.Player)
                 .And
                 .Property(nameof(Target.IsAutomatic))
-                .True
+                .True 
             );
         }
     }
