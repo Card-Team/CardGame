@@ -64,7 +64,7 @@ Un script de carte a besoin de 4 propriétés globales qui doivent etre déclar�
 
 Propriétés immutables (qui ne changeront jamais)
 
-`max_level` qui est le niveau maximum de la carte (les niveaux commencent a 1)
+`max_level` qui est le niveau maximum de la carte (les niveaux commencent à 1)
 
 `image_id` qui sera le numéro de l'image associée a la carte
 

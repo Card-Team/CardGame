@@ -35,13 +35,23 @@ namespace CardGameEngine.Cards.CardPiles
 
 
         /// <summary>
-        /// Constructeur de la classe
+        /// Constructeur de la pile vide
         /// </summary>
         /// <param name="eventManager">EventManager de la partie</param>
         internal CardPile(EventManager eventManager)
         {
             EventManager = eventManager;
             _cardList = new List<Card>();
+        }
+
+        /// <summary>
+        /// Constructeur de la pile remplie
+        /// </summary>
+        /// <param name="eventManager">EventManager de la partie</param>
+        internal CardPile(EventManager eventManager, List<Card> cards)
+        {
+            EventManager = eventManager;
+            _cardList = cards;
         }
 
 
@@ -126,6 +136,11 @@ namespace CardGameEngine.Cards.CardPiles
         internal void MoveInternal(Card card, int newPosition)
         {
             MoveTo(this, card, newPosition);
+        }
+
+        public override string ToString()
+        {
+            return $"{this.GetType().Name}[{string.Join(", ", _cardList)}]";
         }
     }
 }

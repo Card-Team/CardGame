@@ -38,6 +38,8 @@ namespace CardGameEngine.EventSystem.Events.CardEvents.PropertyChange
 
         protected CardPropertyChangeEvent() : base(null!)
         {
+            OldValue = default!;
+            NewValue = default!;
         }
     }
 }

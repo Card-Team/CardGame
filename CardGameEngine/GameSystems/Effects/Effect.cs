@@ -80,5 +80,10 @@ namespace CardGameEngine.GameSystems.Effects
 
             filler(Script);
         }
+
+        public T GetProperty<T>(string propertyName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

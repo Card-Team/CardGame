@@ -24,9 +24,9 @@ namespace CardGameEngine.GameSystems.Effects
         {
             return effectType switch
             {
-                EffectType.Artefact => CheckArtefact(path),
+                EffectType.Artefact => true,
                 EffectType.Card => CheckCard(path),
-                EffectType.Keyword => CheckKeyword(path),
+                EffectType.Keyword => true,
                 _ => throw new ArgumentOutOfRangeException(nameof(effectType), effectType, null) // Ne peut pas arriver
             };
         }
@@ -60,21 +60,21 @@ namespace CardGameEngine.GameSystems.Effects
             // Élements lua requis et leur type respectif
             Dictionary<string, DataType> typeCheckReq = new Dictionary<string, DataType>
             {
-                {"max_level", DataType.Number},
-                {"image_id", DataType.Number},
-                {"name", DataType.String},
-                {"pa_cost", DataType.Number},
-                {"targets", DataType.Table},
-                {"precondition", DataType.Function},
-                {"description", DataType.Function},
-                {"do_effect", DataType.Function},
+                {LuaStrings.Card.MaxLevelProperty, DataType.Number},
+                {LuaStrings.Card.ImageIdProperty, DataType.Number},
+                {LuaStrings.Card.NameProperty, DataType.String},
+                {LuaStrings.Card.CostProperty, DataType.Number},
+                {LuaStrings.Card.TargetsProperty, DataType.Table},
+                {LuaStrings.Card.DescriptionProperty, DataType.String},
+                {LuaStrings.Card.PreconditionMethod, DataType.Function},
+                {LuaStrings.Card.DoEffectMethod, DataType.Function},
             };
 
             // Élements lua optionnels et leur type respectif
             Dictionary<string, DataType> typeCheckOpt = new Dictionary<string, DataType>
             {
-                {"on_level_change", DataType.Function},
-                {"on_game_start", DataType.Function},
+                {LuaStrings.Card.OnLevelChangeMethod, DataType.Function},
+                {LuaStrings.Card.OnCardCreateMethod, DataType.Function},
             };
 
             // Vérifie si tous les élements requis sont existants et du bon type

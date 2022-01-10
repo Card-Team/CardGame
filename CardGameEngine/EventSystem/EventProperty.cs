@@ -1,5 +1,4 @@
-﻿using System.Security.AccessControl;
-using CardGameEngine.EventSystem.Events;
+﻿using CardGameEngine.EventSystem.Events;
 
 namespace CardGameEngine.EventSystem
 {
@@ -23,6 +22,7 @@ namespace CardGameEngine.EventSystem
         public T Value { get; private set; }
 
         private EventManager EvtManager;
+        private readonly bool _isInevitable;
 
 
         /// <summary>
@@ -30,10 +30,14 @@ namespace CardGameEngine.EventSystem
         /// </summary>
         /// <param name="sender">L'objet lié à l'évènement</param>
         /// <param name="evtManager"></param>
-        internal EventProperty(S sender, EventManager evtManager)
+        /// <param name="value">Valeur par défaut</param>
+        /// <param name="isInevitable">Suis-je inéluctable ?</param>
+        internal EventProperty(S sender, EventManager evtManager, T value, bool isInevitable = false)
         {
             _sender = sender;
             EvtManager = evtManager;
+            _isInevitable = isInevitable;
+            Value = value;
         }
 
         /// <summary>
@@ -51,9 +55,9 @@ namespace CardGameEngine.EventSystem
 
             using (var postEvent = EvtManager.SendEvent(evt))
             {
-                if (postEvent.Event.Cancelled)
+                if (!_isInevitable && postEvent.Event.Cancelled)
                     return Value;
-                Value = postEvent.Event.NewValue;
+                Value =_isInevitable ? newVal : postEvent.Event.NewValue;
             }
 
             return Value;

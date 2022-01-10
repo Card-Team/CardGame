@@ -16,6 +16,9 @@ namespace CardGameEngine
     /// </summary>
     public class Game
     {
+        public const int DefaultMaxActionPoint = 5;
+
+
         /// <summary>
         /// Le joueur en train de jouer
         /// </summary>
@@ -47,6 +50,20 @@ namespace CardGameEngine
         /// </summary>
         private readonly IExternCallbacks _externCallbacks;
 
+
+        public Game(string effectFolder, string name1, List<string> deck1, string name2, List<string> deck2)
+        {
+            EventManager = new EventManager();
+
+            EffectsDatabase = new EffectsDatabase(effectFolder);
+            List<Card> cards1 = deck1.Select(s => EffectsDatabase[s]()).Select(e => new Card(e, EventManager)).ToList();
+            List<Card> cards2 = deck2.Select(s => EffectsDatabase[s]()).Select(e => new Card(e, EventManager)).ToList();
+
+            //TODO Add carte victoire
+
+            Player1 = new Player(this, name1, cards1);
+            Player2 = new Player(this, name2, cards2);
+        }
 
         /// <summary>
         /// Teste si un joueur a gagné la partie

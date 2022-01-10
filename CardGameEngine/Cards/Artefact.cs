@@ -32,7 +32,7 @@ namespace CardGameEngine.Cards
 
         internal Artefact(EventManager evtManager)
         {
-            CurrentCharge = new EventProperty<Artefact, int, ArtefactChargeEditEvent>(this, evtManager);
+            CurrentCharge = new EventProperty<Artefact, int, ArtefactChargeEditEvent>(this, evtManager, 0);
         }
 
 

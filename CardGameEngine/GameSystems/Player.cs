@@ -1,4 +1,5 @@
-﻿using CardGameEngine.Cards;
+﻿using System.Collections.Generic;
+using CardGameEngine.Cards;
 using CardGameEngine.Cards.CardPiles;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
@@ -19,7 +20,7 @@ namespace CardGameEngine.GameSystems
         /// <summary>
         /// Pioche du joueur
         /// </summary>
-        public CardPile Deck { get; set; }
+        public CardPile Deck { get; }
 
         /// <summary>
         /// Main du joueur
@@ -57,11 +58,13 @@ namespace CardGameEngine.GameSystems
         public Player OtherPlayer => this == _game.Player1 ? _game.Player2 : _game.Player1;
 
 
-        public Player(Game game)
+        public Player(Game game, string name, List<Card> cards)
         {
             _game = game;
-            ActionPoints = new EventProperty<Player, int, ActionPointsEditEvent>(this, game.EventManager);
-            MaxActionPoints = new EventProperty<Player, int, MaxActionPointsEditEvent>(this, game.EventManager);
+            Name = name;
+            Deck = new CardPile(game.EventManager, cards);
+            ActionPoints = new EventProperty<Player, int, ActionPointsEditEvent>(this, game.EventManager, 0);
+            MaxActionPoints = new EventProperty<Player, int, MaxActionPointsEditEvent>(this, game.EventManager, Game.DefaultMaxActionPoint);
         }
 
 

@@ -33,7 +33,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         /// <param name="path">Nom complet du dossier</param>
         /// <seealso cref="LoadAllEffects(string, EffectType)"/>
-        internal void LoadAllEffects(string path)
+        internal EffectsDatabase(string path)
         {
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
             foreach (var directory in Directory.EnumerateDirectories(path))
@@ -85,7 +85,7 @@ namespace CardGameEngine.GameSystems.Effects
                 script.DoString(fileContent);
 
                 // Récupère les cibles de l'effet
-                var targets = script.Globals.Get("targets")
+                var targets = script.Globals.Get("targets").CheckType(nameof(LoadAllEffects), DataType.Table)
                     .Table.Values
                     .Select(t => t.UserData.Object)
                     .Cast<Target>()
