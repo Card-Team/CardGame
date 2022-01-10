@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using CardGameEngine.EventSystem;
+using CardGameEngine.EventSystem.Events;
 using CardGameEngine.GameSystems.Targeting;
 using MoonSharp.Interpreter;
 
@@ -24,7 +29,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         internal List<Target> AllTargets { get; }
 
-        internal Script Script { get; }
+        private Script Script { get; }
 
 
         /// <summary>
@@ -39,6 +44,41 @@ namespace CardGameEngine.GameSystems.Effects
             EffectId = effectId;
             AllTargets = targets;
             Script = script;
+        }
+
+        internal void FillCommonGlobals(Game game,Player effectOwner, object theThis)
+        {
+            //fonctions
+            Script.Globals["SubscribeTo"] =
+                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>)game.EventManager.LuaSubscribeToEvent;
+            
+            Script.Globals["UnsubscribeTo"] =
+                (Action<EventManager.IEventHandler>)game.EventManager.LuaUnsubscribeFromEvent;
+            
+            //propriétés
+
+            Script.Globals["EffectOwner"] = effectOwner;
+            Script.Globals["Game"] = game;
+            Script.Globals["This"] = theThis;
+            
+            //types des évenements
+
+            var typeInfos = Assembly.GetExecutingAssembly()
+                .DefinedTypes
+                .Where(t => string.Equals(t.Namespace, nameof(EventSystem.Events), StringComparison.Ordinal))
+                .Where(t => t.IsAssignableFrom(typeof(Event)));
+            
+            foreach (var typeInfo in typeInfos)
+            {
+                Script.Globals[typeInfo.Name] = typeInfo;
+            }
+        }
+
+        internal void FillGlobals(Game game, Player effectOwner,object theThis, Action<Script> filler)
+        {
+            FillCommonGlobals(game,effectOwner,theThis);
+
+            filler(Script);
         }
     }
 }

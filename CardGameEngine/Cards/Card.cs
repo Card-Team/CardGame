@@ -59,20 +59,29 @@ namespace CardGameEngine.Cards
         /// <returns>Un booléen en fonction de la réussite</returns>
         internal bool DoEffect(Game game, Player effectOwner)
         {
-            var effectScript = this.Effect.Script;
-            //début injection global lua
-            effectScript.Globals["AskForTarget"] =
-                (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
+            SetUpScriptBeforeRunning(game, effectOwner);
+
             throw new System.NotImplementedException();
         }
 
+        private void SetUpScriptBeforeRunning(Game game, Player effectOwner)
+        {
+            Effect.FillGlobals(game, effectOwner, this, script =>
+            {
+                //globals spécifique au cartes :
+                script.Globals["AskForTarget"] =
+                    (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
+            });
+        }
+
         /// <summary>
-        /// Vérifie la validité de la précondition de l'artefact
+        /// Vérifie la validité de la précondition de la carte
         /// </summary>
         /// <param name="game">La partie en cours</param>
         /// <returns>Un booléen en fonction de la validité</returns>
-        public bool CanBePlayed(Game game)
+        public bool CanBePlayed(Game game,Player effectOwner)
         {
+            SetUpScriptBeforeRunning(game,effectOwner);
             throw new System.NotImplementedException();
         }
     }

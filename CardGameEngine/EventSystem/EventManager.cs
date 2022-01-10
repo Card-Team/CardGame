@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.EventSystem.Events;
+using MoonSharp.Interpreter;
 
 namespace CardGameEngine.EventSystem
 {
@@ -20,8 +21,8 @@ namespace CardGameEngine.EventSystem
         /// <summary>
         /// Dictionnaire contenant tous les évènements
         /// </summary>
-        private Dictionary<Type, List<IEventHandler<Event>>> _eventHandlersDict =
-            new Dictionary<Type, List<IEventHandler<Event>>>();
+        private Dictionary<Type, List<IEventHandler>> _eventHandlersDict =
+            new Dictionary<Type, List<IEventHandler>>();
 
         /// <summary>
         /// Abonne le délégué fourni à l'évènement T donné
@@ -31,18 +32,31 @@ namespace CardGameEngine.EventSystem
         /// <param name="postEvent">Veut recevoir l'information <i>après</i> l'exécution (défaut = false)</param>
         /// <typeparam name="T">Le type d'évènement à écouter</typeparam>
         /// <seealso cref="Event"/>
-        public IEventHandler<T> SubscribeToEvent<T>(OnEvent<T> deleg, bool evenIfCancelled = false,
+        public IEventHandler SubscribeToEvent<T>(OnEvent<T> deleg, bool evenIfCancelled = false,
             bool postEvent = false)
             where T : Event
         {
-            if (!_eventHandlersDict.ContainsKey(typeof(T)))
-                _eventHandlersDict.Add(typeof(T), new List<IEventHandler<Event>>());
-            IEventHandler<T> eventHandler = new EventHandlerImpl<T>(deleg, evenIfCancelled, postEvent);
-            _eventHandlersDict[typeof(T)].Add(eventHandler);
-            return eventHandler;
+            return SubscribeToEvent(typeof(T), new EngineEventHandler<T>(deleg, evenIfCancelled, postEvent));
         }
-        //todo subscribe lua
-        //todo retourner interface sans méthode pour éviter l'envoi manuel
+
+        internal IEventHandler LuaSubscribeToEvent(Type eventType, Closure closure, bool? evenIfCancelled,
+            bool? postEvent)
+        {
+            evenIfCancelled ??= false;
+            postEvent ??= false;
+
+            return SubscribeToEvent(eventType, new LuaEventHandler(eventType, closure, evenIfCancelled.Value, postEvent.Value));
+        }
+
+        private IEventHandler SubscribeToEvent(Type type, IEventHandler handler)
+        {
+            if (!_eventHandlersDict.ContainsKey(type))
+                _eventHandlersDict.Add(type, new List<IEventHandler>());
+
+            _eventHandlersDict[type].Add(handler);
+
+            return handler;
+        }
 
         /// <summary>
         /// Désabonne le délégué fourni de l'évènement T 
@@ -50,11 +64,22 @@ namespace CardGameEngine.EventSystem
         /// <param name="deleg">Le délégué à désinscrire</param>
         /// <typeparam name="T">Le type d'évènement à retirer</typeparam>
         /// <seealso cref="Event"/>
-        public void UnsubscribeFromEvent<T>(IEventHandler<T> deleg) where T : Event
+        public void UnsubscribeFromEvent(IEventHandler deleg)
         {
-            if (_eventHandlersDict.ContainsKey(typeof(T)))
-                _eventHandlersDict[typeof(T)].Remove(deleg);
+            UnsubscribeFromEvent(deleg.EventType,deleg);
         }
+
+        private void UnsubscribeFromEvent(Type eventType,IEventHandler listener)
+        {
+            if (_eventHandlersDict.ContainsKey(eventType))
+                _eventHandlersDict[eventType].Remove(listener);
+        }
+
+        internal void LuaUnsubscribeFromEvent(IEventHandler listener)
+        {
+            UnsubscribeFromEvent(listener.EventType,listener);
+        }
+
 
         /// <summary>
         /// Déclenche l'évènement donné
@@ -79,11 +104,11 @@ namespace CardGameEngine.EventSystem
         }
 
         /// <summary>
-        /// Récupère la liste des <see cref="IEventHandler{T}"/> de la classe <see cref="T"/> ainsi que de ses classes parentes
+        /// Récupère la liste des <see cref="IEventHandler"/> de la classe <see cref="T"/> ainsi que de ses classes parentes
         /// </summary>
         /// <typeparam name="T">Le type demandé</typeparam>
-        /// <returns>Un <see cref="IEnumerable{T}"/> contenant les  <see cref="IEventHandler{T}"/> de <see cref="T"/> et de ses classes parentes</returns>
-        private IEnumerable<IEventHandler<Event>> GetHandlerOfAssignableFrom<T>() where T : Event
+        /// <returns>Un <see cref="IEnumerable{T}"/> contenant les  <see cref="IEventHandler"/> de <see cref="T"/> et de ses classes parentes</returns>
+        private IEnumerable<IEventHandler> GetHandlerOfAssignableFrom<T>() where T : Event
         {
             var currentType = typeof(T);
 
@@ -126,12 +151,12 @@ namespace CardGameEngine.EventSystem
         /// <see cref="T"/> est contravariant et il est donc
         /// possible de faire :
         /// <code>
-        /// IEventHandler&lt;Event&gt; handler = new EventHandlerImpl&lt;CardNameChangeEvent&gt;();
+        /// IEventHandler&lt;Event&gt; handler = new EventHandlerBase&lt;CardNameChangeEvent&gt;();
         /// </code>
         /// </summary>
         /// <typeparam name="T">Le sous-type de <see cref="Event"/> que le délégué demande</typeparam>
         // ReSharper disable once UnusedTypeParameter
-        public interface IEventHandler<out T> where T : Event
+        public interface IEventHandler
         {
             /// <value>
             /// <see cref="EventManager.SubscribeToEvent{T}"/>
@@ -142,6 +167,8 @@ namespace CardGameEngine.EventSystem
             /// <see cref="EventManager.SubscribeToEvent{T}"/>
             /// </value>
             public bool PostEvent { get; }
+
+            Type EventType { get; }
 
             /// <summary>
             /// Envoi l'évent <paramref name="evt"/> au délégué
@@ -150,24 +177,55 @@ namespace CardGameEngine.EventSystem
             public void HandleEvent(Event evt);
         }
 
-        /// <inheritdoc cref="IEventHandler{T}"/>
-        private class EventHandlerImpl<T> : IEventHandler<T> where T : Event
+        /// <inheritdoc cref="IEventHandler"/>
+        private abstract class EventHandlerBase : IEventHandler
         {
-            private OnEvent<T> _evt;
-
-            public EventHandlerImpl(OnEvent<T> evt, bool evenIfCancelled, bool postEvent)
+            protected EventHandlerBase(bool evenIfCancelled, bool postEvent)
             {
                 EvenIfCancelled = evenIfCancelled;
                 PostEvent = postEvent;
-                _evt = evt;
             }
 
             public bool EvenIfCancelled { get; }
             public bool PostEvent { get; }
+            public abstract Type EventType { get; }
+            public abstract void HandleEvent(Event evt);
+        }
 
-            public void HandleEvent(Event evt)
+        private class EngineEventHandler<T> : EventHandlerBase where T : Event
+        {
+            private readonly OnEvent<T> _evt;
+
+            public EngineEventHandler(OnEvent<T> evt, bool evenIfCancelled, bool postEvent) : base(evenIfCancelled,
+                postEvent)
+            {
+                _evt = evt;
+            }
+
+            public override Type EventType => typeof(T);
+
+            public override void HandleEvent(Event evt)
             {
                 _evt.Invoke((T)evt);
+            }
+        }
+
+        private class LuaEventHandler : EventHandlerBase
+        {
+            public override Type EventType { get; }
+            private readonly Closure _evt;
+
+            public LuaEventHandler(Type eventType, Closure closure, bool evenIfCancelled, bool postEvent) : base(
+                evenIfCancelled,
+                postEvent)
+            {
+                EventType = eventType;
+                _evt = closure;
+            }
+
+            public override void HandleEvent(Event evt)
+            {
+                _evt.Call(Convert.ChangeType(evt, EventType));
             }
         }
 
