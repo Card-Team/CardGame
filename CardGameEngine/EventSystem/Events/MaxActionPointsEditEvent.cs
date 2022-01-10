@@ -5,7 +5,7 @@ namespace CardGameEngine.EventSystem.Events
     /// <summary>
     /// Évènement annulable correspondant au changement du nombre de points d'action d'un joueur
     /// </summary>
-    public class ActionPointEditEvent : CancellableEvent, IPropertyChangeEvent<Player, int>
+    public class MaxActionPointsEditEvent : CancellableEvent, IPropertyChangeEvent<Player, int>
     {
         /// <summary>
         /// Le joueur touché
@@ -15,12 +15,12 @@ namespace CardGameEngine.EventSystem.Events
         /// <summary>
         /// Ancien nombre de points
         /// </summary>
-        public int OldPointCount { get; private set; }
+        public int OldMaxPointCount { get; private set; }
 
         /// <summary>
         /// Nouveau nombre de points
         /// </summary>
-        public int NewPointCount { get; internal set; }
+        public int NewMaxPointCount { get; internal set; }
 
 
         Player IPropertyChangeEvent<Player, int>.Sender
@@ -31,14 +31,14 @@ namespace CardGameEngine.EventSystem.Events
 
         int IPropertyChangeEvent<Player, int>.NewValue
         {
-            get => NewPointCount;
-            set => NewPointCount = value;
+            get => NewMaxPointCount;
+            set => NewMaxPointCount = value;
         }
 
         int IPropertyChangeEvent<Player, int>.OldValue
         {
-            get => OldPointCount;
-            set => OldPointCount = value;
+            get => OldMaxPointCount;
+            set => OldMaxPointCount = value;
         }
     }
 }

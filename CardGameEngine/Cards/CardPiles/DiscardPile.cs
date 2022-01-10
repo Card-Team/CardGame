@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using CardGameEngine.EventSystem;
 
 namespace CardGameEngine.Cards.CardPiles
 {
@@ -14,5 +15,9 @@ namespace CardGameEngine.Cards.CardPiles
         public HashSet<Card> MarkedForUpgrade { get; }
 
         // TODO 
+        internal DiscardPile(EventManager eventManager) : base(eventManager)
+        {
+            MarkedForUpgrade = new HashSet<Card>();
+        }
     }
 }

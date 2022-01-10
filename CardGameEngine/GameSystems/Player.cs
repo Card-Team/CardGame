@@ -32,6 +32,11 @@ namespace CardGameEngine.GameSystems
         public DiscardPile Discard;
 
         /// <summary>
+        /// Référence à la partie
+        /// </summary>
+        private readonly Game _game;
+
+        /// <summary>
         /// Les 2 artefacts du joueurs
         /// </summary>
         public Artefact[] Artefacts { get; } = new Artefact[2];
@@ -39,12 +44,24 @@ namespace CardGameEngine.GameSystems
         /// <summary>
         /// Points d'action du joueur
         /// </summary>
-        public EventProperty<Player, int, ActionPointEditEvent> ActionPoints { get; }
+        public EventProperty<Player, int, ActionPointsEditEvent> ActionPoints { get; }
+
+        /// <summary>
+        /// Points d'action maximum du joueur
+        /// </summary>
+        public EventProperty<Player, int, MaxActionPointsEditEvent> MaxActionPoints { get; }
+
+        /// <summary>
+        /// L'autre joueur
+        /// </summary>
+        public Player OtherPlayer => this == _game.Player1 ? _game.Player2 : _game.Player1;
 
 
-        public Player(EventManager evtManager)
+        public Player(Game game)
         {
-            ActionPoints = new EventProperty<Player, int, ActionPointEditEvent>(this, evtManager);
+            _game = game;
+            ActionPoints = new EventProperty<Player, int, ActionPointsEditEvent>(this, game.EventManager);
+            MaxActionPoints = new EventProperty<Player, int, MaxActionPointsEditEvent>(this, game.EventManager);
         }
 
 
@@ -52,9 +69,12 @@ namespace CardGameEngine.GameSystems
         /// Piocher une carte
         /// </summary>
         /// <param name="card">La carte à piocher</param>
-        internal void DrawCard(Card? card = null)
+        internal void DrawCard()
         {
-            throw new System.NotImplementedException();
+            if (Deck.Count > 0)
+            {
+                Deck.MoveTo(Hand, Deck[0], Hand.Count);
+            }
         }
 
         /// <summary>

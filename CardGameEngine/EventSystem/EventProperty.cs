@@ -1,4 +1,5 @@
-﻿using CardGameEngine.EventSystem.Events;
+﻿using System.Security.AccessControl;
+using CardGameEngine.EventSystem.Events;
 
 namespace CardGameEngine.EventSystem
 {
@@ -9,7 +10,7 @@ namespace CardGameEngine.EventSystem
     /// <typeparam name="T">Type de la valeur (int, string, ...)</typeparam>
     /// <typeparam name="ET">IPropertyChangeEvent</typeparam>
     /// <seealso cref="IPropertyChangeEvent{S,T}"/>
-    public class EventProperty<S, T, ET> where ET : Event, IPropertyChangeEvent<S, T>, new()
+    public class EventProperty<S, T, ET> where ET : CancellableEvent, IPropertyChangeEvent<S, T>, new()
     {
         /// <summary>
         /// Objet lié à l'évènement
@@ -50,6 +51,8 @@ namespace CardGameEngine.EventSystem
 
             using (var postEvent = EvtManager.SendEvent(evt))
             {
+                if (postEvent.Event.Cancelled)
+                    return Value;
                 Value = postEvent.Event.NewValue;
             }
 

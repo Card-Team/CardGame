@@ -4,6 +4,7 @@ using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events.CardEvents;
+using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
@@ -18,7 +19,7 @@ namespace CardGameEngine
         /// <summary>
         /// Le joueur en train de jouer
         /// </summary>
-        public Player CurrentPlayer { get; }
+        public Player CurrentPlayer { get; internal set; }
 
         /// <summary>
         /// Le joueur 1
@@ -63,15 +64,39 @@ namespace CardGameEngine
         /// <param name="player">Le joueur qui doit jouer</param>
         private void StartPlayerTurn(Player player)
         {
-            throw new NotImplementedException();
+            StartTurnEvent turnEvent = new StartTurnEvent(player);
+            using (var postSender = EventManager.SendEvent(turnEvent))
+            {
+                CurrentPlayer = postSender.Event.Player;
+                CurrentPlayer.ActionPoints.TryChangeValue(CurrentPlayer.MaxActionPoints.Value);
+                CurrentPlayer.DrawCard();
+            }
         }
 
         /// <summary>
         /// Termine le tour du joueur actuel
         /// </summary>
+        internal bool TryEndPlayerTurn()
+        {
+            EndTurnEvent turnEvent = new EndTurnEvent(CurrentPlayer);
+            using (var postEvent = EventManager.SendEvent(turnEvent))
+            {
+                if (postEvent.Event.Cancelled)
+                    return false;
+            }
+
+            StartPlayerTurn(CurrentPlayer.OtherPlayer);
+            return true;
+        }
+
         public void EndPlayerTurn()
         {
-            throw new NotImplementedException();
+            EndTurnEvent turnEvent = new EndTurnEvent(CurrentPlayer);
+            using (EventManager.SendEvent(turnEvent))
+            {
+            }
+
+            StartPlayerTurn(CurrentPlayer.OtherPlayer);
         }
 
         /// <summary>
@@ -109,10 +134,10 @@ namespace CardGameEngine
 
 
         /// <summary>
-        /// Demande au joueur player de choisir une carte parmis la liste cards et renvoi son choix
+        /// Demande au joueur player de choisir une carte parmi la liste cards et renvoie son choix
         /// </summary>
         /// <param name="player">Le joueur a qui demander</param>
-        /// <param name="cards">La liste de cartes parmis lesquelles choisir</param>
+        /// <param name="cards">La liste de cartes parmi lesquelles choisir</param>
         /// <returns></returns>
         public Card ChooseBetween(Player player, List<Card> cards)
         {
@@ -155,11 +180,7 @@ namespace CardGameEngine
                 }
             }
 
-            var targetingEvent = new TargetingEvent
-            {
-                ResolvedTarget = resolved, 
-                TargetData = target
-            };
+            var targetingEvent = new TargetingEvent(target, resolved);
             using var postSender = EventManager.SendEvent(targetingEvent);
             resolved = postSender.Event.ResolvedTarget;
             return resolved;

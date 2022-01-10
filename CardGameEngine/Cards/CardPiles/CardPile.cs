@@ -1,6 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
+using CardGameEngine.EventSystem;
+using CardGameEngine.EventSystem.Events.CardEvents;
 
 namespace CardGameEngine.Cards.CardPiles
 {
@@ -15,6 +18,11 @@ namespace CardGameEngine.Cards.CardPiles
         private List<Card> _cardList;
 
         /// <summary>
+        /// EventManager de la partie
+        /// </summary>
+        private EventManager EventManager { get; }
+
+        /// <summary>
         /// Propriété renvoyant le nombre de cartes
         /// </summary>
         public int Count => _cardList.Count;
@@ -24,6 +32,17 @@ namespace CardGameEngine.Cards.CardPiles
         /// </summary>
         /// <param name="i">Index de la carte</param>
         public Card this[int i] => _cardList.ElementAt(i);
+
+
+        /// <summary>
+        /// Constructeur de la classe
+        /// </summary>
+        /// <param name="eventManager">EventManager de la partie</param>
+        internal CardPile(EventManager eventManager)
+        {
+            EventManager = eventManager;
+            _cardList = new List<Card>();
+        }
 
 
         /// <summary>
@@ -85,8 +104,17 @@ namespace CardGameEngine.Cards.CardPiles
         {
             if (!_cardList.Contains(card)) throw new NotInPileException(card);
 
-            _cardList.Remove(card);
-            newCardPile.Insert(newPosition, card);
+            CardMovePileEvent moveEvent = new CardMovePileEvent(card, this, IndexOf(card), newCardPile, newPosition);
+            using (var postEvent = EventManager.SendEvent(moveEvent))
+            {
+                if (postEvent.Event.Cancelled)
+                {
+                    return;
+                }
+
+                _cardList.Remove(postEvent.Event.Card);
+                postEvent.Event.DestPile.Insert(postEvent.Event.DestIndex, postEvent.Event.Card);
+            }
         }
 
         /// <summary>
@@ -97,10 +125,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <exception cref="NotInPileException">Si la carte n'est pas dans la pile</exception>
         internal void MoveInternal(Card card, int newPosition)
         {
-            if (!_cardList.Contains(card)) throw new NotInPileException(card);
-
-            _cardList.Remove(card);
-            _cardList.Insert(newPosition, card);
+            MoveTo(this, card, newPosition);
         }
     }
 }

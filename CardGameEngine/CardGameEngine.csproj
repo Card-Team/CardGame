@@ -74,7 +74,7 @@
         <Compile Include="Cards\Keyword.cs" />
         <Compile Include="EventSystem\EventManager.cs" />
         <Compile Include="EventSystem\EventProperty.cs" />
-        <Compile Include="EventSystem\Events\ActionPointEditEvent.cs" />
+        <Compile Include="EventSystem\Events\ActionPointsEditEvent.cs" />
         <Compile Include="EventSystem\Events\ArtefactEvents\ArtefactActivateEvent.cs" />
         <Compile Include="EventSystem\Events\ArtefactEvents\ArtefactChargeEditEvent.cs" />
         <Compile Include="EventSystem\Events\ArtefactEvents\ArtefactEvent.cs" />
@@ -100,6 +100,7 @@
         <Compile Include="EventSystem\Events\GameStateEvents\EndTurnEvent.cs" />
         <Compile Include="EventSystem\Events\GameStateEvents\StartTurnEvent.cs" />
         <Compile Include="EventSystem\Events\IPropertyChangeEvent.cs" />
+        <Compile Include="EventSystem\Events\MaxActionPointsEditEvent.cs" />
         <Compile Include="Game.cs" />
         <Compile Include="GameSystems\Effects\Effect.cs" />
         <Compile Include="GameSystems\Effects\EffectChecker.cs" />
