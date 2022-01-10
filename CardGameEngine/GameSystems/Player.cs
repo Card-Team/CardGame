@@ -16,11 +16,6 @@ namespace CardGameEngine.GameSystems
     public class Player : ITargetable
     {
         /// <summary>
-        /// Nom du joueur
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
         /// Pioche du joueur
         /// </summary>
         public CardPile Deck { get; }
@@ -65,12 +60,15 @@ namespace CardGameEngine.GameSystems
         public IEnumerable<Card> Cards => Hand.Concat(Deck).Concat(Discard);
 
 
-        public Player(Game game, string name, List<Card> cards)
+        public Player(Game game, List<Card> cards)
         {
             _game = game;
             _eventManager = game.EventManager;
-            Name = name;
+            
             Deck = new CardPile(game.EventManager, cards);
+            Hand = new CardPile(game.EventManager, 5);
+            Discard = new DiscardPile(game.EventManager);
+            
             ActionPoints = new EventProperty<Player, int, ActionPointsEditEvent>(this, game.EventManager, 0);
             MaxActionPoints = new EventProperty<Player, int, MaxActionPointsEditEvent>(this, game.EventManager, Game.DefaultMaxActionPoint);
         }

@@ -54,28 +54,22 @@ namespace CardGameEngine
         /// </summary>
         private readonly IExternCallbacks _externCallbacks;
 
-
-        [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
-        public struct PlayerDefinition
-        {
-            public string Name { get; }
-            public IEnumerable<string> Deck { get; }
-        }
-        public Game(string effectFolder, IExternCallbacks externCallbacks, PlayerDefinition player1, PlayerDefinition player2)
+        
+        public Game(string effectFolder, IExternCallbacks externCallbacks, IEnumerable<string> deck1 , IEnumerable<string> deck2 )
         {
             EventManager = new EventManager();
 
             _externCallbacks = externCallbacks;
             
             EffectsDatabase = new EffectsDatabase(effectFolder);
-            var cards1 = player1.Deck.Select(s => EffectsDatabase[s]()).Select(e => new Card(this,e)).ToList();
-            var cards2 = player2.Deck.Select(s => EffectsDatabase[s]()).Select(e => new Card(this,e)).ToList();
+            var cards1 = deck1.Select(s => EffectsDatabase[s]()).Select(e => new Card(this,e)).ToList();
+            var cards2 = deck2.Select(s => EffectsDatabase[s]()).Select(e => new Card(this,e)).ToList();
 
             
             //TODO Add carte victoire
 
-            Player1 = new Player(this, player1.Name, cards1);
-            Player2 = new Player(this, player2.Name, cards2);
+            Player1 = new Player(this, cards1);
+            Player2 = new Player(this, cards2);
 
             CurrentPlayer = Player1;
         }
