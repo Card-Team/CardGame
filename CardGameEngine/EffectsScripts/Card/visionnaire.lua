@@ -1,10 +1,10 @@
 ﻿max_level = 3
 image_id = 636
 
-
 name = "Visionnaire"
 pa_cost = 3
 --TODO a definir le nombre de cout
+
 targets = {
     CreateTarget("Carte a gagner ses point d'action", TargetTypes.Card, false, cardFilter),
 }
@@ -29,5 +29,5 @@ function do_effect()
     --on recupere les points d'action de la carte choisis et on modifie grace a TryChangeValue son cout actuelle
     local coutCard = AskForTarget(1).Cost.Value                         --cout de la carte 
     local pointActionAdv = EffectOwner.ActionPoints.Value               --point d'action du joueur 
-    EffectOwner.ActionPoints.TryChangeValue(pointActionAdv+coutCard)    --ajout du cout de la carte sur les points d'action
+    EffectOwner.ActionPoints.TryChangeValue(pointActionAdv + coutCard)    --ajout du cout de la carte sur les points d'action
 end

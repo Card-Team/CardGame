@@ -5,6 +5,7 @@ image_id = 512
 --mutable data
 name = "Montgolfière"
 pa_cost = 2
+
 targets = {
     CreateTarget("La carte à remonter", TargetTypes.Card, false, card_filter)
 }

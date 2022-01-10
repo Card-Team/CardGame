@@ -1,6 +1,5 @@
-﻿max_level = 1   
+﻿max_level = 1
 image_id = 518
-
 
 name = "Echange inversé"
 pa_cost = 2
@@ -15,7 +14,6 @@ function card_filter()
     local random = math.random(0, DiscardPile.Count() - 1)
     return DiscardPile[random]
 end
-
 
 --- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()

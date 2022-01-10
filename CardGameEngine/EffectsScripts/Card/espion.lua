@@ -1,12 +1,13 @@
 ﻿max_level = 1
 image_id = 626
 
-
 name = "Espion"
 pa_cost = 3
+
 targets = {
     CreateTarget("carte qui fait voir", TargetTypes.Card, true, cardFilter),
 }
+
 --fonction qui recupere toute les cartes de sa main
 function cardFilter()
     -- carte choisis aleatoirement depuis sa main
