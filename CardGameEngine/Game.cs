@@ -18,9 +18,8 @@ namespace CardGameEngine
     /// </summary>
     public class Game
     {
-
         private const string VictoryCardEffectId = "_victory";
-        
+
         public const int DefaultMaxActionPoint = 5;
 
         /// <summary>
@@ -54,18 +53,19 @@ namespace CardGameEngine
         /// </summary>
         private readonly IExternCallbacks _externCallbacks;
 
-        
-        public Game(string effectFolder, IExternCallbacks externCallbacks, IEnumerable<string> deck1 , IEnumerable<string> deck2 )
+
+        public Game(string effectFolder, IExternCallbacks externCallbacks, IEnumerable<string> deck1,
+            IEnumerable<string> deck2)
         {
             EventManager = new EventManager();
 
             _externCallbacks = externCallbacks;
-            
-            EffectsDatabase = new EffectsDatabase(effectFolder);
-            var cards1 = deck1.Select(s => EffectsDatabase[s]()).Select(e => new Card(this,e)).ToList();
-            var cards2 = deck2.Select(s => EffectsDatabase[s]()).Select(e => new Card(this,e)).ToList();
 
-            
+            EffectsDatabase = new EffectsDatabase(effectFolder);
+            var cards1 = deck1.Select(s => EffectsDatabase[s]()).Select(e => new Card(this, e)).ToList();
+            var cards2 = deck2.Select(s => EffectsDatabase[s]()).Select(e => new Card(this, e)).ToList();
+
+
             //TODO Add carte victoire
 
             Player1 = new Player(this, cards1);
@@ -98,6 +98,7 @@ namespace CardGameEngine
                 {
                     CurrentPlayer.LoopDeck();
                 }
+
                 CurrentPlayer.DrawCard();
             }
         }
@@ -222,7 +223,7 @@ namespace CardGameEngine
                 return owner.Discard.MoveForUpgrade(location, toUp);
             }
         }
-        
+
         internal Player GetCurrentOwner(Card card)
         {
             if (Player1.Cards.Contains(card))
@@ -244,7 +245,7 @@ namespace CardGameEngine
             if (currentOwner.Hand.Contains(card)) return currentOwner.Hand;
             if (currentOwner.Deck.Contains(card)) return currentOwner.Deck;
             if (currentOwner.Discard.Contains(card)) return currentOwner.Discard;
-            
+
             throw new InvalidOperationException($"La carte {card} n'appartient a aucun joueur");
         }
 
@@ -323,6 +324,5 @@ namespace CardGameEngine
             resolved = postSender.Event.ResolvedTarget;
             return resolved;
         }
-        
     }
 }

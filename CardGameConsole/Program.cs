@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CardGameEngine;
@@ -11,7 +10,6 @@ namespace CardGameConsole
         public static void Main(string[] args)
         {
             Console.WriteLine("\nLancement d'une partie : ...\n");
-
 
             // Joueur 1
             Console.Write("Joueur 1, veuillez entrer votre nom : ");
@@ -29,7 +27,7 @@ namespace CardGameConsole
             Console.WriteLine("Veuillez m'indiquer le fichier contenant vos cartes (CardGameConsole/Decks/) :");
             var deck2 = File.ReadLines("../../Decks/" + Console.ReadLine()).ToList();
 
-            var game = new Game("../../../CardGameEngine/EffectsScripts/", name1, deck1, name2, deck2);
+            var game = new Game("../../../CardGameEngine/EffectsScripts/", new ConsoleExternCallbacks(), deck1, deck2);
 
             Console.WriteLine(game.Player1.Deck.ToString());
             Console.WriteLine(game.Player2.Deck.ToString());
