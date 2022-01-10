@@ -74,7 +74,7 @@ namespace CardGameEngine
         }
 
         /// <summary>
-        /// Termine le tour du joueur actuel
+        /// Essaye de finir le tour du joueur actuel
         /// </summary>
         internal bool TryEndPlayerTurn()
         {
@@ -89,6 +89,9 @@ namespace CardGameEngine
             return true;
         }
 
+        /// <summary>
+        /// Termine le tour du joueur
+        /// </summary>
         public void EndPlayerTurn()
         {
             EndTurnEvent turnEvent = new EndTurnEvent(CurrentPlayer);

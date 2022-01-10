@@ -83,7 +83,10 @@ namespace CardGameEngine.GameSystems
         /// <param name="card">La carte à défausser</param>
         internal void PrepareCardUpgrade(Card card)
         {
-            throw new System.NotImplementedException();
+            if (Deck.Count > 0)
+            {
+                Deck.MoveTo(Hand, Deck[0], Hand.Count);
+            }
         }
 
         /// <summary>
