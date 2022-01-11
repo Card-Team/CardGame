@@ -67,7 +67,7 @@ namespace CardGameEngine.GameSystems.Targeting
                 if (cardFilter != null)
                     return cardFilter.Call().CheckUserDataType<ITargetable>(nameof(GetAutomaticTarget));
             }
-            catch (ScriptRuntimeException ex)   
+            catch (ScriptRuntimeException ex)
             {
                 throw new LuaException(ex, ex.CallStack.ToList());
             }

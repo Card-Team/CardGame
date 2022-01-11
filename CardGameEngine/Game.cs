@@ -313,7 +313,7 @@ namespace CardGameEngine
         [MoonSharpVisible(true)]
         internal void RevealCard(Player player, Card card)
         {
-            _externCallbacks.ExternShowCard(player,card);
+            _externCallbacks.ExternShowCard(player, card);
         }
 
 

@@ -13,9 +13,10 @@ namespace CardGameConsole
 
         public static void PrintError(ScriptRuntimeException exc)
         {
-            PrintError(exc,exc.CallStack.ToList());
+            PrintError(exc, exc.CallStack.ToList());
         }
-        public static void PrintError(ScriptRuntimeException exception,List<WatchItem> callstack)
+
+        public static void PrintError(ScriptRuntimeException exception, List<WatchItem> callstack)
         {
             var splitted = exception.DecoratedMessage.Split(':');
             var scriptName = splitted[0].Trim();
@@ -61,7 +62,8 @@ namespace CardGameConsole
                 var before = Console.ForegroundColor;
                 for (var i = 0; i < firstLine.Length; i++)
                 {
-                    if (i < watchItemLocation.FromChar || (watchItemLocation.ToChar != 0 && i > watchItemLocation.ToChar))
+                    if (i < watchItemLocation.FromChar ||
+                        (watchItemLocation.ToChar != 0 && i > watchItemLocation.ToChar))
                     {
                         Console.ForegroundColor = before;
                     }
@@ -72,6 +74,7 @@ namespace CardGameConsole
 
                     Console.Write(firstLine[i]);
                 }
+
                 Console.ForegroundColor = before;
             }
             else
@@ -118,7 +121,7 @@ namespace CardGameConsole
 
         public static void PrintError(LuaException exception)
         {
-            PrintError(exception.RuntimeException,exception.CallStack);
+            PrintError(exception.RuntimeException, exception.CallStack);
         }
     }
 }

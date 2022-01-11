@@ -145,10 +145,10 @@ namespace CardGameEngine.Cards
             {
                 //globals spécifique au cartes :
                 script.Globals["AskForTarget"] =
-                    (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
+                    (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
 
                 script.Globals["TargetsExists"] =
-                    (Func<List<int>, bool>)(list => game.LuaTargetsExists(Effect, effectOwner, list));
+                    (Func<List<int>, bool>) (list => game.LuaTargetsExists(Effect, effectOwner, list));
             });
         }
 
