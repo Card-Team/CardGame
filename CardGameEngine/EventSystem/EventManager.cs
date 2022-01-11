@@ -45,7 +45,8 @@ namespace CardGameEngine.EventSystem
             evenIfCancelled ??= false;
             postEvent ??= false;
 
-            return SubscribeToEvent(eventType, new LuaEventHandler(eventType, closure, evenIfCancelled.Value, postEvent.Value));
+            return SubscribeToEvent(eventType,
+                new LuaEventHandler(eventType, closure, evenIfCancelled.Value, postEvent.Value));
         }
 
         private IEventHandler SubscribeToEvent(Type type, IEventHandler handler)
@@ -66,10 +67,10 @@ namespace CardGameEngine.EventSystem
         /// <seealso cref="Event"/>
         public void UnsubscribeFromEvent(IEventHandler deleg)
         {
-            UnsubscribeFromEvent(deleg.EventType,deleg);
+            UnsubscribeFromEvent(deleg.EventType, deleg);
         }
 
-        private void UnsubscribeFromEvent(Type eventType,IEventHandler listener)
+        private void UnsubscribeFromEvent(Type eventType, IEventHandler listener)
         {
             if (_eventHandlersDict.ContainsKey(eventType))
                 _eventHandlersDict[eventType].Remove(listener);
@@ -77,7 +78,7 @@ namespace CardGameEngine.EventSystem
 
         internal void LuaUnsubscribeFromEvent(IEventHandler listener)
         {
-            UnsubscribeFromEvent(listener.EventType,listener);
+            UnsubscribeFromEvent(listener.EventType, listener);
         }
 
 
@@ -206,7 +207,7 @@ namespace CardGameEngine.EventSystem
 
             public override void HandleEvent(Event evt)
             {
-                _evt.Invoke((T)evt);
+                _evt.Invoke((T) evt);
             }
         }
 

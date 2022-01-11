@@ -141,6 +141,7 @@ namespace CardGameEngine.Cards.CardPiles
                     throw new InvalidOperationException(
                         $"La carte {card} a disparue de la pile {this} pendant l'opération de déplacement vers {postEvent.Event.DestPile}");
                 }
+
                 postEvent.Event.DestPile.Insert(postEvent.Event.DestIndex, postEvent.Event.Card);
             }
 

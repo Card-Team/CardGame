@@ -1,6 +1,4 @@
-﻿using CardGameEngine.GameSystems;
-
-namespace CardGameEngine.EventSystem.Events
+﻿namespace CardGameEngine.EventSystem.Events
 {
     /// <summary>
     /// Classe abstraite représentant les évènement pouvant être annulés

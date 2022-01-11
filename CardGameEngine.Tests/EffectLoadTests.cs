@@ -45,10 +45,10 @@ namespace CardGameTests
 
         [Test(Description = "Verifier que les effets bien formés sont acceptés")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetAllTestDataOfType)
-            , new object[] { LuaTestData.TestScriptType.Good })]
+            , new object[] {LuaTestData.TestScriptType.Good})]
         public void Test_Load_Effect_Good(object effectType, string script)
         {
-            var type = (EffectType)effectType;
+            var type = (EffectType) effectType;
             PutScript(script, type);
             Console.WriteLine(script);
             Assert.DoesNotThrow(() =>
@@ -59,10 +59,10 @@ namespace CardGameTests
 
         [Test(Description = "Verifier que les effets mal formés sont rejetés")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetAllTestDataOfType)
-            , new object[] { LuaTestData.TestScriptType.Bad })]
+            , new object[] {LuaTestData.TestScriptType.Bad})]
         public void Test_Load_Effect_Bad(object effectType, string script)
         {
-            var type = (EffectType)effectType;
+            var type = (EffectType) effectType;
             PutScript(script, type);
             Console.WriteLine(script);
             Assert.Throws<InvalidEffectException>(() =>
@@ -74,10 +74,10 @@ namespace CardGameTests
 
         [Test(Description = "Verifier que le chargement d'une carte contient bien les données attendues")]
         [TestCaseSource(typeof(LuaTestData), nameof(LuaTestData.GetNamedTestData),
-            new object[] { EffectType.Card, LuaTestData.TestScriptType.Good, "example.lua" })]
+            new object[] {EffectType.Card, LuaTestData.TestScriptType.Good, "example.lua"})]
         public void Test_Effect_Card_Data(object effectType, string scriptContent)
         {
-            var type = (EffectType)effectType;
+            var type = (EffectType) effectType;
             var path = Path.GetFileNameWithoutExtension(PutScript(scriptContent, type));
             _effectsDatabase = new EffectsDatabase(_randomDir);
             var supplier = _effectsDatabase[path];
@@ -106,7 +106,7 @@ namespace CardGameTests
             );
 
             Assert.Throws<ScriptRuntimeException>(() => eft.AllTargets[0].IsValidTarget(null!));
-            
+
             Assert.That(eft.AllTargets, Has.Exactly(1)
                 .With.Property(nameof(Target.Name))
                 .EqualTo("Un joueur")

@@ -6,7 +6,6 @@ using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
-using MoonSharp.Interpreter;
 
 namespace CardGameEngine.Cards
 {
@@ -101,10 +100,10 @@ namespace CardGameEngine.Cards
             {
                 //globals spécifique au cartes :
                 script.Globals["AskForTarget"] =
-                    (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
+                    (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
 
                 script.Globals["TargetsExists"] =
-                    (Func<List<int>, bool>)(list => game.LuaTargetsExists(Effect, effectOwner, list));
+                    (Func<List<int>, bool>) (list => game.LuaTargetsExists(Effect, effectOwner, list));
             });
         }
 

@@ -60,10 +60,10 @@ namespace CardGameEngine.GameSystems.Targeting
             if (!this.IsAutomatic)
                 throw new InvalidOperationException("la target n'est pas automatique");
             var cardFilter = this._cardFilter;
-            
+
             if (cardFilter != null)
                 return cardFilter.Call().CheckUserDataType<ITargetable>(nameof(GetAutomaticTarget));
-            
+
             throw new InvalidEffectException(
                 "l'effet est invalide car la  cible est automatique mais n'a pas de carte filter");
             //TODO afficher l'effet

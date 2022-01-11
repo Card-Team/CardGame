@@ -20,9 +20,8 @@ namespace CardGameEngine.Cards.CardPiles
         {
             MarkedForUpgrade = new HashSet<Card>();
         }
-        
-        [MoonSharpVisible(true)]
 
+        [MoonSharpVisible(true)]
         internal bool MoveForUpgrade(CardPile oldLocation, Card toUp)
         {
             var moveResult = oldLocation.MoveTo(this, toUp, 0);

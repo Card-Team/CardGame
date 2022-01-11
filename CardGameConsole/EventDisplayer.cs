@@ -5,7 +5,6 @@ using CardGameEngine.EventSystem.Events;
 using CardGameEngine.EventSystem.Events.CardEvents;
 using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 using CardGameEngine.GameSystems;
-using Spectre.Console;
 
 namespace CardGameConsole
 {

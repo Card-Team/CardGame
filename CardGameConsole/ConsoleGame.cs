@@ -83,12 +83,12 @@ namespace CardGameConsole
                     PrintInfo(Game.CurrentPlayer, false);
                     var choices = new Dictionary<string, int>
                     {
-                        { "Lister vos cartes + d'autres infos", 1 },
-                        { "Lister votre défausse", 2 },
-                        { "Lister les information adverses", 3 },
-                        { "Jouer une carte", 4 },
-                        { "Améliorer une carte", 5 },
-                        { "Terminer votre tour", 0 },
+                        {"Lister vos cartes + d'autres infos", 1},
+                        {"Lister votre défausse", 2},
+                        {"Lister les information adverses", 3},
+                        {"Jouer une carte", 4},
+                        {"Améliorer une carte", 5},
+                        {"Terminer votre tour", 0},
                     };
 
                     var choice = InputUtils.ChooseList("Veuillez choisir une action", choices);
@@ -119,7 +119,6 @@ namespace CardGameConsole
                 }
 
                 Game.EndPlayerTurn();
-                
             }
         }
 

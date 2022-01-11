@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
@@ -11,7 +10,6 @@ namespace CardGameConsole
     {
         public static Card? ChooseFrom(Player pov, IEnumerable<Card> list, bool annulable = false)
         {
-
             var split = list.SplitIntoPiles().ToList();
             var flattened = new Dictionary<string, Card>();
 
@@ -23,24 +21,24 @@ namespace CardGameConsole
 
             foreach (var pile in split)
             {
-                var builded = new List<string>();
+                var built = new List<string>();
                 foreach (var (card, visible) in pile.WithVisionInfo(pov))
                 {
                     var text = $"{index} - {(visible ? card.ToString() : "Inconnu")}";
-                    builded.Add(text);
+                    built.Add(text);
                     flattened[text] = card;
                     index++;
                 }
 
 
                 prompt.AddChoiceGroup(pile.Key.Display(pov),
-                    builded);
+                    built);
             }
 
             if (annulable)
             {
-                var retour = "⬅ Retour";
-                prompt.AddChoice(retour);
+                var retour = Emoji.Known.LeftArrow + " Retour";
+                prompt.AddChoice(Emoji.Replace(retour));
                 flattened[retour] = null!;
             }
 
@@ -64,7 +62,7 @@ namespace CardGameConsole
 
         public static T ChooseList<T>(string title, IEnumerable<T> elements)
         {
-            return ChooseList(title,elements.ToDictionary(e => e?.ToString() ?? "null", e => e));
+            return ChooseList(title, elements.ToDictionary(e => e?.ToString() ?? "null", e => e));
         }
     }
 }

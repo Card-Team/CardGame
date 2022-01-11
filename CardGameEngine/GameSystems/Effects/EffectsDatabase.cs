@@ -20,7 +20,7 @@ namespace CardGameEngine.GameSystems.Effects
         private readonly Dictionary<string, EffectSupplier>
             _effectDictionary = new Dictionary<string, EffectSupplier>();
 
-        private Dictionary<string,string> _scripts = new Dictionary<string, string>();
+        private Dictionary<string, string> _scripts = new Dictionary<string, string>();
 
         internal delegate Effect EffectSupplier();
 
@@ -41,7 +41,7 @@ namespace CardGameEngine.GameSystems.Effects
         {
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
             Table dump = UserData.GetDescriptionOfRegisteredTypes(true);
-            File.WriteAllText("./dump.txt",dump.Serialize());
+            File.WriteAllText("./dump.txt", dump.Serialize());
 
             foreach (var directory in Directory.EnumerateDirectories(path))
             {
@@ -115,7 +115,7 @@ namespace CardGameEngine.GameSystems.Effects
                 // Élements c# à intégrer dans le fichier lua
                 Globals =
                 {
-                    ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>)CreateTarget,
+                    ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>) CreateTarget,
                     ["TargetTypes"] = UserData.CreateStatic<TargetTypes>(),
                 }
             };

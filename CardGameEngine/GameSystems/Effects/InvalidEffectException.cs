@@ -11,7 +11,7 @@ namespace CardGameEngine.GameSystems.Effects
             base($"L'effet {effectId} de type {effectType} est invalide")
         {
         }
-        
+
         internal InvalidEffectException(string message) :
             base(message)
         {

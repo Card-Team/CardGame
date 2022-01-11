@@ -10,7 +10,7 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
     {
         public Player WhoPlayed { get; internal set; }
 
-        internal CardPlayEvent(Player whoPlayed,Card card) : base(card)
+        internal CardPlayEvent(Player whoPlayed, Card card) : base(card)
         {
             WhoPlayed = whoPlayed;
         }

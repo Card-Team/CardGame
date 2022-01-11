@@ -2,6 +2,5 @@
 {
     public class CardDescriptionChangeEvent : CardPropertyChangeEvent<string>
     {
-        
     }
 }

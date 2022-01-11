@@ -28,7 +28,8 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
         /// </summary>
         public int DestIndex { get; internal set; }
 
-        internal CardMovePileEvent(Card card, CardPile sourcePile, int sourceIndex, CardPile destPile, int destIndex) : base(card)
+        internal CardMovePileEvent(Card card, CardPile sourcePile, int sourceIndex, CardPile destPile, int destIndex) :
+            base(card)
         {
             SourcePile = sourcePile;
             SourceIndex = sourceIndex;

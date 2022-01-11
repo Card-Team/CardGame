@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using CardGameEngine.Cards;
-using CardGameEngine.GameSystems.Targeting;
 
 namespace CardGameEngine.GameSystems
 {

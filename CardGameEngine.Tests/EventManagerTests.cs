@@ -1,9 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using CardGameEngine.EventSystem;
+﻿using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace CardGameTests
 {
@@ -127,15 +124,16 @@ namespace CardGameTests
 
             _eventManager.SubscribeToEvent(superHandler);
             _eventManager.SubscribeToEvent(megaHandler);
-            _eventManager.SubscribeToEvent(postHandler,postEvent:true);
+            _eventManager.SubscribeToEvent(postHandler, postEvent: true);
 
             var postsender = _eventManager.SendEvent(originalSubClassEvent);
             postsender.Dispose();
 
             Assert.That(receivedEvent, Is.Not.Null.And.SameAs(megaReceived).And.SameAs(originalSubClassEvent),
                 "L'évènement de type classe fille n'est pas reçu par un écouteur de la classe parente");
-            
-            Assert.That(postReceived,Is.Not.Null.And.SameAs(originalSubClassEvent), "L'évenement POST de type classe fille n'est pas recu par un écouteur POST de la classe parente");
+
+            Assert.That(postReceived, Is.Not.Null.And.SameAs(originalSubClassEvent),
+                "L'évenement POST de type classe fille n'est pas recu par un écouteur POST de la classe parente");
         }
 
 
@@ -155,7 +153,7 @@ namespace CardGameTests
 
             Assert.That(firstEvent, Is.Not.Null, "L'évènement n'a pas été reçu par le premier écouteur");
             Assert.That(wasFirstEventNotNull, Is.Not.Null, "L'évènement n'a pas été reçu par le deuxième écouteur");
-            
+
             Assert.That(wasFirstEventNotNull,
                 Is.True, "Le premier évènement n'a pas été reçu avant le second évènement");
         }
