@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.EventSystem.Events;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.EventSystem
 {
@@ -97,7 +98,7 @@ namespace CardGameEngine.EventSystem
                                                 (evt is CancellableEvent cancelled && (!cancelled.Cancelled ||
                                                     eventHandler.EvenIfCancelled))))
                 {
-                    eventHandler.HandleEvent(evt);
+                    eventHandler.HandleEvent(this,evt);
                 }
             }
 
@@ -142,7 +143,7 @@ namespace CardGameEngine.EventSystem
                 if (evt is CancellableEvent == false || (evt is CancellableEvent cancelled &&
                                                          (!cancelled.Cancelled || eventHandler.EvenIfCancelled)))
                 {
-                    eventHandler.HandleEvent(evt);
+                    eventHandler.HandleEvent(this,evt);
                 }
             }
         }
@@ -175,7 +176,7 @@ namespace CardGameEngine.EventSystem
             /// Envoi l'évent <paramref name="evt"/> au délégué
             /// </summary>
             /// <param name="evt">L'event à envoyer au délégué</param>
-            public void HandleEvent(Event evt);
+            public void HandleEvent(EventManager evm,Event evt);
         }
 
         /// <inheritdoc cref="IEventHandler"/>
@@ -190,7 +191,7 @@ namespace CardGameEngine.EventSystem
             public bool EvenIfCancelled { get; }
             public bool PostEvent { get; }
             public abstract Type EventType { get; }
-            public abstract void HandleEvent(Event evt);
+            public abstract void HandleEvent(EventManager evmn,Event evt);
         }
 
         private class EngineEventHandler<T> : EventHandlerBase where T : Event
@@ -205,7 +206,7 @@ namespace CardGameEngine.EventSystem
 
             public override Type EventType => typeof(T);
 
-            public override void HandleEvent(Event evt)
+            public override void HandleEvent(EventManager evm,Event evt)
             {
                 _evt.Invoke((T) evt);
             }
@@ -214,6 +215,10 @@ namespace CardGameEngine.EventSystem
         private class LuaEventHandler : EventHandlerBase
         {
             public override Type EventType { get; }
+            
+            [MoonSharpVisible(true)]
+            public bool Single { get; internal set; }
+            
             private readonly Closure _evt;
 
             public LuaEventHandler(Type eventType, Closure closure, bool evenIfCancelled, bool postEvent) : base(
@@ -224,9 +229,11 @@ namespace CardGameEngine.EventSystem
                 _evt = closure;
             }
 
-            public override void HandleEvent(Event evt)
+            public override void HandleEvent(EventManager evm,Event evt)
             {
                 _evt.Call(Convert.ChangeType(evt, EventType));
+                if(Single)
+                    evm.LuaUnsubscribeFromEvent(this);
             }
         }
 
