@@ -157,6 +157,7 @@ namespace CardGameEngine
         /// <param name="player">Le joueur</param>
         /// <param name="card">La carte jouée</param>
         /// <param name="upgrade">Améliore ou joue</param>
+        [MoonSharpVisible(false)]
         public bool PlayCard(Player player, Card card, bool upgrade)
         {
             if (card.IsVirtual)
@@ -191,6 +192,7 @@ namespace CardGameEngine
             return upgrade ? UpgradeCard(card) : PlayCardEffect(player, card, player.Hand, player.Discard);
         }
 
+        [MoonSharpVisible(true)]
         internal bool PlayCardVirtual(Player effectowner, Card card)
         {
             if (!card.IsVirtual)
@@ -204,6 +206,7 @@ namespace CardGameEngine
             return PlayCardEffect(effectowner, card, null,null);
         }
         
+        [MoonSharpVisible(true)]
         internal bool PlayCardFromEffect(Player effectowner, Card card)
         {
             if (card.IsVirtual)
