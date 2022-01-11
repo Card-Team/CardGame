@@ -12,7 +12,7 @@ function card_filter()
 end
 
 targets = {
-    CreateTarget("le joueur dont son nombre de PA va diminuer", TargetTypes.OtherPlayer, true, card_filter),
+    CreateTarget("le joueur dont son nombre de PA va diminuer", TargetTypes.Player, true, card_filter),
 }
 
 

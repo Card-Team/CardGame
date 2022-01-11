@@ -1,32 +1,60 @@
-﻿max_level = 3
+﻿max_level = 2
 image_id = 636
 
 name = "Visionnaire"
 pa_cost = 3
 --TODO a definir le nombre de cout
 
-description = "Gagner les points d'action d'une carte de ton deck selectionné"
+base_description ="Niveau 1 Cette carte vous permet de voir les 2 premiers cartes du deck"
+description = base_description
 
---fonction qui recupere toute les cartes de sa main sauf celle ci est lui demande d'en selectionné une
-function cardFilter(aCard)
-    return EffectOwner.Hand.Contains(aCard)
-            and ThisCard ~= aCard
+function cardFilter1(aCard)
+    return EffectOwner.Deck[0]
 end
-
+function cardFilter2(aCard)
+    return EffectOwner.Deck[1]
+end
+function cardFilter2(aCard)
+    return EffectOwner.Deck[2]
+end
 targets = {
-    CreateTarget("Carte a gagner ses point d'action", TargetTypes.Card, false, cardFilter),
+    CreateTarget("la premiere carte du deck", TargetTypes.Card, true, cardFilter1),
+    CreateTarget("la deuxieme carte du deck", TargetTypes.Card, true, cardFilter2),
+    CreateTarget("la troisieme carte du deck", TargetTypes.Card, true, cardFilter3)
 }
 
-
---Visionnaire TODO ?0
+--Visionnaire
 
 function precondition()
-    return TargetsExists({ 1 })
+    --si la carte est au niveau 1 ou 2
+    if This.CurrentLevel.Value == 1 then
+        return EffectOwner.Deck.Count >= 2
+    else
+        return EffectOwner.Deck.Count >= 3
+    end
 end
 
 function do_effect()
-    --on recupere les points d'action de la carte choisis et on modifie grace a TryChangeValue son cout actuelle
-    local coutCard = AskForTarget(1).Cost.Value                         --cout de la carte 
-    local pointActionAdv = EffectOwner.ActionPoints.Value               --point d'action du joueur 
-    EffectOwner.ActionPoints.TryChangeValue(pointActionAdv + coutCard)    --ajout du cout de la carte sur les points d'action
+    --voir les dernieres cartes
+    if This.CurrentLevel.Value == 1 then
+        local card1 = AskForTarget(1)            --la carte 1 Deck
+        local card2 = AskForTarget(2)            --la carte 2
+        EffectOwner.RevealCard(card1)            -- fait voir les carte 1
+        EffectOwner.RevealCard(card2)            -- fait voir les carte 2
+    else
+        local card1 = AskForTarget(1)            --la carte 1 du Deck
+        local card2 = AskForTarget(2)            --la carte 2 du Deck
+        local card3 = AskForTarget(3)            --la carte 3
+        EffectOwner.RevealCard(card1)            -- fait voir les carte selectionner
+        EffectOwner.RevealCard(card2)
+        EffectOwner.RevealCard(card3)
+    end
+end
+
+function on_level_change(old, new)
+    if (new == 1) then
+        This.Description.TryChangeValue(base_description)
+    else
+        This.Description.TryChangeValue("Niveau 2 cette carte vous permet de voir les 3 premiers cartes du deck")
+    end
 end
