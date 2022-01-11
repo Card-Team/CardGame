@@ -5,6 +5,7 @@ using System.Linq;
 using CardGameEngine.GameSystems.Targeting;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop;
+using MoonSharp.Interpreter.Serialization;
 
 namespace CardGameEngine.GameSystems.Effects
 {
@@ -39,6 +40,8 @@ namespace CardGameEngine.GameSystems.Effects
         internal EffectsDatabase(string path)
         {
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
+            Table dump = UserData.GetDescriptionOfRegisteredTypes(true);
+            File.WriteAllText("./dump.txt",dump.Serialize());
 
             foreach (var directory in Directory.EnumerateDirectories(path))
             {

@@ -13,11 +13,22 @@ namespace CardGameConsole
 
         public static void PrintHand(this Player player)
         {
-            Console.WriteLine("Cartes dans votre main : ");
-            foreach (Card card in player.Hand)
+            for (var i = 0; i < player.Hand.Count; i++)
             {
-                Console.WriteLine(card);
+                Console.WriteLine($"{i} - {player.Hand[i]}");
             }
-        } 
+        }
+
+        public static void PrintDiscard(this Player player)
+        {
+            for (var i = 0; i < player.Discard.Count; i++)
+            {
+                Console.Write($"{i} - {player.Discard[i]}");
+                if (player.Discard.IsMarkedForUpgrade(player.Discard[i]))
+                {
+                    Console.Write(" [Marquée]\n");
+                }
+            }
+        }
     }
 }

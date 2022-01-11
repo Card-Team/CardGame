@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CardGameEngine;
+using CardGameEngine.Cards;
 using CardGameEngine.EventSystem.Events;
 using CardGameEngine.EventSystem.Events.CardEvents;
 using CardGameEngine.EventSystem.Events.GameStateEvents;
@@ -60,34 +62,54 @@ namespace CardGameConsole
             {
                 ErrorUtils.PrintError(exception);
             }
+            catch (InvalidOperationException exception)
+            {
+                if (exception.TargetSite.DeclaringType?.Namespace?.StartsWith("CardGameEngine") == true)
+                {
+                    ErrorUtils.PrintError(exception);
+                }
+                else throw;
+            }
         }
 
         private static void GameLoop()
         {
             while (!_gameEnded)
             {
-                PrintInfo();
+                PrintInfo(Game.CurrentPlayer);
                 var turnEnded = false;
                 while (!turnEnded)
                 {
+                    Console.WriteLine("---------------------------");
                     Console.WriteLine("\nAppuyez sur 0 pour terminer votre tour");
                     Console.WriteLine("Appuyez sur 1 pour lister vos cartes + d'autres infos");
-                    Console.WriteLine("Appuyez sur 2 pour jouer une carte");
-                    Console.WriteLine("Appuyez sur 3 pour améliorer une carte");
+                    Console.WriteLine("Appuyez sur 2 pour lister votre défausse");
+                    Console.WriteLine("Appuyez sur 3 pour lister les information adverses");
+                    Console.WriteLine("Appuyez sur 4 pour jouer une carte");
+                    Console.WriteLine("Appuyez sur 5 pour améliorer une carte");
 
-                    var choice = InputUtils.ChooseFromList(Enumerable.Range(0, 4).ToList());
+                    var choice = InputUtils.ChooseFromList(Enumerable.Range(0, 6).ToList());
+                    Console.WriteLine("---------------------------");
                     switch (choice)
                     {
                         case 0:
                             turnEnded = true;
                             break;
                         case 1:
-                            PrintInfo();
+                            Console.WriteLine("Cartes dans votre main : ");
+                            PrintInfo(Game.CurrentPlayer);
                             break;
                         case 2:
-                            PlayCard(false);
+                            Console.WriteLine("Votre défausse : ");
+                            Game.CurrentPlayer.PrintDiscard();
                             break;
                         case 3:
+                            PrintInfo(Game.CurrentPlayer.OtherPlayer);
+                            break;
+                        case 4:
+                            PlayCard(false);
+                            break;
+                        case 5:
                             PlayCard(true);
                             break;
                     }
@@ -97,13 +119,25 @@ namespace CardGameConsole
             }
         }
 
-        private static void PrintInfo()
+        private static void PrintInfo(Player player)
         {
-            Console.WriteLine($"\nTour de {Game.CurrentPlayer.GetName()}");
-            Game.CurrentPlayer.PrintHand();
-            Console.WriteLine($"Nombre de cartes dans votre défausse : {Game.CurrentPlayer.Discard.Count}");
-            Console.WriteLine($"Nombre de cartes dans votre deck : {Game.CurrentPlayer.Deck.Count}");
-            Console.WriteLine($"Nombre de points d'actions: {Game.CurrentPlayer.ActionPoints.Value}");
+            if (player == Game.CurrentPlayer)
+            {
+                Console.WriteLine($"\nTour de {Game.CurrentPlayer.GetName()}");
+                Game.CurrentPlayer.PrintHand();
+                Console.WriteLine($"Nombre de cartes dans votre défausse : {Game.CurrentPlayer.Discard.Count}");
+                Console.WriteLine($"Nombre de cartes dans votre deck : {Game.CurrentPlayer.Deck.Count}");
+                Console.WriteLine($"Nombre de points d'actions: {Game.CurrentPlayer.ActionPoints.Value}");
+            }
+            else
+            {
+                Console.WriteLine($"Nombre de cartes dans la main adverse : {player.Hand.Count}");
+                Console.WriteLine($"Nombre de cartes dans le deck adverse : {player.Deck.Count}");
+
+                Console.WriteLine($"Cartes de la défausse adverse :");
+                player.PrintDiscard();
+                Console.WriteLine($"Nombre de points d'actions de l'adversaire: {player.ActionPoints.Value}");
+            }
         }
 
         private static void RegisterEventListeners()
@@ -124,8 +158,18 @@ namespace CardGameConsole
 
         private static void PlayCard(bool upgrade)
         {
-            var chosen = InputUtils.ChooseFrom(Game.CurrentPlayer,
-                Game.CurrentPlayer.Hand.Where(c => c.CanBePlayed(Game, Game.CurrentPlayer)));
+            var available = Game.CurrentPlayer.Hand.Where(c => c.Cost.Value <= Game.CurrentPlayer.ActionPoints.Value).ToList();
+            if (!upgrade)
+            {
+                available = available.Where(c => c.CanBePlayed(Game, Game.CurrentPlayer)).ToList();
+            }
+
+            if (available.Count == 0)
+            {
+                Console.WriteLine("Aucune carte disponible");
+                return;
+            }
+            var chosen = InputUtils.ChooseFrom(Game.CurrentPlayer,available);
             Game.PlayCard(Game.CurrentPlayer, chosen, upgrade);
         }
     }

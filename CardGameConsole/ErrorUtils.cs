@@ -6,6 +6,8 @@ namespace CardGameConsole
 {
     public class ErrorUtils
     {
+        private const string ScriptError = "[Erreur de script] : ";
+
         public static void PrintError(ScriptRuntimeException exception)
         {
             var splitted = exception.DecoratedMessage.Split(':');
@@ -15,14 +17,29 @@ namespace CardGameConsole
             for (var index = 0; index < exception.CallStack.Count; index++)
             {
                 var watchItem = exception.CallStack[index];
+                var text = $"[Erreur de script] : Dans {watchItem.Name} {FormatSourceLocation(watchItem.Location)}";
                 Console.Error.Write(
-                    $"[Erreur de script] : Dans {watchItem.Name} {FormatSourceLocation(watchItem.Location)} : ");
-                ColoredSource(scriptName, watchItem.Location, index == exception.CallStack.Count - 1);
+                    text);
+                if (!watchItem.Location.IsClrLocation && !watchItem.Name.StartsWith("<"))
+                {
+                    Console.Write(" : ");
+                    ColoredSource(scriptName, text.Length - ScriptError.Length, watchItem.Location,
+                        index == exception.CallStack.Count - 1);
+                }
+
                 Console.WriteLine("");
             }
         }
 
-        private static void ColoredSource(string scriptName, SourceRef watchItemLocation, bool isError)
+        public static void PrintError(InvalidOperationException exception)
+        {
+            var bef = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"[Erreure Moteur] : {exception.Message}");
+            Console.ForegroundColor = bef;
+        }
+
+        private static void ColoredSource(string scriptName, int padding, SourceRef watchItemLocation, bool isError)
         {
             var scriptContent = ConsoleGame.Game.GetScriptByName(scriptName);
             if (scriptContent == null) return;
@@ -34,11 +51,12 @@ namespace CardGameConsole
             string lastLine = strings[watchItemLocation.ToLine - 1];
             if (!isMultiLine)
             {
+                var before = Console.ForegroundColor;
                 for (var i = 0; i < firstLine.Length; i++)
                 {
                     if (i < watchItemLocation.FromChar || i > watchItemLocation.ToChar)
                     {
-                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = before;
                     }
                     else
                     {
@@ -50,13 +68,31 @@ namespace CardGameConsole
             }
             else
             {
-                for (var i = 0; i < Math.Min(firstLine.Length, 6); i++)
+                Console.Write("|");
+                for (var i = 0; i < firstLine.Length; i++)
                 {
                     Console.Write(firstLine[i]);
                 }
 
-                Console.Write("...");
-                for (var i = 0; i < Math.Min(lastLine.Length, 6); i++)
+                Console.WriteLine("");
+
+                Console.Write(ScriptError);
+                for (int i = 0; i < padding; i++)
+                {
+                    Console.Write(" ");
+                }
+
+                Console.Write("|");
+                Console.WriteLine("...");
+
+                Console.Write(ScriptError);
+                for (int i = 0; i < padding; i++)
+                {
+                    Console.Write(" ");
+                }
+
+                Console.Write("|");
+                for (var i = 0; i < lastLine.Length; i++)
                 {
                     Console.Write(lastLine[i]);
                 }

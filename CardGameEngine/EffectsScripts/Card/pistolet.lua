@@ -13,18 +13,22 @@ function cardFilter()
     if (OtherHand.Count == 0) then
         return nil
     elseif (current_level == 1) then
-        local minCard = OtherHand[1].Cost.Value
+        local minCardCost = OtherHand[0].Cost.Value
+        local minCard = OtherHand[0]
         for card in OtherHand do
-            if (card.Cost.Value < minCard) then
-                minCard = card.Cost.Value
+            if (card.Cost.Value < minCardCost) then
+                minCardCost = card.Cost.Value
+                minCard = card
             end
         end
         return minCard
     else
-        local maxCard = OtherHand[1].Cost.Value
+        local maxCardCost = OtherHand[1].Cost.Value
+        local maxCard = OtherHand[1]
         for card in OtherHand do
-            if (card.Cost.Value > maxCard) then
-                maxCard = card.Cost.Value
+            if (card.Cost.Value > maxCardCost) then
+                maxCardCost = card.Cost.Value
+                maxCard = card
             end
         end
         return maxCard

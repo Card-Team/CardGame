@@ -19,7 +19,7 @@ namespace CardGameConsole
             foreach (var pile in split)
             {
                 if (pile.Key != PileIdentifier.Unknown)
-                    Console.WriteLine($"{pile.Key} : ");
+                    Console.WriteLine($"{pile.Key.Display()} : ");
                 foreach (var (card, visible) in pile.WithVisionInfo(pov))
                 {
                     Console.WriteLine($"{index} - {(visible ? card.ToString() : "Inconnu")}");

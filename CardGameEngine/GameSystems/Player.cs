@@ -7,6 +7,7 @@ using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
 using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems.Targeting;
+using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.GameSystems
 {
@@ -64,13 +65,15 @@ namespace CardGameEngine.GameSystems
         {
             _game = game;
             _eventManager = game.EventManager;
-            
+
             Deck = new CardPile(game.EventManager, cards);
             Hand = new CardPile(game.EventManager, 5);
             Discard = new DiscardPile(game.EventManager);
-            
+
             ActionPoints = new EventProperty<Player, int, ActionPointsEditEvent>(this, game.EventManager, 0);
-            MaxActionPoints = new EventProperty<Player, int, MaxActionPointsEditEvent>(this, game.EventManager, Game.DefaultMaxActionPoint);
+            MaxActionPoints =
+                new EventProperty<Player, int, MaxActionPointsEditEvent>(this, game.EventManager,
+                    Game.DefaultMaxActionPoint);
         }
 
 
@@ -78,6 +81,7 @@ namespace CardGameEngine.GameSystems
         /// Piocher une carte
         /// </summary>
         /// <param name="card">La carte à piocher</param>
+        [MoonSharpVisible(true)]
         internal void DrawCard()
         {
             if (Deck.Count > 0)
@@ -91,13 +95,14 @@ namespace CardGameEngine.GameSystems
         /// </summary>
         /// <seealso cref="DiscardPile"/>
         /// <seealso cref="CardPile"/>
+        [MoonSharpVisible(true)]
         internal void LoopDeck()
         {
             var evt = new DeckLoopEvent(this);
             using (var post = _eventManager.SendEvent(evt))
             {
                 var toLoop = post.Event.Player;
-                foreach (Card card in toLoop.Discard)
+                foreach (var card in toLoop.Discard.ToList())
                 {
                     if (toLoop.Discard.IsMarkedForUpgrade(card))
                     {
@@ -107,7 +112,6 @@ namespace CardGameEngine.GameSystems
                     toLoop.Discard.MoveTo(toLoop.Deck, card, 0);
                 }
             }
-            
         }
     }
 }

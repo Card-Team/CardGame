@@ -1,4 +1,5 @@
 ﻿using CardGameEngine.EventSystem.Events;
+using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.EventSystem
 {
@@ -44,6 +45,7 @@ namespace CardGameEngine.EventSystem
         /// Essaye de changer la valeur de la propriété par la nouvelle entrée
         /// </summary>
         /// <param name="newVal">La nouvelle valeur</param>
+        [MoonSharpVisible(true)]
         internal T TryChangeValue(T newVal)
         {
             var evt = new ET

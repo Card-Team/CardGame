@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using CardGameEngine;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
 
@@ -19,6 +20,26 @@ namespace CardGameConsole
     }
     public static class PileUtils
     {
+
+        public static string Display(this PileIdentifier pileIdentifier)
+        {
+            return pileIdentifier switch
+            {
+                PileIdentifier.Player1Deck => IsCurrent("Votre deck","Le deck adverse"),
+                PileIdentifier.Player1Hand => IsCurrent("Votre main","La main adverse"),
+                PileIdentifier.Player1Discard => IsCurrent("Votre défausse","La défausse adverse"),
+                PileIdentifier.Player2Deck => IsCurrent("Le deck adverse","Votre deck"),
+                PileIdentifier.Player2Hand => IsCurrent("La main adverse","Votre main"),
+                PileIdentifier.Player2Discard => IsCurrent("La défausse adverse","Votre défausse"),
+                PileIdentifier.Unknown => "Inconnu",
+                _ => throw new ArgumentOutOfRangeException(nameof(pileIdentifier), pileIdentifier, null)
+            };
+        }
+
+        private static string IsCurrent(string votreDeck, string leDeckAdverse)
+        {
+            return ConsoleGame.Game.CurrentPlayer == ConsoleGame.Game.Player1 ? votreDeck : leDeckAdverse;
+        }
 
         public static IEnumerable<IGrouping<PileIdentifier, Card>> SplitIntoPiles(this IEnumerable<Card> cardList)
         {

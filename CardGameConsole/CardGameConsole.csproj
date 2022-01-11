@@ -46,6 +46,7 @@
     <ItemGroup>
         <Compile Include="ConsoleExternCallbacks.cs" />
         <Compile Include="ErrorUtils.cs" />
+        <Compile Include="EventDisplayer.cs" />
         <Compile Include="InputUtils.cs" />
         <Compile Include="ConsoleGame.cs" />
         <Compile Include="PileUtils.cs" />

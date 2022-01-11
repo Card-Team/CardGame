@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events.CardEvents;
+using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.Cards.CardPiles
 {
@@ -121,6 +122,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <param name="card">La carte à bouger</param>
         /// <param name="newPosition">La position à prendre</param>
         /// <exception cref="NotInPileException">Si la carte n'est pas dans la pile</exception>
+        [MoonSharpVisible(true)]
         internal virtual bool MoveTo(CardPile newCardPile, Card card, int newPosition)
         {
             if (!_cardList.Contains(card)) throw new NotInPileException(card);
@@ -151,6 +153,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <param name="card">La carte à bouger</param>
         /// <param name="newPosition">La position à prendre</param>
         /// <exception cref="NotInPileException">Si la carte n'est pas dans la pile</exception>
+        [MoonSharpVisible(true)]
         internal bool MoveInternal(Card card, int newPosition)
         {
             return MoveTo(this, card, newPosition);

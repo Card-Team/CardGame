@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CardGameEngine.EventSystem;
+using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.Cards.CardPiles
 {
@@ -19,8 +20,10 @@ namespace CardGameEngine.Cards.CardPiles
         {
             MarkedForUpgrade = new HashSet<Card>();
         }
+        
+        [MoonSharpVisible(true)]
 
-        public bool MoveForUpgrade(CardPile oldLocation, Card toUp)
+        internal bool MoveForUpgrade(CardPile oldLocation, Card toUp)
         {
             var moveResult = oldLocation.MoveTo(this, toUp, 0);
             if (moveResult == false) return false;
@@ -29,6 +32,7 @@ namespace CardGameEngine.Cards.CardPiles
             return true;
         }
 
+        [MoonSharpVisible(true)]
         internal override bool MoveTo(CardPile newCardPile, Card card, int newPosition)
         {
             var moveResult = base.MoveTo(newCardPile, card, newPosition);
