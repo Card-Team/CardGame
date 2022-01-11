@@ -5,7 +5,7 @@ name = "Visionnaire"
 pa_cost = 3
 --TODO a definir le nombre de cout
 
-base_description ="Niveau 1 Cette carte vous permet de voir les 2 premiers cartes de votre deck"
+base_description ="Cette carte vous permet de voir les 2 premiers cartes de votre deck"
 description = base_description
 
 function cardFilter1(aCard)

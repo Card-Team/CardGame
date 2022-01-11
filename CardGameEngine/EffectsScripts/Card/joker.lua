@@ -28,8 +28,8 @@ end
 function do_effect()
     if (current_level == max_level) then
         --application des 2 effets cartes lvl2
-        effet1 = AskForTarget(1)          --var qui recuper l'effet 1
-        effet2 = AskForTarget(2)          --var qui recuper l'effet 2
+        effet1 = AskForTarget(1)                 --var qui recuper l'effet 1
+        effet2 = AskForTarget(2)                 --var qui recuper l'effet 2
         Game.PlayCard(EffectOwner, effet1)       --joue l'effet de la 1 carte
         Game.PlayCard(EffectOwner, effet2)       --joue l'effet de la 2 carte
     else

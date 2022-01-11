@@ -4,7 +4,7 @@ image_id = 626
 name = "Espion"
 pa_cost = 3
 
-description = "voir une carte de la main de l'adversaire"
+description = "voir une carte aleatoire de la main de l'adversaire"
 
 --fonction qui recupere toute les cartes de sa main
 function cardFilter()
@@ -26,5 +26,5 @@ end
 function do_effect()
     --on recupere la carte de l'adversaire
     local card = AskForTarget(1)                        --la carte
-    EffectOwner.OtherPlayer.RevealCard(card)            -- fait voir la carte selectionner de la main de l'adversaire
+    Game.RevealCard(EffectOwner,card)                   -- fait voir la carte selectionner de la main de l'adversaire
 end

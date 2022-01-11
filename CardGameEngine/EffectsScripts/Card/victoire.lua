@@ -24,8 +24,8 @@ function on_level_change(old, new)
     elseif (new == max_level) then
         Game.MakeWin(EffectOwner)
     elseif (max_level - new < 5) then
-        This.Description.TryChangeValue("Plus que " .. max_level - current_level .. " améliorations de la carte pour gagner la partie.")
+        This.Description.TryChangeValue("Plus que ".. max_level - current_level .." améliorations pour gagner la partie.")
     else
-        This.Description.TryChangeValue("La carte est au niveau : " .. current_level)
+        This.Description.TryChangeValue("La carte est au niveau : ".. current_level)
     end
 end

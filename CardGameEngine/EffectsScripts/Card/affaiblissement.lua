@@ -4,7 +4,7 @@ image_id = 523
 name = "affaiblissement"
 pa_cost = 3
 
-description = "Fait baisser le coût d'action de l'adversaire avec le cout d'une carte aleatoire"
+description = "Fait baisser le coût d'action de l'adversaire avec le cout d'une carte aleatoire de ton deck"
 
 function card_filter()
     -- carte choisis aleatoirement depuis ton deck
@@ -23,9 +23,15 @@ function precondition()
     return EffectOwner.Deck.Count > 0
 end
 
+coutCard=0
+
+function baisserPointAction(startEvent)
+    local pointActionAdv = startEvent.Player.ActionPoints.Value                   --point d'action de l'adversaire
+    startEvent.Player.ActionPoints.TryChangeValue(math.max(pointActionAdv - coutCard,0))--commence l'evenement au prochain tour : il baissera ses points d'action apres le prochain tour
+end
+
 function do_effect()
     --prends le cout de CardPile est enleve le nombre de pints d'action a l'edversaire
-    local coutCard = AskForTarget(1).Cost.Value                                         --cout de la carte
-    local pointActionAdv = EffectOwner.OtherPlayer.ActionPoints.Value                   --point d'action de l'adversaire
-    EffectOwner.OtherPlayer.ActionPoints.TryChangeValue(pointActionAdv - coutCard)        --on enleve au cout d'action le cout de la carte
+    coutCard = AskForTarget(1).Cost.Value                                         --cout de la carte
+    SubscribeTo(StartTurnEvent,baisserPointAction,false,true).Single= true               --s'abonne a l'evenement
 end

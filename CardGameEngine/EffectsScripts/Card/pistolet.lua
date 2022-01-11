@@ -4,7 +4,7 @@ image_id = 569
 name = "Pistolet"
 pa_cost = 2
 
-description = "met une carte dans sa deffause (1 -> carte avec cout d'action plus bas 2 -> carte avec cout d'action plus haut"
+description = "lvl 1 -> Défausse la carte au plus faible cout de l'adversaire, lvl2 -> défausse celle au plus haut cout" 
 
 
 
@@ -36,7 +36,7 @@ function cardFilter()
 end
 
 targets = {
-    CreateTarget("met une carte dans sa deffause (1 -> carte avec cout d'action plus bas 2 -> carte avec cout d'action plus haut", TargetTypes.Card, true, cardFilter),
+    CreateTarget("défausse la carte la plus faible en cout de l'adversaire", TargetTypes.Card, true, cardFilter),
 }
 
 function precondition()
@@ -44,6 +44,6 @@ function precondition()
 end
 
 function do_effect()
-    local carte = AskForTarget(1)                                                   --carte
+    local carte = AskForTarget(1)                                                     --carte
     EffectOwner.OtherPlayer.Hand.MoveTo(EffectOwner.OtherPlayer.Discard, carte, 0)    --prends la carte de l'adversaire depuis la main et la met dans sa defausse
 end

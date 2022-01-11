@@ -4,12 +4,12 @@ image_id = 517
 name = "Carte Blanche"
 pa_cost = 2
 
-base_description = "Cette carte peut copier l'effet d'une carte"
+base_description = "Cette carte peut copier l'effet d'une carte de la main"
 description = base_description
 
 function card_filter(a_card)
     return EffectOwner.Hand.Contains(a_card)
-            and a_card ~= This
+            and a_card.Name.Value ~= This.Name.Value
 end
 
 targets = {
@@ -26,14 +26,13 @@ end
 carte_copie = nil
 function do_effect()
     if (carte_copie == nil) then
-        carte_copie = AskForTarget(1)
+        carte_copie = AskForTarget(1).Virtual()
         This.Cost.TryChangeValue(carte_copie.Cost.Value)
         This.Description.TryChangeValue("Cette carte a pris l'effet de la carte " ..carte_copie.Name.Value)
-        return false
+        return false    --pour pas carteblanche se fasse defaussé (A REVOIR !!)
     else
-        Game.PlayCard(EffectOwner, carte_copie,false)
+        Game.PlayCardVirtual(EffectOwner, carte_copie)
         This.Description.TryChangeValue(base_description)
     end
-
 end
 
