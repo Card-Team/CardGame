@@ -11,6 +11,10 @@ using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
 
+namespace CardGameEngine.EventSystem.Events.GameStateEvents
+{
+}
+
 namespace CardGameEngine
 {
     /// <summary>
@@ -36,11 +40,6 @@ namespace CardGameEngine
         /// Le joueur 2
         /// </summary>
         public Player Player2 { get; }
-
-        /// <summary>
-        /// Est-ce que la partie est terminée
-        /// </summary>
-        private Player? _winner = null;
 
         /// <summary>
         /// Gestionnaire des évènements de la partie
@@ -79,7 +78,7 @@ namespace CardGameEngine
             CurrentPlayer = Player2;
         }
 
-        public Player StartGame()
+        public void StartGame()
         {
             for (var i = 0; i < 3; i++)
             {
@@ -91,13 +90,8 @@ namespace CardGameEngine
             {
                 card.OnCardCreate();
             }
-
-            while (_winner == null)
-            {
-                StartPlayerTurn(CurrentPlayer.OtherPlayer);
-            }
-
-            return _winner;
+            
+            StartPlayerTurn(CurrentPlayer.OtherPlayer);
         }
 
         /// <summary>
@@ -106,7 +100,10 @@ namespace CardGameEngine
         /// <param name="playerToWin">La joueur à faire gagner</param>
         internal void MakeWin(Player playerToWin)
         {
-            _winner = playerToWin;
+            CurrentPlayer = null;
+
+            var evt = new PlayerWinEvent(playerToWin);
+            using var post = EventManager.SendEvent(evt);
         }
 
         /// <summary>
