@@ -47,58 +47,65 @@ namespace CardGameConsole
         {
             foreach (var group in cards)
             {
-                Table table = GetDefaultTable(group.Key.Display(),
-                    group.Key == PileIdentifier.CurrentPlayerDiscard || group.Key == PileIdentifier.OtherPlayerDiscard);
+                var defausse = group.Key == PileIdentifier.CurrentPlayerDiscard ||
+                               group.Key == PileIdentifier.OtherPlayerDiscard;
+                Table table = GetDefaultTable(group.Key.Display(), defausse);
 
                 foreach (var (card, visible) in group.WithVisionInfo())
                 {
-                    Markup[] cols;
+                    List<Markup> cols = new List<Markup>();
                     if (visible)
                     {
-                        var precondition = card.CanBePlayed(ConsoleGame.Game, ConsoleGame.Game.CurrentPlayer);
-                        var cost2Much = card.Cost.Value > ConsoleGame.Game.CurrentPlayer.ActionPoints.Value;
-                        var level = card.CurrentLevel.Value == card.MaxLevel;
-
-                        cols = new[]
+                        if (defausse)
                         {
-                            new Markup((!precondition || cost2Much ? "[red]" : "")
-                                       + card.Name.Value +
-                                       (!precondition || cost2Much ? "[/]" : "")),
+                            cols.Add(new Markup($"[grey]{card.Name}[/]"));
+                            cols.Add(new Markup($"[grey]{card.Cost}[/]"));
+                            cols.Add(new Markup($"[grey]{card.CurrentLevel}/{card.MaxLevel}[/]"));
+                            cols.Add(new Markup($"[grey]{card.Description}[/]"));
+                        }
+                        else
+                        {
+                            var precondition = card.CanBePlayed(ConsoleGame.Game, ConsoleGame.Game.CurrentPlayer);
+                            var cost2Much = card.Cost.Value > ConsoleGame.Game.CurrentPlayer.ActionPoints.Value;
+                            var maxLevel = card.CurrentLevel.Value == card.MaxLevel;
 
-                            new Markup((cost2Much ? "[red]" : "")
-                                       + card.Cost +
-                                       (cost2Much ? "[/]" : "")),
+                            cols.Add(precondition && !cost2Much
+                                ? new Markup($"{card.Name}")
+                                : new Markup($"[red]{card.Name}[/]"));
 
-                            new Markup((level ? "[yellow]" : "")
-                                       + $"{card.CurrentLevel}/{card.MaxLevel}" +
-                                       (level ? "[/]" : "")),
+                            cols.Add(!cost2Much
+                                ? new Markup($"{card.Cost}")
+                                : new Markup($"[red]{card.Cost}[/]"));
 
-                            new Markup((!precondition ? "[red]" : "")
-                                       + card.Description.Value +
-                                       (!precondition ? "[/]" : ""))
-                        };
+                            cols.Add(!maxLevel
+                                ? new Markup($"{card.CurrentLevel}/{card.MaxLevel}")
+                                : new Markup($"[yellow]{card.CurrentLevel}/{card.MaxLevel}[/]"));
+
+                            cols.Add(precondition
+                                ? new Markup($"{card.Description}")
+                                : new Markup($"[red]{card.Description}[/]"));
+                        }
                     }
                     else
-                        cols = new[]
-                        {
-                            new Markup("[silver]Caché[/]"),
-                            new Markup("[silver]?[/]"),
-                            new Markup("[silver]?/?[/]"),
-                            new Markup("[silver]Inconnue[/]")
-                        };
+                    {
+                        cols.Add(new Markup("[silver]Caché[/]"));
+                        cols.Add(new Markup("[silver]?[/]"));
+                        cols.Add(new Markup("[silver]?/?[/]"));
+                        cols.Add(new Markup("[silver]Inconnue[/]"));
+                    }
 
                     if (group.Key == PileIdentifier.CurrentPlayerDiscard)
                     {
-                        cols = cols.Append(
-                                new Markup(ConsoleGame.Game.CurrentPlayer.Discard.IsMarkedForUpgrade(card) ? "×" : " "))
-                            .ToArray();
+                        cols.Add(new Markup(ConsoleGame.Game.CurrentPlayer.Discard.IsMarkedForUpgrade(card)
+                            ? "[grey]×[/]"
+                            : " "));
                     }
                     else if (group.Key == PileIdentifier.OtherPlayerDiscard)
                     {
-                        cols = cols.Append(new Markup(
+                        cols.Add(new Markup(
                             ConsoleGame.Game.CurrentPlayer.OtherPlayer.Discard.IsMarkedForUpgrade(card)
-                                ? "×"
-                                : " ")).ToArray();
+                                ? "[grey]×[/]"
+                                : " "));
                     }
 
                     table.AddRow(cols);

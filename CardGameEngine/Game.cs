@@ -76,7 +76,7 @@ namespace CardGameEngine
 
         public void StartGame()
         {
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 2; i++)
             {
                 Player1.DrawCard();
                 Player2.DrawCard();
