@@ -175,7 +175,7 @@ namespace CardGameEngine
                     $"Player {player} tried to play card {card} but it's not in their hand");
             }
 
-            if (card.IsMaxLevel)
+            if (upgrade && card.IsMaxLevel)
             {
                 throw new InvalidOperationException(
                     $"Tentative d'amélioration de la carte {card} alors qu'elle est au niveau maximum ({card.CurrentLevel})");
