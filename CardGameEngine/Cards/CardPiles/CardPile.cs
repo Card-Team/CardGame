@@ -94,6 +94,8 @@ namespace CardGameEngine.Cards.CardPiles
         /// <param name="card">La carte à insérer</param>
         private void Insert(int newPosition, Card card)
         {
+            if (card.IsVirtual)
+                throw new InvalidOperationException($"Tentative d'insertion de la carte virtuelle {card} dans une pile");
             _cardList.Insert(newPosition, card);
         }
 

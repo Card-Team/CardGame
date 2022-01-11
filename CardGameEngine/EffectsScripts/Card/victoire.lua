@@ -1,4 +1,4 @@
-﻿max_level = 10 --TODO-- A définir
+﻿max_level = 3 --TODO-- A définir
 image_id = 519
 
 name = "Victoire"
@@ -21,6 +21,8 @@ end
 function on_level_change(old, new)
     if (new < 3) then
         This.Description.TryChangeValue(base_description)
+    elseif (new == max_level) then
+        Game.MakeWin(EffectOwner)
     elseif (max_level - new < 5) then
         This.Description.TryChangeValue("Plus que " .. max_level - current_level .. " améliorations de la carte pour gagner la partie.")
     else

@@ -27,7 +27,7 @@ namespace CardGameConsole
                 var text = $"[Erreur de script] : Dans {watchItem.Name} {FormatSourceLocation(watchItem.Location)}";
                 Console.Error.Write(
                     text);
-                if (!watchItem.Location.IsClrLocation && !watchItem.Name.StartsWith("<"))
+                if (watchItem.Location is { IsClrLocation: false } && !watchItem.Name.StartsWith("<"))
                 {
                     Console.Write(" : ");
                     ColoredSource(scriptName, text.Length - ScriptError.Length, watchItem.Location,
@@ -109,6 +109,10 @@ namespace CardGameConsole
 
         private static string FormatSourceLocation(SourceRef location)
         {
+            if (location == null)
+            {
+                return "";
+            }
             return $"({location.FromLine},{location.FromChar})-({location.ToLine},{location.ToChar})";
         }
 

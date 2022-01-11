@@ -7,6 +7,7 @@ using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
 using MoonSharp.Interpreter;
+using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.Cards
 {
@@ -19,6 +20,11 @@ namespace CardGameEngine.Cards
         /// Nom de la carte
         /// </summary>
         public EventProperty<Card, string, CardNameChangeEvent> Name { get; }
+
+        /// <summary>
+        /// Est-ce que la carte est virtuelle ?
+        /// </summary>
+        public bool IsVirtual { get; internal set; }
 
         /// <summary>
         /// Niveau maximum de la carte
@@ -54,8 +60,28 @@ namespace CardGameEngine.Cards
 
         private readonly Game _game;
 
+        [MoonSharpVisible(true)]
+        internal Card Virtual()
+        {
+            Card virt = new Card(_game, _game.EffectsDatabase[Effect.EffectId](), true);
+            
+            virt.OnCardCreate();
 
-        internal Card(Game game, Effect effect)
+            return virt;
+        }
+
+        [MoonSharpVisible(true)]
+        public Card Clone()
+        {
+            Card clone = new Card(_game, _game.EffectsDatabase[Effect.EffectId](), false);
+            
+            clone.OnCardCreate();
+
+            return clone;
+        }
+
+
+        internal Card(Game game, Effect effect, bool isVirtual = false)
         {
             if (effect.EffectType != EffectType.Card)
                 throw new InvalidOperationException(
@@ -63,6 +89,8 @@ namespace CardGameEngine.Cards
             _game = game;
 
             Effect = effect;
+
+            IsVirtual = isVirtual;
 
             Name = new EventProperty<Card, string, CardNameChangeEvent>(this, game.EventManager,
                 effect.GetProperty<string>(LuaStrings.Card.NameProperty));

@@ -159,6 +159,11 @@ namespace CardGameEngine
         /// <param name="upgrade">Améliore ou joue</param>
         public bool PlayCard(Player player, Card card, bool upgrade)
         {
+            if (card.IsVirtual)
+            {
+                throw new InvalidOperationException(
+                    $"La carte {card} a eu une tentative d'activation alors qu'elle est virtuelle");
+            }
             if (CurrentPlayer != player)
             {
                 throw new InvalidOperationException(
@@ -176,6 +181,7 @@ namespace CardGameEngine
                 throw new InvalidOperationException(
                     $"Tentative d'amélioration de la carte {card} alors qu'elle est au niveau maximum ({card.CurrentLevel})");
             }
+            
 
             if (!upgrade && card.CanBePlayed(this, player) == false) return false;
 
@@ -184,6 +190,34 @@ namespace CardGameEngine
 
             return upgrade ? UpgradeCard(card) : PlayCardEffect(player, card, player.Hand, player.Discard);
         }
+
+        internal bool PlayCardVirtual(Player effectowner, Card card)
+        {
+            if (!card.IsVirtual)
+            {
+                throw new InvalidOperationException(
+                    $"PlayCardVirtual appelé avec une carte non virtuelle ({card})");
+            }
+
+            if (card.CanBePlayed(this, effectowner) == false) ;
+            
+            return PlayCardEffect(effectowner, card, null,null);
+        }
+        
+        internal bool PlayCardFromEffect(Player effectowner, Card card)
+        {
+            if (card.IsVirtual)
+            {
+                throw new InvalidOperationException(
+                    $"PlayCardFromEffect appelé avec une carte virtuelle ({card})");
+            }
+
+            if (card.CanBePlayed(this, effectowner) == false) ;
+
+            return PlayCardEffect(effectowner, card, GetPileOf(card), effectowner.Discard);
+        }
+        
+        
 
         private bool PlayCardEffect(Player originalPlayer, Card card, CardPile? discardSource, DiscardPile? discardGoal)
         {

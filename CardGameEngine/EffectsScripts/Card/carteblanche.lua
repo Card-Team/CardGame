@@ -31,7 +31,7 @@ function do_effect()
         This.Description.TryChangeValue("Cette carte a pris l'effet de la carte " ..carte_copie.Name.Value)
         return false
     else
-        Game.PlayCard(EffectOwner, carte_copie)
+        Game.PlayCard(EffectOwner, carte_copie,false)
         This.Description.TryChangeValue(base_description)
     end
 
