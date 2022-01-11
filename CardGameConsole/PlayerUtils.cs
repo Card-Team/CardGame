@@ -16,12 +16,12 @@ namespace CardGameConsole
 
         public static void PrintHand(this Player player)
         {
-            PrintCardsTable(player.Hand.GroupBy(c => player.Hand.Indentifier()));
+            PrintCardsTable(player.Hand.GroupBy(c => player.Hand.Identifier()));
         }
 
         public static void PrintDiscard(this Player player)
         {
-            PrintCardsTable(player.Discard.GroupBy(c => player.Discard.Indentifier()));
+            PrintCardsTable(player.Discard.GroupBy(c => player.Discard.Identifier()));
         }
 
         public static void PrintCardsTable(IEnumerable<Card> cards, string title)

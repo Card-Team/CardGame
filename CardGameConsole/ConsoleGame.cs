@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CardGameEngine;
 using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
 using MoonSharp.Interpreter;
+using Spectre.Console;
 
 namespace CardGameConsole
 {
@@ -74,20 +76,23 @@ namespace CardGameConsole
         {
             while (!_gameEnded)
             {
-                PrintInfo(Game.CurrentPlayer);
                 var turnEnded = false;
                 while (!turnEnded)
                 {
-                    Console.WriteLine("---------------------------");
-                    Console.WriteLine("\nAppuyez sur 0 pour terminer votre tour");
-                    Console.WriteLine("Appuyez sur 1 pour lister vos cartes + d'autres infos");
-                    Console.WriteLine("Appuyez sur 2 pour lister votre défausse");
-                    Console.WriteLine("Appuyez sur 3 pour lister les information adverses");
-                    Console.WriteLine("Appuyez sur 4 pour jouer une carte");
-                    Console.WriteLine("Appuyez sur 5 pour améliorer une carte");
+                    AnsiConsole.Write(new Rule($"Tour de [bold]{Game.CurrentPlayer.GetName()}[/]").Centered());
+                    PrintInfo(Game.CurrentPlayer, false);
+                    var choices = new Dictionary<string, int>
+                    {
+                        { "Lister vos cartes + d'autres infos", 1 },
+                        { "Lister votre défausse", 2 },
+                        { "Lister les information adverses", 3 },
+                        { "Jouer une carte", 4 },
+                        { "Améliorer une carte", 5 },
+                        { "Terminer votre tour", 0 },
+                    };
 
-                    var choice = InputUtils.ChooseFromList(Enumerable.Range(0, 6).ToList());
-                    Console.WriteLine("---------------------------");
+                    var choice = InputUtils.ChooseList("Veuillez choisir une action", choices);
+                    AnsiConsole.Write(new Rule().Centered());
                     switch (choice)
                     {
                         case 0:
@@ -95,14 +100,14 @@ namespace CardGameConsole
                             break;
                         case 1:
                             Console.WriteLine("Cartes dans votre main : ");
-                            PrintInfo(Game.CurrentPlayer);
+                            PrintInfo(Game.CurrentPlayer, true);
                             break;
                         case 2:
                             Console.WriteLine("Votre défausse : ");
                             Game.CurrentPlayer.PrintDiscard();
                             break;
                         case 3:
-                            PrintInfo(Game.CurrentPlayer.OtherPlayer);
+                            PrintInfo(Game.CurrentPlayer.OtherPlayer, true);
                             break;
                         case 4:
                             PlayCard(false);
@@ -114,27 +119,30 @@ namespace CardGameConsole
                 }
 
                 Game.EndPlayerTurn();
+                
             }
         }
 
-        private static void PrintInfo(Player player)
+        private static void PrintInfo(Player player, bool sayturn)
         {
             if (player == Game.CurrentPlayer)
             {
-                Console.WriteLine($"\nTour de {Game.CurrentPlayer.GetName()}");
+                if (sayturn)
+                    AnsiConsole.Write(new Markup($"\nTour de [bold]{Game.CurrentPlayer.GetName()}[/]").Centered());
                 Game.CurrentPlayer.PrintHand();
-                Console.WriteLine($"Nombre de cartes dans votre défausse : {Game.CurrentPlayer.Discard.Count}");
-                Console.WriteLine($"Nombre de cartes dans votre deck : {Game.CurrentPlayer.Deck.Count}");
-                Console.WriteLine($"Nombre de points d'actions: {Game.CurrentPlayer.ActionPoints.Value}");
+                AnsiConsole.Write(new Panel(
+                        new Markup($"Nombre de cartes dans votre défausse : {Game.CurrentPlayer.Discard.Count}\n" +
+                                   $"Nombre de cartes dans votre deck : {Game.CurrentPlayer.Deck.Count}\n" +
+                                   $"Nombre de points d'actions: {Game.CurrentPlayer.ActionPoints.Value}"))
+                    .Header("Vos informations", Justify.Right));
             }
             else
             {
-                Console.WriteLine($"Nombre de cartes dans la main adverse : {player.Hand.Count}");
-                Console.WriteLine($"Nombre de cartes dans le deck adverse : {player.Deck.Count}");
-
-                Console.WriteLine($"Cartes de la défausse adverse :");
-                player.PrintDiscard();
-                Console.WriteLine($"Nombre de points d'actions de l'adversaire: {player.ActionPoints.Value}");
+                AnsiConsole.Write(new Panel(
+                        new Markup($"Nombre de cartes dans la main adverse : {player.Hand.Count}\n" +
+                                   $"Cartes de la défausse adverse :\n" +
+                                   $"Nombre de points d'actions de l'adversaire: {player.ActionPoints.Value}"))
+                    .Header("Informations de l'adversaire", Justify.Right));
             }
         }
 
@@ -169,7 +177,12 @@ namespace CardGameConsole
                 return;
             }
 
-            var chosen = InputUtils.ChooseFrom(Game.CurrentPlayer, available);
+            var chosen = InputUtils.ChooseFrom(Game.CurrentPlayer, available, true);
+            if (chosen == null)
+            {
+                return;
+            }
+
             Game.PlayCard(Game.CurrentPlayer, chosen, upgrade);
         }
     }

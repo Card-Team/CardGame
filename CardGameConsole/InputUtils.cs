@@ -3,69 +3,68 @@ using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
+using Spectre.Console;
 
 namespace CardGameConsole
 {
     public static class InputUtils
     {
-        public static Card ChooseFrom(Player pov, IEnumerable<Card> list)
+        public static Card? ChooseFrom(Player pov, IEnumerable<Card> list, bool annulable = false)
         {
-            Console.WriteLine("Veuillez sélectionner une carte parmi la liste suivante : ");
-
 
             var split = list.SplitIntoPiles().ToList();
-            var flattened = split.SelectMany(s => s).ToList();
+            var flattened = new Dictionary<string, Card>();
+
             var index = 0;
+
+            var prompt = new SelectionPrompt<string>();
+
+            prompt.Title("Veuillez sélectionner une carte");
+
             foreach (var pile in split)
             {
-                if (pile.Key != PileIdentifier.Unknown)
-                    Console.WriteLine($"{pile.Key.Display()} : ");
-                foreach (var (card, visible) in pile.WithVisionInfo(pov))
+                var builded = new List<string>();
+                foreach (var (card, visible) in pile.WithVisionInfo())
                 {
-                    Console.WriteLine($"{index} - {(visible ? card.ToString() : "Inconnu")}");
+                    var text = $"{index} - {(visible ? card.ToString() : "Inconnu")}";
+                    builded.Add(text);
+                    flattened[text] = card;
                     index++;
                 }
+
+
+                prompt.AddChoiceGroup(pile.Key.Display(),
+                    builded);
             }
 
-            return ChooseFromList(flattened);
+            if (annulable)
+            {
+                var retour = "⬅ Retour";
+                prompt.AddChoice(retour);
+                flattened[retour] = null!;
+            }
+
+            var res = AnsiConsole.Prompt(prompt);
+
+            return flattened[res];
         }
 
 
-        public static T ChooseList<T>(List<(string, T)> elements) where T : class
+        public static T ChooseList<T>(string title, Dictionary<string, T> elements)
         {
-            for (var i = 0; i < elements.Count; i++)
-            {
-                Console.WriteLine($" - {elements[i].Item1}");
-            }
+            var result = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title(title)
+                    .Mode(SelectionMode.Leaf)
+                    .AddChoices(elements.Keys));
 
-            return ChooseFromList(elements.Select(s => s.Item2).ToList());
+            return elements[result];
         }
 
-        public static T ChooseList<T>(List<T> elements) where T : class
+
+        public static T ChooseList<T>(string title, IEnumerable<T> elements)
         {
-            foreach (var elem in elements)
-            {
-                Console.WriteLine($" - {elem}");
-            }
-
-            return ChooseFromList(elements);
-        }
-
-        public static T ChooseFromList<T>(List<T> elements)
-        {
-            var chosen = false;
-            T res = default;
-            do
-            {
-                Console.Write("Choix : ");
-                if (!int.TryParse(Console.ReadLine()?.Trim(), out var result)) continue;
-
-                if (result < 0 || result >= elements.Count) continue;
-                res = elements[result];
-                chosen = true;
-            } while (!chosen);
-
-            return res ?? throw new InvalidOperationException();
+            return ChooseList(title,elements.ToDictionary(e => e?.ToString() ?? "null", e => e));
         }
     }
 }

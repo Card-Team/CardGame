@@ -18,10 +18,10 @@ namespace CardGameConsole
 
         public Player ExternPlayerAskForTarget(Player effectOwner, string targetName)
         {
-            return InputUtils.ChooseList(new List<(string, Player)>
+            return InputUtils.ChooseList($"Veuillez choisir un joueur pour {targetName}", new Dictionary<string, Player>
             {
-                (ConsoleGame.Player1Name, ConsoleGame.Game.Player1),
-                (ConsoleGame.Player2Name, ConsoleGame.Game.Player2)
+                { ConsoleGame.Player1Name, ConsoleGame.Game.Player1 },
+                { ConsoleGame.Player2Name, ConsoleGame.Game.Player2 }
             });
         }
 
@@ -32,7 +32,7 @@ namespace CardGameConsole
 
         public Card ExternChooseBetween(Player player, List<Card> card)
         {
-            return InputUtils.ChooseList(card);
+            return InputUtils.ChooseList("Veuillez faire un choix",card);
         }
 
         public void ExternGameEnded(Player winner)

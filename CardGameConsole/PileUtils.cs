@@ -41,9 +41,39 @@ namespace CardGameConsole
             return ConsoleGame.Game.CurrentPlayer == player ? votreDeck : leDeckAdverse;
         }
 
-        public static string Identifier(this CardPile pile)
+        public static PileIdentifier Identifier(this CardPile pile)
         {
-            throw new NotImplementedException("TODO Bilel !");
+            if (pile == ConsoleGame.Game.CurrentPlayer.Hand)
+            {
+                return PileIdentifier.CurrentPlayerHand;
+            }
+
+            if (pile == ConsoleGame.Game.CurrentPlayer.Deck)
+            {
+                return PileIdentifier.CurrentPlayerDeck;
+            }
+
+            if (pile == ConsoleGame.Game.CurrentPlayer.Discard)
+            {
+                return PileIdentifier.CurrentPlayerDiscard;
+            }
+
+            if (pile == ConsoleGame.Game.CurrentPlayer.OtherPlayer.Hand)
+            {
+                return PileIdentifier.OtherPlayerHand;
+            }
+
+            if (pile == ConsoleGame.Game.CurrentPlayer.OtherPlayer.Deck)
+            {
+                return PileIdentifier.OtherPlayerDeck;
+            }
+
+            if (pile == ConsoleGame.Game.CurrentPlayer.OtherPlayer.Discard)
+            {
+                return PileIdentifier.OtherPlayerDiscard;
+            }
+
+            return PileIdentifier.Unknown;
         }
 
         public static IEnumerable<IGrouping<PileIdentifier, Card>> SplitIntoPiles(this IEnumerable<Card> cardList)
