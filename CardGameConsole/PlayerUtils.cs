@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
+using Spectre.Console;
 
 namespace CardGameConsole
 {
@@ -13,21 +16,52 @@ namespace CardGameConsole
 
         public static void PrintHand(this Player player)
         {
-            for (var i = 0; i < player.Hand.Count; i++)
-            {
-                Console.WriteLine($"{i} - {player.Hand[i]}");
-            }
+            PrintCardsTable(player.Hand.GroupBy(c => player.Hand.Indentifier()));
         }
 
         public static void PrintDiscard(this Player player)
         {
-            for (var i = 0; i < player.Discard.Count; i++)
+            PrintCardsTable(player.Discard.GroupBy(c => player.Discard.Indentifier()));
+        }
+
+        public static void PrintCardsTable(IEnumerable<Card> cards, string title)
+        {
+            Table table = new Table().Title(title)
+                .AddColumn(new TableColumn("Nom").Centered())
+                .AddColumn(new TableColumn("Coût").Centered())
+                .AddColumn(new TableColumn("Niveau").Centered())
+                .AddColumn(new TableColumn("Description").Centered());
+
+            foreach (var card in cards)
             {
-                Console.Write($"{i} - {player.Discard[i]}");
-                if (player.Discard.IsMarkedForUpgrade(player.Discard[i]))
+                table.AddRow(card.Name.Value, card.Cost.Value.ToString(), $"{card.CurrentLevel}/{card.MaxLevel}",
+                    card.Description.Value);
+            }
+
+            AnsiConsole.Write(table);
+        }
+
+        private static void PrintCardsTable(IEnumerable<IGrouping<PileIdentifier, Card>> cards)
+        {
+            foreach (var group in cards)
+            {
+                Table table = new Table().Title(group.Key.Display())
+                    .AddColumn(new TableColumn("Nom").Centered())
+                    .AddColumn(new TableColumn("Coût").Centered())
+                    .AddColumn(new TableColumn("Niveau").Centered())
+                    .AddColumn(new TableColumn("Description").Centered()).Centered();
+
+                foreach (var (card, visible) in group.WithVisionInfo())
                 {
-                    Console.Write(" [Marquée]\n");
+                    if (visible)
+                        table.AddRow(card.Name.Value, card.Cost.Value.ToString(),
+                            $"{card.CurrentLevel}/{card.MaxLevel}",
+                            card.Description.Value);
+                    else
+                        table.AddRow("caché");
                 }
+
+                AnsiConsole.Write(table);
             }
         }
     }

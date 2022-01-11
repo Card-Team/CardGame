@@ -35,7 +35,7 @@ namespace CardGameConsole
         {
             var bef = Console.ForegroundColor;
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[Erreure Moteur] : {exception.Message}");
+            Console.WriteLine($"[Erreur Moteur] : {exception.Message}");
             Console.ForegroundColor = bef;
         }
 
@@ -69,15 +69,15 @@ namespace CardGameConsole
             else
             {
                 Console.Write("|");
-                for (var i = 0; i < firstLine.Length; i++)
+                foreach (var t in firstLine)
                 {
-                    Console.Write(firstLine[i]);
+                    Console.Write(t);
                 }
 
                 Console.WriteLine("");
 
                 Console.Write(ScriptError);
-                for (int i = 0; i < padding; i++)
+                for (var i = 0; i < padding; i++)
                 {
                     Console.Write(" ");
                 }
@@ -86,15 +86,15 @@ namespace CardGameConsole
                 Console.WriteLine("...");
 
                 Console.Write(ScriptError);
-                for (int i = 0; i < padding; i++)
+                for (var i = 0; i < padding; i++)
                 {
                     Console.Write(" ");
                 }
 
                 Console.Write("|");
-                for (var i = 0; i < lastLine.Length; i++)
+                foreach (var t in lastLine)
                 {
-                    Console.Write(lastLine[i]);
+                    Console.Write(t);
                 }
             }
         }

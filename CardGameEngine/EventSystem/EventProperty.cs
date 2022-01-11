@@ -59,10 +59,15 @@ namespace CardGameEngine.EventSystem
             {
                 if (!_isInevitable && postEvent.Event.Cancelled)
                     return Value;
-                Value =_isInevitable ? newVal : postEvent.Event.NewValue;
+                Value = _isInevitable ? newVal : postEvent.Event.NewValue;
             }
 
             return Value;
+        }
+
+        public override string ToString()
+        {
+            return Value?.ToString() ?? "null";
         }
     }
 }

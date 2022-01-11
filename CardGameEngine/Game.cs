@@ -11,10 +11,6 @@ using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
 
-namespace CardGameEngine.EventSystem.Events.GameStateEvents
-{
-}
-
 namespace CardGameEngine
 {
     /// <summary>
@@ -75,7 +71,7 @@ namespace CardGameEngine
             Player1 = new Player(this, cards1);
             Player2 = new Player(this, cards2);
 
-            CurrentPlayer = Player2;
+            CurrentPlayer = Player1;
         }
 
         public void StartGame()
@@ -91,7 +87,7 @@ namespace CardGameEngine
                 card.OnCardCreate();
             }
 
-            StartPlayerTurn(CurrentPlayer.OtherPlayer);
+            StartPlayerTurn(CurrentPlayer);
         }
 
         /// <summary>
@@ -329,7 +325,6 @@ namespace CardGameEngine
             {
                 if (target.TargetType == TargetTypes.Card)
                 {
-
                     var cards = GetValidTargets(target);
                     resolved = _externCallbacks.ExternCardAskForTarget(effectOwner, target.Name, cards);
                 }
@@ -356,6 +351,7 @@ namespace CardGameEngine
             {
                 throw new InvalidOperationException("TargetsExists ne doit etre appelé que pour des cibles manuelles");
             }
+
             var allCards = Player1.Cards.Concat(Player2.Cards);
 
             return allCards.Where(target.IsValidTarget).ToList();

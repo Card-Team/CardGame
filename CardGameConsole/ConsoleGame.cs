@@ -1,26 +1,21 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CardGameEngine;
-using CardGameEngine.Cards;
-using CardGameEngine.EventSystem.Events;
-using CardGameEngine.EventSystem.Events.CardEvents;
 using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
 using MoonSharp.Interpreter;
 
 namespace CardGameConsole
 {
-    internal class ConsoleGame
+    internal static class ConsoleGame
     {
         public static Game Game;
 
-        private Player? _winner;
-
         public static string Player1Name;
         public static string Player2Name;
+
+        private static Player? _winner;
         private static bool _gameEnded;
 
         public static void Main(string[] args)
@@ -51,6 +46,7 @@ namespace CardGameConsole
             Console.WriteLine(Game.Player2.Deck.ToString());
 
             RegisterEventListeners();
+            EventDisplayer.RegisterAllEvents(Game.EventManager);
 
             Console.WriteLine("Début de partie :");
 
@@ -160,7 +156,8 @@ namespace CardGameConsole
 
         private static void PlayCard(bool upgrade)
         {
-            var available = Game.CurrentPlayer.Hand.Where(c => c.Cost.Value <= Game.CurrentPlayer.ActionPoints.Value).ToList();
+            var available = Game.CurrentPlayer.Hand.Where(c => c.Cost.Value <= Game.CurrentPlayer.ActionPoints.Value)
+                .ToList();
             if (!upgrade)
             {
                 available = available.Where(c => c.CanBePlayed(Game, Game.CurrentPlayer)).ToList();
@@ -171,7 +168,8 @@ namespace CardGameConsole
                 Console.WriteLine("Aucune carte disponible");
                 return;
             }
-            var chosen = InputUtils.ChooseFrom(Game.CurrentPlayer,available);
+
+            var chosen = InputUtils.ChooseFrom(Game.CurrentPlayer, available);
             Game.PlayCard(Game.CurrentPlayer, chosen, upgrade);
         }
     }

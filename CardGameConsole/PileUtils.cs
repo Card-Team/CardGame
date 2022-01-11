@@ -1,44 +1,49 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using CardGameEngine;
 using CardGameEngine.Cards;
+using CardGameEngine.Cards.CardPiles;
 using CardGameEngine.GameSystems;
 
 namespace CardGameConsole
 {
     public enum PileIdentifier
     {
-        Player1Deck,
-        Player1Hand,
-        Player1Discard,
-        Player2Deck,
-        Player2Hand,
-        Player2Discard,
+        CurrentPlayerDeck,
+        CurrentPlayerHand,
+        CurrentPlayerDiscard,
+        OtherPlayerDeck,
+        OtherPlayerHand,
+        OtherPlayerDiscard,
         Unknown
     }
+
     public static class PileUtils
     {
-
-        public static string Display(this PileIdentifier pileIdentifier)
+        public static string Display(this PileIdentifier pileIdentifier, Player? pov = null)
         {
+            pov ??= ConsoleGame.Game.CurrentPlayer;
             return pileIdentifier switch
             {
-                PileIdentifier.Player1Deck => IsCurrent("Votre deck","Le deck adverse"),
-                PileIdentifier.Player1Hand => IsCurrent("Votre main","La main adverse"),
-                PileIdentifier.Player1Discard => IsCurrent("Votre défausse","La défausse adverse"),
-                PileIdentifier.Player2Deck => IsCurrent("Le deck adverse","Votre deck"),
-                PileIdentifier.Player2Hand => IsCurrent("La main adverse","Votre main"),
-                PileIdentifier.Player2Discard => IsCurrent("La défausse adverse","Votre défausse"),
+                PileIdentifier.CurrentPlayerDeck => pov.IsCurrent("Votre deck", "Le deck adverse"),
+                PileIdentifier.CurrentPlayerHand => pov.IsCurrent("Votre main", "La main adverse"),
+                PileIdentifier.CurrentPlayerDiscard => pov.IsCurrent("Votre défausse", "La défausse adverse"),
+                PileIdentifier.OtherPlayerDeck => pov.IsCurrent("Le deck adverse", "Votre deck"),
+                PileIdentifier.OtherPlayerHand => pov.IsCurrent("La main adverse", "Votre main"),
+                PileIdentifier.OtherPlayerDiscard => pov.IsCurrent("La défausse adverse", "Votre défausse"),
                 PileIdentifier.Unknown => "Inconnu",
                 _ => throw new ArgumentOutOfRangeException(nameof(pileIdentifier), pileIdentifier, null)
             };
         }
 
-        private static string IsCurrent(string votreDeck, string leDeckAdverse)
+        private static string IsCurrent(this Player player, string votreDeck, string leDeckAdverse)
         {
-            return ConsoleGame.Game.CurrentPlayer == ConsoleGame.Game.Player1 ? votreDeck : leDeckAdverse;
+            return ConsoleGame.Game.CurrentPlayer == player ? votreDeck : leDeckAdverse;
+        }
+
+        public static string Identifier(this CardPile pile)
+        {
+            throw new NotImplementedException("TODO Bilel !");
         }
 
         public static IEnumerable<IGrouping<PileIdentifier, Card>> SplitIntoPiles(this IEnumerable<Card> cardList)
@@ -47,41 +52,43 @@ namespace CardGameConsole
             {
                 if (ConsoleGame.Game.Player1.Hand.Contains(c))
                 {
-                    return PileIdentifier.Player1Hand;
+                    return PileIdentifier.CurrentPlayerHand;
                 }
 
                 if (ConsoleGame.Game.Player1.Deck.Contains(c))
                 {
-                    return PileIdentifier.Player1Deck;
+                    return PileIdentifier.CurrentPlayerDeck;
                 }
 
                 if (ConsoleGame.Game.Player1.Discard.Contains(c))
                 {
-                    return PileIdentifier.Player1Discard;
+                    return PileIdentifier.CurrentPlayerDiscard;
                 }
 
                 if (ConsoleGame.Game.Player2.Hand.Contains(c))
                 {
-                    return PileIdentifier.Player2Hand;
+                    return PileIdentifier.OtherPlayerHand;
                 }
 
                 if (ConsoleGame.Game.Player2.OtherPlayer.Deck.Contains(c))
                 {
-                    return PileIdentifier.Player2Deck;
+                    return PileIdentifier.OtherPlayerDeck;
                 }
 
                 if (ConsoleGame.Game.Player2.OtherPlayer.Discard.Contains(c))
                 {
-                    return PileIdentifier.Player2Discard;
+                    return PileIdentifier.OtherPlayerDiscard;
                 }
 
                 return PileIdentifier.Unknown;
             });
         }
 
-        public static IEnumerable<(Card,bool)> WithVisionInfo(this IEnumerable<Card> cardList ,Player player)
+        public static IEnumerable<(Card, bool)> WithVisionInfo(this IEnumerable<Card> cardList, Player? pov = null)
         {
-            var seeable = player.Cards.Concat(player.OtherPlayer.Discard).ToList();
+            pov ??= ConsoleGame.Game.CurrentPlayer;
+
+            var seeable = pov.Cards.Concat(pov.OtherPlayer.Discard).ToList();
             return cardList.Select(c => (c, seeable.Contains(c)));
         }
     }
