@@ -196,14 +196,11 @@ namespace CardGameEngine
                     return false;
                 }
 
-                if (!post.Event.Card.DoEffect(this, post.Event.WhoPlayed))
-                {
-                    playResult = false;
-                }
+                var doitDefausser = post.Event.Card.DoEffect(this, post.Event.WhoPlayed);
 
                 //défaussement
 
-                if (discardSource != null && discardSource.Contains(post.Event.Card))
+                if (doitDefausser && discardSource != null && discardSource.Contains(post.Event.Card))
                 {
                     if (discardGoal == null)
                     {

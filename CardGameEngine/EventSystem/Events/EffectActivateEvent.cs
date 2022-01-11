@@ -5,11 +5,16 @@ namespace CardGameEngine.EventSystem.Events
     /// <summary>
     /// Évènement représentant l'activation d'un effet
     /// </summary>
-    internal class EffectActivateEvent : CancellableEvent
+    internal class EffectActivateEvent : Event
     {
         /// <summary>
         /// L'effet activé
         /// </summary>
-        internal Effect Effect { get; set; }
+        public Effect Effect { get; }
+
+        public EffectActivateEvent(Effect effect)
+        {
+            Effect = effect;
+        }
     }
 }

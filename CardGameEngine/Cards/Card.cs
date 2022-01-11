@@ -6,6 +6,7 @@ using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
+using MoonSharp.Interpreter;
 
 namespace CardGameEngine.Cards
 {
@@ -84,13 +85,20 @@ namespace CardGameEngine.Cards
         /// Exécute l'effet de la carte
         /// </summary>
         /// <param name="game">La partie en cours</param>
-        /// <returns>Un booléen en fonction de la réussite</returns>
+        /// <returns>Vrai si la carte doit etre défaussée, faux sinon</returns>
         internal bool DoEffect(Game game, Player effectOwner)
         {
-            var effectActivateEvent = new EffectActivateEvent();
-            SetUpScriptBeforeRunning(game, effectOwner);
-            Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
-            return true;
+            var effectActivateEvent = new EffectActivateEvent(Effect);
+            using (var post = _game.EventManager.SendEvent(effectActivateEvent))
+            {
+                SetUpScriptBeforeRunning(game, effectOwner);
+                var result = Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
+                if (result.Type == DataType.Boolean)
+                {
+                    return result.Boolean;
+                }
+                else return true;
+            }
         }
 
         //todo voir comment l'appeller dans les evenements
@@ -100,10 +108,10 @@ namespace CardGameEngine.Cards
             {
                 //globals spécifique au cartes :
                 script.Globals["AskForTarget"] =
-                    (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
+                    (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
 
                 script.Globals["TargetsExists"] =
-                    (Func<List<int>, bool>) (list => game.LuaTargetsExists(Effect, effectOwner, list));
+                    (Func<List<int>, bool>)(list => game.LuaTargetsExists(Effect, effectOwner, list));
             });
         }
 
