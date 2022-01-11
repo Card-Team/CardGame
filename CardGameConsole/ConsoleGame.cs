@@ -80,6 +80,7 @@ namespace CardGameConsole
 
                 while (choice != 0)
                 {
+                    AnsiConsole.Clear();
                     AnsiConsole.Write(new Rule($"Tour de [bold]{Game.CurrentPlayer.GetName()}[/]").Centered());
                     PrintInfo(Game.CurrentPlayer, false);
                     var choices = new Dictionary<string, int>
