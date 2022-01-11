@@ -37,7 +37,7 @@ namespace CardGameConsole
                 AnsiConsole.Ask($"Veuillez passer la main a [bold]{player.GetName()}[/] temporairement", "");
             }
 
-            AnsiConsole.WriteLine($"La carte suivante vous est montrée : {card}");
+            AnsiConsole.Ask($"La carte suivante vous est montrée : {card}","");
             
             if (player != ConsoleGame.Game.CurrentPlayer)
                 AnsiConsole.Ask($"Veuillez rendre la main a [bold]{ConsoleGame.Game.CurrentPlayer.GetName()}[/]", "");
