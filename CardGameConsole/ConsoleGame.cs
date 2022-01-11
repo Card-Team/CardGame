@@ -164,6 +164,10 @@ namespace CardGameConsole
             {
                 available = available.Where(c => c.CanBePlayed(Game, Game.CurrentPlayer)).ToList();
             }
+            else
+            {
+                available = available.Where(c => c.CurrentLevel.Value < c.MaxLevel).ToList();
+            }
 
             if (available.Count == 0)
             {

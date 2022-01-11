@@ -4,7 +4,7 @@ using MoonSharp.Interpreter.Debugging;
 
 namespace CardGameConsole
 {
-    public class ErrorUtils
+    public static class ErrorUtils
     {
         private const string ScriptError = "[Erreur de script] : ";
 
