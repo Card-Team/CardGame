@@ -28,20 +28,22 @@ namespace CardGameConsole
             Console.WriteLine("\nLancement d'une partie : ...\n");
 
             // Joueur 1
-            Console.Write("Joueur 1, veuillez entrer votre nom : ");
-            Player1Name = Console.ReadLine();
-
-            Console.WriteLine($"\nBonjour, {Player1Name}");
-            Console.WriteLine("Veuillez m'indiquer le fichier contenant vos cartes (CardGameConsole/Decks/) :");
-            var deck1 = File.ReadLines("../../Decks/" + Console.ReadLine()).ToList();
-
-            // Joueur 2
-            Console.Write("\nJoueur 2, veuillez entrer votre nom : ");
-            Player2Name = Console.ReadLine();
-
-            Console.WriteLine($"\nBonjour, {Player2Name}");
-            Console.WriteLine("Veuillez m'indiquer le fichier contenant vos cartes (CardGameConsole/Decks/) :");
-            var deck2 = File.ReadLines("../../Decks/" + Console.ReadLine()).ToList();
+            // Console.Write("Joueur 1, veuillez entrer votre nom : ");
+            // Player1Name = Console.ReadLine();
+            Player1Name = "oui";
+            //
+            // Console.WriteLine($"\nBonjour, {Player1Name}");
+            // Console.WriteLine("Veuillez m'indiquer le fichier contenant vos cartes (CardGameConsole/Decks/) :");
+            var deck1 = File.ReadLines("../../Decks/oui.txt").ToList();
+            //
+            // // Joueur 2
+            // Console.Write("\nJoueur 2, veuillez entrer votre nom : ");
+            // Player2Name = Console.ReadLine();
+            Player2Name = "non";
+            //
+            // Console.WriteLine($"\nBonjour, {Player2Name}");
+            // Console.WriteLine("Veuillez m'indiquer le fichier contenant vos cartes (CardGameConsole/Decks/) :");
+            var deck2 = File.ReadLines("../../Decks/non.txt").ToList();
 
             Game = new Game("../../../CardGameEngine/EffectsScripts/", new ConsoleExternCallbacks(), deck1, deck2);
 
