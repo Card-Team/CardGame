@@ -27,7 +27,7 @@ namespace CardGameConsole
             // Joueur 1
             // Console.Write("Joueur 1, veuillez entrer votre nom : ");
             // Player1Name = Console.ReadLine();
-            Player1Name = "oui";
+            Player1Name = "Simon";
             //
             // Console.WriteLine($"\nBonjour, {Player1Name}");
             // Console.WriteLine("Veuillez m'indiquer le fichier contenant vos cartes (CardGameConsole/Decks/) :");
@@ -36,7 +36,7 @@ namespace CardGameConsole
             // // Joueur 2
             // Console.Write("\nJoueur 2, veuillez entrer votre nom : ");
             // Player2Name = Console.ReadLine();
-            Player2Name = "non";
+            Player2Name = "Rachelle";
             //
             // Console.WriteLine($"\nBonjour, {Player2Name}");
             // Console.WriteLine("Veuillez m'indiquer le fichier contenant vos cartes (CardGameConsole/Decks/) :");
@@ -76,57 +76,50 @@ namespace CardGameConsole
         {
             while (!_gameEnded)
             {
-                var turnEnded = false;
-                while (!turnEnded)
+                var choice = -1;
+
+                while (choice != 0)
                 {
                     AnsiConsole.Write(new Rule($"Tour de [bold]{Game.CurrentPlayer.GetName()}[/]").Centered());
                     PrintInfo(Game.CurrentPlayer, false);
                     var choices = new Dictionary<string, int>
                     {
-                        {"Lister vos cartes + d'autres infos", 1},
-                        {"Lister votre défausse", 2},
-                        {"Lister les information adverses", 3},
-                        {"Jouer une carte", 4},
-                        {"Améliorer une carte", 5},
+                        {"Lister votre défausse", 1},
+                        {"Lister les information adverses", 2},
+                        {"Jouer une carte", 3},
+                        {"Améliorer une carte", 4},
                         {"Terminer votre tour", 0},
                     };
 
-                    var choice = InputUtils.ChooseList("Veuillez choisir une action", choices);
-                    AnsiConsole.Write(new Rule().Centered());
+
                     switch (choice)
                     {
-                        case 0:
-                            turnEnded = true;
-                            break;
                         case 1:
-                            Console.WriteLine("Cartes dans votre main : ");
-                            PrintInfo(Game.CurrentPlayer, true);
-                            break;
-                        case 2:
-                            Console.WriteLine("Votre défausse : ");
                             Game.CurrentPlayer.PrintDiscard();
                             break;
-                        case 3:
+                        case 2:
                             PrintInfo(Game.CurrentPlayer.OtherPlayer, true);
                             break;
-                        case 4:
+                        case 3:
                             PlayCard(false);
                             break;
-                        case 5:
+                        case 4:
                             PlayCard(true);
                             break;
                     }
+
+                    choice = InputUtils.ChooseList("Veuillez choisir une action :", choices);
                 }
 
                 Game.EndPlayerTurn();
             }
         }
 
-        private static void PrintInfo(Player player, bool sayturn)
+        private static void PrintInfo(Player player, bool sayTurn)
         {
             if (player == Game.CurrentPlayer)
             {
-                if (sayturn)
+                if (sayTurn)
                     AnsiConsole.Write(new Markup($"\nTour de [bold]{Game.CurrentPlayer.GetName()}[/]").Centered());
                 Game.CurrentPlayer.PrintHand();
                 AnsiConsole.Write(new Panel(
@@ -159,6 +152,7 @@ namespace CardGameConsole
 
         private static void OnTurnStart(StartTurnEvent turnEvent)
         {
+            AnsiConsole.Clear();
         }
 
         private static void PlayCard(bool upgrade)

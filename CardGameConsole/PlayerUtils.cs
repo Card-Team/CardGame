@@ -15,21 +15,23 @@ namespace CardGameConsole
 
         public static void PrintHand(this Player player)
         {
-            PrintCardsTable(player.Hand.GroupBy(c => player.Hand.Identifier()));
+            if (player.Hand.IsEmpty)
+                AnsiConsole.WriteLine("La main est vide");
+            else
+                PrintCardsTable(player.Hand.GroupBy(c => player.Hand.Identifier()));
         }
 
         public static void PrintDiscard(this Player player)
         {
-            PrintCardsTable(player.Discard.GroupBy(c => player.Discard.Identifier()));
+            if (player.Discard.IsEmpty)
+                AnsiConsole.WriteLine("La défausse est vide");
+            else
+                PrintCardsTable(player.Discard.GroupBy(c => player.Discard.Identifier()));
         }
 
         public static void PrintCardsTable(IEnumerable<Card> cards, string title)
         {
-            Table table = new Table().Title(title)
-                .AddColumn(new TableColumn("Nom").Centered())
-                .AddColumn(new TableColumn("Coût").Centered())
-                .AddColumn(new TableColumn("Niveau").Centered())
-                .AddColumn(new TableColumn("Description").Centered());
+            Table table = GetDefaultTable(title);
 
             foreach (var card in cards)
             {
@@ -44,24 +46,60 @@ namespace CardGameConsole
         {
             foreach (var group in cards)
             {
-                Table table = new Table().Title(group.Key.Display())
-                    .AddColumn(new TableColumn("Nom").Centered())
-                    .AddColumn(new TableColumn("Coût").Centered())
-                    .AddColumn(new TableColumn("Niveau").Centered())
-                    .AddColumn(new TableColumn("Description").Centered()).Centered();
+                Table table = GetDefaultTable(group.Key.Display(),
+                    group.Key == PileIdentifier.CurrentPlayerDiscard || group.Key == PileIdentifier.OtherPlayerDiscard);
 
                 foreach (var (card, visible) in group.WithVisionInfo())
                 {
+                    string[] cols;
                     if (visible)
-                        table.AddRow(card.Name.Value, card.Cost.Value.ToString(),
+                        cols = new[]
+                        {
+                            card.Name.Value, card.Cost.Value.ToString(),
                             $"{card.CurrentLevel}/{card.MaxLevel}",
-                            card.Description.Value);
+                            card.Description.Value
+                        };
                     else
-                        table.AddRow("caché");
+                        cols = new[]
+                        {
+                            "Caché",
+                            "?",
+                            "?/?",
+                            "Inconnue"
+                        };
+
+                    if (group.Key == PileIdentifier.CurrentPlayerDiscard)
+                    {
+                        cols = cols.Append(ConsoleGame.Game.CurrentPlayer.Discard.IsMarkedForUpgrade(card) ? "×" : " ")
+                            .ToArray();
+                    }
+                    else if (group.Key == PileIdentifier.OtherPlayerDiscard)
+                    {
+                        cols = cols.Append(ConsoleGame.Game.CurrentPlayer.OtherPlayer.Discard.IsMarkedForUpgrade(card)
+                            ? "×"
+                            : " ").ToArray();
+                    }
+
+                    table.AddRow(cols);
                 }
 
                 AnsiConsole.Write(table);
             }
+        }
+
+        private static Table GetDefaultTable(string title, bool upgrade = false)
+        {
+            Table table = new Table().Title(title)
+                .AddColumn(new TableColumn("[bold][underline]Nom[/][/]").Centered())
+                .AddColumn(new TableColumn("[bold][underline]Coût[/][/]").Centered())
+                .AddColumn(new TableColumn("[bold][underline]Niveau[/][/]").Centered())
+                .AddColumn(new TableColumn("[bold][underline]Description[/][/]").Centered())
+                .Centered();
+
+            if (upgrade)
+                table.AddColumn(new TableColumn("[bold][underline]Marquée[/][/]").Centered());
+
+            return table;
         }
     }
 }
