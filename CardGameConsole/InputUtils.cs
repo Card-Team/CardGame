@@ -24,7 +24,7 @@ namespace CardGameConsole
             foreach (var pile in split)
             {
                 var builded = new List<string>();
-                foreach (var (card, visible) in pile.WithVisionInfo())
+                foreach (var (card, visible) in pile.WithVisionInfo(pov))
                 {
                     var text = $"{index} - {(visible ? card.ToString() : "Inconnu")}";
                     builded.Add(text);
@@ -33,7 +33,7 @@ namespace CardGameConsole
                 }
 
 
-                prompt.AddChoiceGroup(pile.Key.Display(),
+                prompt.AddChoiceGroup(pile.Key.Display(pov),
                     builded);
             }
 
