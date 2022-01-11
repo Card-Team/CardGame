@@ -10,7 +10,7 @@ description = "Gagner les points d'action d'une carte de ton deck selectionné"
 --fonction qui recupere toute les cartes de sa main sauf celle ci est lui demande d'en selectionné une
 function cardFilter(aCard)
     return EffectOwner.Hand.Contains(aCard)
-            and ThisCard ~= aCard
+            and This ~= aCard
 end
 
 targets = {

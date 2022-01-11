@@ -8,8 +8,8 @@ description = "Fait baisser le coût d'action de l'adversaire avec le cout d'une
 
 function card_filter()
     -- carte choisis aleatoirement depuis ton deck
-    local CardPile = EffectOwner.Player.Deck
-    local random = math.random(0, CardPile.Count() - 1)
+    local CardPile = EffectOwner.Deck
+    local random = math.random(0, CardPile.Count - 1)
     return CardPile[random]
 end
 

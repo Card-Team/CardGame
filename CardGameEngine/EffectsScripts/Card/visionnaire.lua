@@ -5,7 +5,7 @@ name = "Visionnaire"
 pa_cost = 3
 --TODO a definir le nombre de cout
 
-base_description ="Niveau 1 Cette carte vous permet de voir les 2 premiers cartes du deck"
+base_description ="Niveau 1 Cette carte vous permet de voir les 2 premiers cartes de votre deck"
 description = base_description
 
 function cardFilter1(aCard)
@@ -14,7 +14,7 @@ end
 function cardFilter2(aCard)
     return EffectOwner.Deck[1]
 end
-function cardFilter2(aCard)
+function cardFilter3(aCard)
     return EffectOwner.Deck[2]
 end
 targets = {
@@ -39,15 +39,15 @@ function do_effect()
     if This.CurrentLevel.Value == 1 then
         local card1 = AskForTarget(1)            --la carte 1 Deck
         local card2 = AskForTarget(2)            --la carte 2
-        EffectOwner.RevealCard(card1)            -- fait voir les carte 1
-        EffectOwner.RevealCard(card2)            -- fait voir les carte 2
+        Game.RevealCard(EffectOwner,card1)       -- fait voir les carte 1
+        Game.RevealCard(EffectOwner,card2)        -- fait voir les carte 2
     else
         local card1 = AskForTarget(1)            --la carte 1 du Deck
         local card2 = AskForTarget(2)            --la carte 2 du Deck
         local card3 = AskForTarget(3)            --la carte 3
-        EffectOwner.RevealCard(card1)            -- fait voir les carte selectionner
-        EffectOwner.RevealCard(card2)
-        EffectOwner.RevealCard(card3)
+        Game.RevealCard(EffectOwner,card1)            -- fait voir les carte selectionner
+        Game.RevealCard(EffectOwner,card2)
+        Game.RevealCard(EffectOwner,card3)
     end
 end
 

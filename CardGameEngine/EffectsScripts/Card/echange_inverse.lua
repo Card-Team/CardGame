@@ -9,7 +9,7 @@ description = "Echange cette carte avec une carte aléatoire dans votre défauss
 function card_filter()
     -- Verifier quand pas de carte dans la défausse
     local DiscardPile = EffectOwner.Discard
-    local random = math.random(0, DiscardPile.Count() - 1)
+    local random = math.random(0, DiscardPile.Count - 1)
     return DiscardPile[random]
 end
 
@@ -26,8 +26,8 @@ end
 function do_effect()
     local theCard = AskForTarget(1)
     -- TODO échanger leur position aussi ( donc pas 0)
-    EffectOwner.Player.Discard.MoveTo(EffectOwner.Hand, theCard, 0)
-    EffectOwner.Hand.MoveTo(EffectOwner.Player.Discard, This, 0)
+    EffectOwner.Discard.MoveTo(EffectOwner.Hand, theCard, 0)
+    EffectOwner.Hand.MoveTo(EffectOwner.Discard, This, 0)
 end
 
 

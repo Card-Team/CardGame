@@ -9,7 +9,7 @@ description = base_description
 
 function card_filter(a_card)
     return EffectOwner.Hand.Contains(a_card)
-            and a_card ~= ThisCard
+            and a_card ~= This
 end
 
 targets = {
@@ -27,8 +27,9 @@ carte_copie = nil
 function do_effect()
     if (carte_copie == nil) then
         carte_copie = AskForTarget(1)
-        This.Cost = carte_copie.Cost
-        This.Description.TryChangeValue("Cette carte prend l'effet de la carte " .. carte_copie.Name)
+        This.Cost.TryChangeValue(carte_copie.Cost.Value)
+        This.Description.TryChangeValue("Cette carte a pris l'effet de la carte " ..carte_copie.Name.Value)
+        return false
     else
         Game.PlayCard(EffectOwner, carte_copie)
         This.Description.TryChangeValue(base_description)
