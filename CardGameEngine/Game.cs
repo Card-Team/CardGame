@@ -9,6 +9,7 @@ using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
+using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine
 {
@@ -272,9 +273,10 @@ namespace CardGameEngine
         /// </summary>
         /// <param name="player"></param>
         /// <param name="card"></param>
-        private void RevealCard(Player player, Card card)
+        [MoonSharpVisible(true)]
+        internal void RevealCard(Player player, Card card)
         {
-            throw new NotImplementedException();
+            _externCallbacks.ExternShowCard(player,card);
         }
 
 

@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using CardGameEngine;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
+using Spectre.Console;
 
 namespace CardGameConsole
 {
@@ -27,7 +31,13 @@ namespace CardGameConsole
 
         public void ExternShowCard(Player player, Card card)
         {
-            Console.Write($"La carte suivante vous est montré : {card}");
+            if (player != ConsoleGame.Game.CurrentPlayer)
+            {
+                AnsiConsole.Clear();
+                AnsiConsole.Ask($"Veuillez passer la main a [bold]{player.GetName()}[/] temporairement","");
+            }
+            AnsiConsole.WriteLine($"La carte suivante vous est montrée : {card}");
+            AnsiConsole.Ask($"Veuillez rendre la main a [bold]{ConsoleGame.Game.CurrentPlayer.GetName()}[/]","");
         }
 
         public Card ExternChooseBetween(Player player, List<Card> card)
