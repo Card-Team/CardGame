@@ -9,7 +9,7 @@ description = "Echange cette carte avec une carte aléatoire de la main de votre
 function card_filter()
     -- Verifier quand pas de carte
     local OtherHand = EffectOwner.OtherPlayer.Hand
-    local random = math.random(0, OtherHand.Count() - 1)
+    local random = math.random(0, OtherHand.Count- 1)
     return OtherHand[random]
 end
 

@@ -18,8 +18,7 @@ targets = {
 }
 
 
---Extracteur  : Carte qui permet au joueur de choisir parmi une de ses cartes en main et d'en gagner le cout en points d'action.
---La carte choisit retourne en bas du deck et devient lourde jusqu à prochaine pioche. Lv1 -> Cout max de la carte : 2, Lv2-> Cout max de la carte : 3, lv3 -> Cout max de la carte : 4 "
+--Visionnaire TODO ?0
 
 function precondition()
     return TargetsExists({ 1 })

@@ -9,7 +9,7 @@ description = base_description
 
 function card_filter(a_card)
     local cardDeckPlayer = EffectOwner.Deck
-    local random = math.random(0, cardDeckPlayer.Count() - 1)
+    local random = math.random(0, cardDeckPlayer.Count - 1)
     return cardDeckPlayer[random]
 end
 

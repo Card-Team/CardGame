@@ -4,15 +4,14 @@ image_id = 709
 name = "chance"
 pa_cost = 2
 
-description = "Devine une carte de la main du joueurs si c'est bon elle va dans sa defausse"
+description = "Devine une carte de la main du joueur si c'est la bonne elle va dans sa defausse"
 
 function cardFilter()
     local OtherHand = EffectOwner.OtherPlayer.Hand
-    if (OtherHand.Count == 0) then
-        return nil
-    else
-        --TODO 
-    end
+    --selectionner toute les cartes du jeu
+    
+    -- for pour verifier si il a selctionner une carte de sa main
+    
 end
 
 targets = {
