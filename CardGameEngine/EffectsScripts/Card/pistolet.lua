@@ -12,7 +12,7 @@ function cardFilter()
     local OtherHand = EffectOwner.OtherPlayer.Hand
     if (OtherHand.Count == 0) then
         return nil
-    elseif (current_level == 1) then
+    elseif (This.CurrentLevel.Value == 1) then
         local minCardCost = OtherHand[0].Cost.Value
         local minCard = OtherHand[0]
         for card in OtherHand do
@@ -31,7 +31,7 @@ function cardFilter()
                 maxCard = card
             end
         end
-        return maxCard
+        return maxCard.test
     end
 end
 

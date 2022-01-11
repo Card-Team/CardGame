@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CardGameEngine;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Debugging;
 
@@ -8,15 +11,19 @@ namespace CardGameConsole
     {
         private const string ScriptError = "[Erreur de script] : ";
 
-        public static void PrintError(ScriptRuntimeException exception)
+        public static void PrintError(ScriptRuntimeException exc)
+        {
+            PrintError(exc,exc.CallStack.ToList());
+        }
+        public static void PrintError(ScriptRuntimeException exception,List<WatchItem> callstack)
         {
             var splitted = exception.DecoratedMessage.Split(':');
             var scriptName = splitted[0].Trim();
             var msg = splitted[2].Trim();
             Console.Error.WriteLine($"[Erreur de script] : {scriptName} -> {msg}");
-            for (var index = 0; index < exception.CallStack.Count; index++)
+            for (var index = 0; index < callstack.Count; index++)
             {
-                var watchItem = exception.CallStack[index];
+                var watchItem = callstack[index];
                 var text = $"[Erreur de script] : Dans {watchItem.Name} {FormatSourceLocation(watchItem.Location)}";
                 Console.Error.Write(
                     text);
@@ -24,7 +31,7 @@ namespace CardGameConsole
                 {
                     Console.Write(" : ");
                     ColoredSource(scriptName, text.Length - ScriptError.Length, watchItem.Location,
-                        index == exception.CallStack.Count - 1);
+                        index == 0);
                 }
 
                 Console.WriteLine("");
@@ -44,7 +51,7 @@ namespace CardGameConsole
             var scriptContent = ConsoleGame.Game.GetScriptByName(scriptName);
             if (scriptContent == null) return;
 
-            bool isMultiLine = watchItemLocation.FromLine != watchItemLocation.ToLine;
+            bool isMultiLine = watchItemLocation.FromLine != watchItemLocation.ToLine && watchItemLocation.ToChar != 0;
 
             var strings = scriptContent.Split('\n');
             string firstLine = strings[watchItemLocation.FromLine - 1];
@@ -54,7 +61,7 @@ namespace CardGameConsole
                 var before = Console.ForegroundColor;
                 for (var i = 0; i < firstLine.Length; i++)
                 {
-                    if (i < watchItemLocation.FromChar || i > watchItemLocation.ToChar)
+                    if (i < watchItemLocation.FromChar || (watchItemLocation.ToChar != 0 && i > watchItemLocation.ToChar))
                     {
                         Console.ForegroundColor = before;
                     }
@@ -65,6 +72,7 @@ namespace CardGameConsole
 
                     Console.Write(firstLine[i]);
                 }
+                Console.ForegroundColor = before;
             }
             else
             {
@@ -102,6 +110,11 @@ namespace CardGameConsole
         private static string FormatSourceLocation(SourceRef location)
         {
             return $"({location.FromLine},{location.FromChar})-({location.ToLine},{location.ToChar})";
+        }
+
+        public static void PrintError(LuaException exception)
+        {
+            PrintError(exception.RuntimeException,exception.CallStack);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems.Effects;
 using MoonSharp.Interpreter;
@@ -61,8 +62,15 @@ namespace CardGameEngine.GameSystems.Targeting
                 throw new InvalidOperationException("la target n'est pas automatique");
             var cardFilter = this._cardFilter;
 
-            if (cardFilter != null)
-                return cardFilter.Call().CheckUserDataType<ITargetable>(nameof(GetAutomaticTarget));
+            try
+            {
+                if (cardFilter != null)
+                    return cardFilter.Call().CheckUserDataType<ITargetable>(nameof(GetAutomaticTarget));
+            }
+            catch (ScriptRuntimeException ex)   
+            {
+                throw new LuaException(ex, ex.CallStack.ToList());
+            }
 
             throw new InvalidEffectException(
                 "l'effet est invalide car la  cible est automatique mais n'a pas de carte filter");

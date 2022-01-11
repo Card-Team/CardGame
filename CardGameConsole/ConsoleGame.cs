@@ -62,6 +62,10 @@ namespace CardGameConsole
             {
                 ErrorUtils.PrintError(exception);
             }
+            catch (LuaException exception)
+            {
+                ErrorUtils.PrintError(exception);
+            }
             catch (InvalidOperationException exception)
             {
                 if (exception.TargetSite.DeclaringType?.Namespace?.StartsWith("CardGameEngine") == true)

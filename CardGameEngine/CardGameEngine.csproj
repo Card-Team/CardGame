@@ -115,6 +115,7 @@
         <Compile Include="GameSystems\Targeting\ITargetable.cs" />
         <Compile Include="GameSystems\Targeting\Target.cs" />
         <Compile Include="GameSystems\Targeting\TargetTypes.cs" />
+        <Compile Include="LuaException.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

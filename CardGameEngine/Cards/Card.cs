@@ -92,12 +92,21 @@ namespace CardGameEngine.Cards
             using (var post = _game.EventManager.SendEvent(effectActivateEvent))
             {
                 SetUpScriptBeforeRunning(game, effectOwner);
-                var result = Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
-                if (result.Type == DataType.Boolean)
+                try
                 {
-                    return result.Boolean;
+                    var result = Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
+
+
+                    if (result.Type == DataType.Boolean)
+                    {
+                        return result.Boolean;
+                    }
+                    else return true;
                 }
-                else return true;
+                catch (ScriptRuntimeException exc)
+                {
+                    throw;
+                }
             }
         }
 

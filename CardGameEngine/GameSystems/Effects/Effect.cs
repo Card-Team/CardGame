@@ -50,10 +50,10 @@ namespace CardGameEngine.GameSystems.Effects
         {
             //fonctions
             Script.Globals["SubscribeTo"] =
-                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>) game.EventManager.LuaSubscribeToEvent;
+                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>)game.EventManager.LuaSubscribeToEvent;
 
             Script.Globals["UnsubscribeTo"] =
-                (Action<EventManager.IEventHandler>) game.EventManager.LuaUnsubscribeFromEvent;
+                (Action<EventManager.IEventHandler>)game.EventManager.LuaUnsubscribeFromEvent;
 
             //propriétés
 
@@ -88,15 +88,29 @@ namespace CardGameEngine.GameSystems.Effects
 
         internal DynValue RunMethod(string methodName, params object[] parameters)
         {
-            var method = Script.Globals.Get(methodName).CheckType(nameof(RunMethod), DataType.Function);
+            try
+            {
+                var method = Script.Globals.Get(methodName).CheckType(nameof(RunMethod), DataType.Function);
 
-            return method.Function.Call(parameters);
+                return method.Function.Call(parameters);
+            }
+            catch (ScriptRuntimeException exception)
+            {
+                throw new LuaException(exception, exception.CallStack.ToList());
+            }
         }
 
         internal DynValue RunMethodOptional(string methodName, params object[] parameters)
         {
-            var dynValue = Script.Globals.Get(methodName);
-            return dynValue.Type == DataType.Function ? dynValue.Function.Call(parameters) : DynValue.Nil;
+            try
+            {
+                var dynValue = Script.Globals.Get(methodName);
+                return dynValue.Type == DataType.Function ? dynValue.Function.Call(parameters) : DynValue.Nil;
+            }
+            catch (ScriptRuntimeException exception)
+            {
+                throw new LuaException(exception, exception.CallStack.ToList());
+            }
         }
 
         public T GetProperty<T>(string propertyName)
