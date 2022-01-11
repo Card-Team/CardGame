@@ -64,9 +64,9 @@ namespace CardGameEngine.GameSystems.Effects
             //types des évenements
 
             var typeInfos = Assembly.GetExecutingAssembly()
-                .DefinedTypes
+                .GetTypes()
                 .Where(t => t.Namespace?.StartsWith("CardGameEngine.EventSystem.Events") ?? false)
-                .Where(t => t.IsAssignableFrom(typeof(Event)));
+                .Where(t => typeof(Event).IsAssignableFrom(t));
 
             foreach (var typeInfo in typeInfos)
             {
