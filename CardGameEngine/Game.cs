@@ -177,7 +177,7 @@ namespace CardGameEngine
                     $"Tentative d'amélioration de la carte {card} alors qu'elle est au niveau maximum ({card.CurrentLevel})");
             }
 
-            if (card.CanBePlayed(this, player) == false) return false;
+            if (!upgrade && card.CanBePlayed(this, player) == false) return false;
 
             var newVal = Math.Max(0, player.ActionPoints.Value - card.Cost.Value);
             player.ActionPoints.TryChangeValue(newVal);

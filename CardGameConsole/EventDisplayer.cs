@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.AccessControl;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
 using CardGameEngine.EventSystem.Events.CardEvents;
@@ -12,6 +14,8 @@ namespace CardGameConsole
 {
     public static class EventDisplayer
     {
+        private static List<string> _events = new List<string>();
+
         public static void RegisterAllEvents(EventManager eventManager)
         {
             // Carte monte de niveau
@@ -36,17 +40,18 @@ namespace CardGameConsole
 
         private static void OnMaxActionPointsEdit(MaxActionPointsEditEvent evt)
         {
-            WriteEvent(new Markup($"Votre limite de [green]points d'action[/] est maintenant de [bold]{evt.NewMaxPointCount}[/]").RightAligned());
+            WriteEvent($"Votre limite de [green]points d'action[/] est maintenant de [bold]{evt.NewMaxPointCount}[/]");
         }
 
         private static void OnActionPointsEdit(ActionPointsEditEvent evt)
         {
-            WriteEvent(new Markup($"Il vous reste [bold]{evt.NewPointCount}[/] [green]points d'action[/]").RightAligned());
+            WriteEvent(
+                $"Il vous reste [bold]{evt.NewPointCount}[/] [green]points d'action[/]");
         }
 
         private static void OnCardMarkedUpgrade(CardMarkUpgradeEvent evt)
         {
-            WriteEvent(new Markup($"[bold]{evt.Card.Name}[/] est prête à se faire améliorer").RightAligned());
+            WriteEvent($"[underline]{evt.Card.Name}[/] est prête à se faire améliorer");
         }
 
         private static void OnCardChangePile(CardMovePileEvent evt)
@@ -61,33 +66,44 @@ namespace CardGameConsole
             {
                 // Main → Défausse = Défausser/Améliorer
                 if (evt.SourcePile == player.Hand && evt.DestPile == player.Discard)
-                    WriteEvent(new Markup($"La carte [underline]{evt.Card.Name}[/] de [bold]{player.GetName()}[/] se dirige vers [red]la défausse[/]").RightAligned());
+                    WriteEvent(
+                        $"La carte [underline]{evt.Card.Name}[/] de [bold]{player.GetName()}[/] se dirige vers [red]la défausse[/]");
 
                 // Deck → Main = Pioche
                 else if (evt.SourcePile == player.Deck && evt.DestPile == player.Hand)
 
                     if (player == ConsoleGame.Game.CurrentPlayer)
                         // Tu pioches
-                        WriteEvent(new Markup($"Vous venez de piocher [underline]{evt.Card.Name}[/]").RightAligned());
+                        WriteEvent($"Vous venez de piocher [underline]{evt.Card.Name}[/]");
                     else
                         // L'adversaire pioche
-                        WriteEvent(new Markup($"[bold]{player.GetName()}[/] vient de piocher une carte").RightAligned());
+                        WriteEvent($"[bold]{player.GetName()}[/] vient de piocher une carte");
             }
         }
 
         private static void OnCardPlay(CardPlayEvent evt)
         {
-            WriteEvent(new Markup($"[underline]{evt.Card.Name}[/] vient d'être activée").RightAligned());
+            WriteEvent($"[underline]{evt.Card.Name}[/] vient d'être activée");
         }
 
-        private static void WriteEvent(IRenderable evt)
+        private static void WriteEvent(string evt)
         {
-            AnsiConsole.Write(evt);
+            _events.Add(evt);
+        }
+
+        public static Panel DumpEvents()
+        {
+            return new Panel(new Markup(string.Join("\n", _events)).Alignment(Justify.Right));
+        }
+
+        public static void ClearEvents()
+        {
+            _events.Clear();
         }
 
         private static void OnPostCardPlay(CardPlayEvent evt)
         {
-            WriteEvent(new Markup($"[underline]L'effet de {evt.Card.Name}[/] a été exécuté avec succès").RightAligned());
+            WriteEvent($"[underline]L'effet de {evt.Card.Name}[/] a été exécuté avec succès");
         }
 
         private static void OnCardLevelChange(CardLevelChangeEvent evt)
@@ -100,7 +116,7 @@ namespace CardGameConsole
 
             // Niveau baisse
             else
-                WriteEvent(new Markup($"[underline]{evt.Card.Name}[/] est redescendue au [blue]niveau {evt.NewValue}[/]").RightAligned());
+                WriteEvent($"[underline]{evt.Card.Name}[/] est redescendue au [blue]niveau {evt.NewValue}[/]");
         }
     }
 }

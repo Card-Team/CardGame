@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
@@ -51,33 +52,53 @@ namespace CardGameConsole
 
                 foreach (var (card, visible) in group.WithVisionInfo())
                 {
-                    string[] cols;
+                    Markup[] cols;
                     if (visible)
+                    {
+                        var precondition = card.CanBePlayed(ConsoleGame.Game, ConsoleGame.Game.CurrentPlayer);
+                        var cost2Much = card.Cost.Value > ConsoleGame.Game.CurrentPlayer.ActionPoints.Value;
+                        var level = card.CurrentLevel.Value == card.MaxLevel;
+
                         cols = new[]
                         {
-                            card.Name.Value, card.Cost.Value.ToString(),
-                            $"{card.CurrentLevel}/{card.MaxLevel}",
-                            card.Description.Value
+                            new Markup((!precondition || cost2Much ? "[red]" : "")
+                                       + card.Name.Value +
+                                       (!precondition || cost2Much ? "[/]" : "")),
+
+                            new Markup((cost2Much ? "[red]" : "")
+                                       + card.Cost +
+                                       (cost2Much ? "[/]" : "")),
+
+                            new Markup((level ? "[yellow]" : "")
+                                       + $"{card.CurrentLevel}/{card.MaxLevel}" +
+                                       (level ? "[/]" : "")),
+
+                            new Markup((!precondition ? "[red]" : "")
+                                       + card.Description.Value +
+                                       (!precondition ? "[/]" : ""))
                         };
+                    }
                     else
                         cols = new[]
                         {
-                            "Caché",
-                            "?",
-                            "?/?",
-                            "Inconnue"
+                            new Markup("[silver]Caché[/]"),
+                            new Markup("[silver]?[/]"),
+                            new Markup("[silver]?/?[/]"),
+                            new Markup("[silver]Inconnue[/]")
                         };
 
                     if (group.Key == PileIdentifier.CurrentPlayerDiscard)
                     {
-                        cols = cols.Append(ConsoleGame.Game.CurrentPlayer.Discard.IsMarkedForUpgrade(card) ? "×" : " ")
+                        cols = cols.Append(
+                                new Markup(ConsoleGame.Game.CurrentPlayer.Discard.IsMarkedForUpgrade(card) ? "×" : " "))
                             .ToArray();
                     }
                     else if (group.Key == PileIdentifier.OtherPlayerDiscard)
                     {
-                        cols = cols.Append(ConsoleGame.Game.CurrentPlayer.OtherPlayer.Discard.IsMarkedForUpgrade(card)
-                            ? "×"
-                            : " ").ToArray();
+                        cols = cols.Append(new Markup(
+                            ConsoleGame.Game.CurrentPlayer.OtherPlayer.Discard.IsMarkedForUpgrade(card)
+                                ? "×"
+                                : " ")).ToArray();
                     }
 
                     table.AddRow(cols);
@@ -100,6 +121,21 @@ namespace CardGameConsole
                 table.AddColumn(new TableColumn("[bold][underline]Marquée[/][/]").Centered());
 
             return table;
+        }
+
+        public static IEnumerable<Card> Playable(this IEnumerable<Card> cards)
+        {
+            return cards.Where(c => c.CanBePlayed(ConsoleGame.Game, ConsoleGame.Game.CurrentPlayer));
+        }
+
+        public static IEnumerable<Card> Upgradable(this IEnumerable<Card> cards)
+        {
+            return cards.Where(c => c.CurrentLevel.Value < c.MaxLevel);
+        }
+
+        public static IEnumerable<Card> CostPlayable(this IEnumerable<Card> cards)
+        {
+            return cards.Where(c => c.Cost.Value <= ConsoleGame.Game.CurrentPlayer.ActionPoints.Value);
         }
     }
 }
