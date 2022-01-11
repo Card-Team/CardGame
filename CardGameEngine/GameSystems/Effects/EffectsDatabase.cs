@@ -16,10 +16,13 @@ namespace CardGameEngine.GameSystems.Effects
         /// <summary>
         /// Le dictionnaire stockant les effets valides avec leur nom comme clé
         /// </summary>
-        private readonly Dictionary<string, EffectSupplier> _effectDictionary = new Dictionary<string, EffectSupplier>();
+        private readonly Dictionary<string, EffectSupplier>
+            _effectDictionary = new Dictionary<string, EffectSupplier>();
+
+        private Dictionary<string,string> _scripts = new Dictionary<string, string>();
 
         internal delegate Effect EffectSupplier();
-        
+
         /// <summary>
         /// Accède au dictionnaire des effets de l'objet
         /// </summary>
@@ -36,6 +39,7 @@ namespace CardGameEngine.GameSystems.Effects
         internal EffectsDatabase(string path)
         {
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
+
             foreach (var directory in Directory.EnumerateDirectories(path))
             {
                 var validFile = Enum.TryParse(Path.GetFileName(directory), out EffectType type);
@@ -77,12 +81,13 @@ namespace CardGameEngine.GameSystems.Effects
             }
 
             var fileContent = File.ReadAllText(path);
-
+            _scripts[effectId] = fileContent;
             _effectDictionary[effectId] = () =>
             {
                 // Charge le script de l'effet
                 var script = GetDefaultScript();
-                script.DoString(fileContent);
+                script.Options.DebugPrint = s => Console.WriteLine($"[LUA:{effectId}]: {s}");
+                script.DoString(fileContent, codeFriendlyName: effectId);
 
                 // Récupère les cibles de l'effet
                 var targets = script.Globals.Get("targets").CheckType(nameof(LoadAllEffects), DataType.Table)
@@ -107,7 +112,7 @@ namespace CardGameEngine.GameSystems.Effects
                 // Élements c# à intégrer dans le fichier lua
                 Globals =
                 {
-                    ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>) CreateTarget,
+                    ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>)CreateTarget,
                     ["TargetTypes"] = UserData.CreateStatic<TargetTypes>(),
                 }
             };
@@ -123,6 +128,11 @@ namespace CardGameEngine.GameSystems.Effects
             Closure? cardFilter = null)
         {
             return new Target(targetName, targetType, isAutomatic, cardFilter);
+        }
+
+        public string? GetScript(string effectName)
+        {
+            return _scripts.ContainsKey(effectName) ? _scripts[effectName] : null;
         }
     }
 }

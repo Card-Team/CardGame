@@ -2,6 +2,7 @@
 using System.IO;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
+using MoonSharp.Interpreter;
 using NUnit.Framework;
 
 namespace CardGameTests
@@ -104,6 +105,8 @@ namespace CardGameTests
                 .False
             );
 
+            Assert.Throws<ScriptRuntimeException>(() => eft.AllTargets[0].IsValidTarget(null!));
+            
             Assert.That(eft.AllTargets, Has.Exactly(1)
                 .With.Property(nameof(Target.Name))
                 .EqualTo("Un joueur")

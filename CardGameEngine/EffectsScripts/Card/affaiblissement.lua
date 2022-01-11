@@ -6,10 +6,6 @@ pa_cost = 3
 
 description = "Fait baisser le coût d'action de l'adversaire avec le cout d'une carte aleatoire"
 
-targets = {
-    CreateTarget("points d'action baisser aleatoirement", TargetTypes.Card, true, card_filter),
-}
-
 function card_filter()
     -- carte choisis aleatoirement depuis ton deck
     local CardPile = EffectOwner.Player.Deck
@@ -17,9 +13,14 @@ function card_filter()
     return CardPile[random]
 end
 
+targets = {
+    CreateTarget("points d'action baisser aleatoirement", TargetTypes.Card, true, card_filter),
+}
+
+
 --- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
-    return TargetsExists({ 1 })
+    return EffectOwner.Deck.Count > 0
 end
 
 function do_effect()

@@ -6,16 +6,17 @@ pa_cost = 2
 
 description = "une description de la carte qui peut changer"
 
+function card_filter(a_card)
+    -- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
+    return a_card.Name == "Exemple"
+end
+
 targets = {
     -- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
     CreateTarget("Une cible carte", TargetTypes.Card, false, card_filter),
     CreateTarget("Un joueur", TargetTypes.Player, true),
 }
 
-function card_filter(a_card)
-    -- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
-    return a_card.Name == "Exemple"
-end
 
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()

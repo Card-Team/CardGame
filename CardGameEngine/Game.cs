@@ -90,7 +90,7 @@ namespace CardGameEngine
             {
                 card.OnCardCreate();
             }
-            
+
             StartPlayerTurn(CurrentPlayer.OtherPlayer);
         }
 
@@ -151,6 +151,8 @@ namespace CardGameEngine
             using (EventManager.SendEvent(turnEvent))
             {
             }
+
+            StartPlayerTurn(CurrentPlayer.OtherPlayer);
         }
 
         /// <summary>
@@ -178,6 +180,8 @@ namespace CardGameEngine
                 throw new InvalidOperationException(
                     $"Tentative d'amélioration de la carte {card} alors qu'elle est au niveau maximum ({card.CurrentLevel})");
             }
+
+            if (card.CanBePlayed(this, player) == false) return false;
 
             var newVal = Math.Max(0, player.ActionPoints.Value - card.Cost.Value);
             player.ActionPoints.TryChangeValue(newVal);
@@ -313,6 +317,7 @@ namespace CardGameEngine
         /// <returns></returns>
         internal ITargetable LuaAskForTarget(Effect effect, Player effectOwner, int i)
         {
+            i = i - 1; //parce que lua
             var target = effect.AllTargets[i];
             ITargetable resolved;
 
@@ -324,14 +329,8 @@ namespace CardGameEngine
             {
                 if (target.TargetType == TargetTypes.Card)
                 {
-                    var allCards = Player1.Hand
-                        .Concat(Player1.Deck)
-                        .Concat(Player1.Discard)
-                        .Concat(Player2.Hand)
-                        .Concat(Player2.Deck)
-                        .Concat(Player2.Discard);
 
-                    var cards = allCards.Where(c => target.IsValidTarget(c)).ToList();
+                    var cards = GetValidTargets(target);
                     resolved = _externCallbacks.ExternCardAskForTarget(effectOwner, target.Name, cards);
                 }
                 else
@@ -344,6 +343,27 @@ namespace CardGameEngine
             using var postSender = EventManager.SendEvent(targetingEvent);
             resolved = postSender.Event.ResolvedTarget;
             return resolved;
+        }
+
+        public string? GetScriptByName(string effectName)
+        {
+            return EffectsDatabase.GetScript(effectName);
+        }
+
+        private List<Card> GetValidTargets(Target target)
+        {
+            if (target.IsAutomatic)
+            {
+                throw new InvalidOperationException("TargetsExists ne doit etre appelé que pour des cibles manuelles");
+            }
+            var allCards = Player1.Cards.Concat(Player2.Cards);
+
+            return allCards.Where(target.IsValidTarget).ToList();
+        }
+
+        internal bool LuaTargetsExists(Effect effect, Player effectOwner, IEnumerable<int> list)
+        {
+            return list.All(targetId => GetValidTargets(effect.AllTargets[targetId - 1]).Any());
         }
     }
 }

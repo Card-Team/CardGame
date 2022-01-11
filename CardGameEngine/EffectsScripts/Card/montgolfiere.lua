@@ -9,10 +9,6 @@ pa_cost = 2
 base_description = "Remonte une carte de 1 place dans le deck."
 description = base_description
 
-targets = {
-    CreateTarget("La carte à remonter", TargetTypes.Card, false, card_filter)
-}
-
 function card_filter(a_card)
     return EffectOwner.Deck.Contains(a_card)
             and
@@ -22,6 +18,11 @@ function card_filter(a_card)
                             EffectOwner.Deck.IndexOf(a_card) > 0
             )
 end
+
+targets = {
+    CreateTarget("La carte à remonter", TargetTypes.Card, false, card_filter)
+}
+
 
 function precondition()
     return TargetsExists({ 1 })

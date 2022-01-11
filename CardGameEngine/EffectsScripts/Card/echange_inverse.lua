@@ -6,20 +6,21 @@ pa_cost = 2
 
 description = "Echange cette carte avec une carte aléatoire dans votre défausse."
 
-targets = {
-    CreateTarget("la carte avec laquelle elle s'échange dans la défausse", TargetTypes.Card, true, card_filter),
-}
-
 function card_filter()
     -- Verifier quand pas de carte dans la défausse
-    local DiscardPile = EffectOwner.Player.Discard
+    local DiscardPile = EffectOwner.Discard
     local random = math.random(0, DiscardPile.Count() - 1)
     return DiscardPile[random]
 end
 
+targets = {
+    CreateTarget("la carte avec laquelle elle s'échange dans la défausse", TargetTypes.Card, true, card_filter),
+}
+
+
 --- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
-    return TargetsExists({ 1 })
+    return EffectOwner.Discard.Count > 0
 end
 
 function do_effect()

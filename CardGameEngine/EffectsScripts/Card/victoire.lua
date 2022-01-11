@@ -11,7 +11,7 @@ targets = {}
 
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
-    return true
+    return false
 end
 
 function do_effect()

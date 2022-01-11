@@ -34,6 +34,10 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
+        <Reference Include="MoonSharp.Interpreter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=921e73ce94aa17f8">
+          <HintPath>..\packages\MoonSharp.2.0.0.0\lib\net40-client\MoonSharp.Interpreter.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
@@ -41,6 +45,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="ConsoleExternCallbacks.cs" />
+        <Compile Include="ErrorUtils.cs" />
         <Compile Include="InputUtils.cs" />
         <Compile Include="ConsoleGame.cs" />
         <Compile Include="PileUtils.cs" />
@@ -56,6 +61,10 @@
     <ItemGroup>
       <Content Include="Decks\non.txt" />
       <Content Include="Decks\oui.txt" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Include="App.config" />
+      <None Include="packages.config" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

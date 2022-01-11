@@ -94,13 +94,17 @@ namespace CardGameEngine.Cards
             return true;
         }
 
+        //todo voir comment l'appeller dans les evenements
         private void SetUpScriptBeforeRunning(Game game, Player effectOwner)
         {
             Effect.FillGlobals(game, effectOwner, this, script =>
             {
                 //globals spécifique au cartes :
                 script.Globals["AskForTarget"] =
-                    (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
+                    (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
+
+                script.Globals["TargetsExists"] =
+                    (Func<List<int>, bool>)(list => game.LuaTargetsExists(Effect, effectOwner, list));
             });
         }
 
@@ -113,8 +117,6 @@ namespace CardGameEngine.Cards
         {
             SetUpScriptBeforeRunning(game, effectOwner);
             return Effect.RunMethod<bool>("precondition");
-            SetUpScriptBeforeRunning(game, effectOwner);
-            throw new NotImplementedException();
         }
 
         public bool Upgrade()

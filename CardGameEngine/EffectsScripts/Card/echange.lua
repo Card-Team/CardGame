@@ -6,10 +6,6 @@ pa_cost = 2
 
 description = "Echange cette carte avec une carte aléatoire de la main de votre adversaire."
 
-targets = {
-    CreateTarget("La carte que l'on veut échanger", TargetTypes.Card, true, card_filter),
-}
-
 function card_filter()
     -- Verifier quand pas de carte
     local OtherHand = EffectOwner.OtherPlayer.Hand
@@ -17,9 +13,14 @@ function card_filter()
     return OtherHand[random]
 end
 
+targets = {
+    CreateTarget("La carte que l'on veut échanger", TargetTypes.Card, true, card_filter),
+}
+
+
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
-    return TargetsExists({ 1 })
+    return EffectOwner.OtherPlayer.Hand.Count > 0
 end
 
 function do_effect()

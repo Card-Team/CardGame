@@ -6,10 +6,6 @@ pa_cost = 2
 
 description = "Devine une carte de la main du joueurs si c'est bon elle va dans sa defausse"
 
-targets = {
-    CreateTarget("Devine une carte de la main du joueurs", TargetTypes.Card, true, cardFilter),
-}
-
 function cardFilter()
     local OtherHand = EffectOwner.OtherPlayer.Hand
     if (OtherHand.Count == 0) then
@@ -19,8 +15,13 @@ function cardFilter()
     end
 end
 
+targets = {
+    CreateTarget("Devine une carte de la main du joueurs", TargetTypes.Card, true, cardFilter),
+}
+
+
 function precondition()
-    return TargetsExists({ 1 })
+    return EffectOwner.OtherPlayer.Hand.Count > 0
 end
 
 function do_effect()

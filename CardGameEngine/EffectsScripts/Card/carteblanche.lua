@@ -7,14 +7,15 @@ pa_cost = 2
 base_description = "Cette carte peut copier l'effet d'une carte"
 description = base_description
 
-targets = {
-    CreateTarget("Prendre l'effet d'une carte de la main", TargetTypes.Card, false, card_filter),
-}
-
 function card_filter(a_card)
     return EffectOwner.Hand.Contains(a_card)
             and a_card ~= ThisCard
 end
+
+targets = {
+    CreateTarget("Prendre l'effet d'une carte de la main", TargetTypes.Card, false, card_filter),
+}
+
 
 
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non

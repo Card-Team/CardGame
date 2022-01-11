@@ -5,7 +5,7 @@ namespace CardGameEngine.EventSystem.Events.GameStateEvents
     /// <summary>
     /// Evenement de victoire
     /// </summary>
-    internal class PlayerWinEvent : Event
+    public class PlayerWinEvent : Event
     {
         /// <summary>
         /// Joueur ayant gagné

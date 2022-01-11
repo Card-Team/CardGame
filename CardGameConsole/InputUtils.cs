@@ -27,7 +27,7 @@ namespace CardGameConsole
                 }
             }
 
-            return ChooseList(flattened);
+            return ChooseFromList(flattened);
         }
 
 

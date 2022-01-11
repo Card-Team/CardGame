@@ -7,21 +7,22 @@ pa_cost = 2
 base_description = "Cette carte peut copier l'effet d'une carte du deck"
 description = base_description
 
-targets = {
-    CreateTarget("Effet d'une carte aléatoire de ton deck", TargetTypes.Card, false, card_filter),
-    CreateTarget("Effet de 2 cartes aléatoires de ton deck", TargetTypes.Card, false, card_filter)
-}
-
 function card_filter(a_card)
     local cardDeckPlayer = EffectOwner.Deck
     local random = math.random(0, cardDeckPlayer.Count() - 1)
     return cardDeckPlayer[random]
 end
 
+targets = {
+    CreateTarget("Effet d'une carte aléatoire de ton deck", TargetTypes.Card, false, card_filter),
+    CreateTarget("Effet de 2 cartes aléatoires de ton deck", TargetTypes.Card, false, card_filter)
+}
+
+
 --Joker : lv1 : Carte copie l'effet d'une carte aléatoirement contenue dans son deck.
 --        lv2 : le joueur applique deux effets parmi les cartes de son deck aléatoirement et simultanément.
 function precondition()
-    return TargetsExists({ 1 })
+    return EffectOwner.Deck.Count > 0
 end
 
 function do_effect()

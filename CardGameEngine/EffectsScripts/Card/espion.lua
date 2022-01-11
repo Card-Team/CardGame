@@ -6,10 +6,6 @@ pa_cost = 3
 
 description = "voir une carte de la main de l'adversaire"
 
-targets = {
-    CreateTarget("carte qui fait voir", TargetTypes.Card, true, cardFilter),
-}
-
 --fonction qui recupere toute les cartes de sa main
 function cardFilter()
     -- carte choisis aleatoirement depuis sa main
@@ -18,8 +14,13 @@ function cardFilter()
     return OtherPlayerHand[random]
 end
 
+targets = {
+    CreateTarget("carte qui fait voir", TargetTypes.Card, true, cardFilter),
+}
+
+
 function precondition()
-    return TargetsExists({ 1 })
+    return EffectOwner.OtherPlayer.Hand.Count > 0
 end
 
 function do_effect()

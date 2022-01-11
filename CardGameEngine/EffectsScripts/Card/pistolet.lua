@@ -6,9 +6,7 @@ pa_cost = 2
 
 description = "met une carte dans sa deffause (1 -> carte avec cout d'action plus bas 2 -> carte avec cout d'action plus haut"
 
-targets = {
-    CreateTarget("met une carte dans sa deffause (1 -> carte avec cout d'action plus bas 2 -> carte avec cout d'action plus haut", TargetTypes.Card, true, cardFilter),
-}
+
 
 function cardFilter()
     local OtherHand = EffectOwner.OtherPlayer.Hand
@@ -33,8 +31,12 @@ function cardFilter()
     end
 end
 
+targets = {
+    CreateTarget("met une carte dans sa deffause (1 -> carte avec cout d'action plus bas 2 -> carte avec cout d'action plus haut", TargetTypes.Card, true, cardFilter),
+}
+
 function precondition()
-    return TargetsExists({ 1 })
+    return EffectOwner.OtherPlayer.Hand.Count > 0
 end
 
 function do_effect()

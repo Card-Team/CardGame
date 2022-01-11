@@ -7,14 +7,16 @@ pa_cost = 3
 
 description = "Gagner les points d'action d'une carte de ton deck selectionné"
 
-targets = {
-    CreateTarget("Carte a gagner ses point d'action", TargetTypes.Card, false, cardFilter),
-}
 --fonction qui recupere toute les cartes de sa main sauf celle ci est lui demande d'en selectionné une
 function cardFilter(aCard)
     return EffectOwner.Hand.Contains(aCard)
             and ThisCard ~= aCard
 end
+
+targets = {
+    CreateTarget("Carte a gagner ses point d'action", TargetTypes.Card, false, cardFilter),
+}
+
 
 --Extracteur  : Carte qui permet au joueur de choisir parmi une de ses cartes en main et d'en gagner le cout en points d'action.
 --La carte choisit retourne en bas du deck et devient lourde jusqu à prochaine pioche. Lv1 -> Cout max de la carte : 2, Lv2-> Cout max de la carte : 3, lv3 -> Cout max de la carte : 4 "
