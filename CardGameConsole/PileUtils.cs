@@ -22,25 +22,18 @@ namespace CardGameConsole
     {
         public static string Display(this PileIdentifier pileIdentifier, Player? pov = null)
         {
-            pov ??= ConsoleGame.Game.CurrentPlayer;
             return pileIdentifier switch
             {
-                PileIdentifier.CurrentPlayerDeck => pov.IsCurrent("Votre deck", "Le deck adverse"),
-                PileIdentifier.CurrentPlayerHand => pov.IsCurrent("Votre main", "La main adverse"),
-                PileIdentifier.CurrentPlayerDiscard => pov.IsCurrent("Votre défausse", "La défausse adverse"),
-                PileIdentifier.OtherPlayerDeck => pov.IsCurrent("Le deck adverse", "Votre deck"),
-                PileIdentifier.OtherPlayerHand => pov.IsCurrent("La main adverse", "Votre main"),
-                PileIdentifier.OtherPlayerDiscard => pov.IsCurrent("La défausse adverse", "Votre défausse"),
+                PileIdentifier.CurrentPlayerDeck => "Votre deck",
+                PileIdentifier.CurrentPlayerHand => "Votre main",
+                PileIdentifier.CurrentPlayerDiscard => "Votre défausse",
+                PileIdentifier.OtherPlayerDeck => "Le deck adverse",
+                PileIdentifier.OtherPlayerHand => "La main adverse",
+                PileIdentifier.OtherPlayerDiscard => "La défausse adverse",
                 PileIdentifier.Unknown => "Inconnu",
                 _ => throw new ArgumentOutOfRangeException(nameof(pileIdentifier), pileIdentifier, null)
             };
         }
-
-        private static string IsCurrent(this Player player, string votreDeck, string leDeckAdverse)
-        {
-            return ConsoleGame.Game.CurrentPlayer == player ? votreDeck : leDeckAdverse;
-        }
-
         public static PileIdentifier Identifier(this CardPile pile)
         {
             if (pile == ConsoleGame.Game.CurrentPlayer.Hand)
@@ -80,32 +73,32 @@ namespace CardGameConsole
         {
             return cardList.GroupBy(c =>
             {
-                if (ConsoleGame.Game.Player1.Hand.Contains(c))
+                if (ConsoleGame.Game.CurrentPlayer.Hand.Contains(c))
                 {
                     return PileIdentifier.CurrentPlayerHand;
                 }
 
-                if (ConsoleGame.Game.Player1.Deck.Contains(c))
+                if (ConsoleGame.Game.CurrentPlayer.Deck.Contains(c))
                 {
                     return PileIdentifier.CurrentPlayerDeck;
                 }
 
-                if (ConsoleGame.Game.Player1.Discard.Contains(c))
+                if (ConsoleGame.Game.CurrentPlayer.Discard.Contains(c))
                 {
                     return PileIdentifier.CurrentPlayerDiscard;
                 }
 
-                if (ConsoleGame.Game.Player2.Hand.Contains(c))
+                if (ConsoleGame.Game.CurrentPlayer.OtherPlayer.Hand.Contains(c))
                 {
                     return PileIdentifier.OtherPlayerHand;
                 }
 
-                if (ConsoleGame.Game.Player2.Deck.Contains(c))
+                if (ConsoleGame.Game.CurrentPlayer.OtherPlayer.Deck.Contains(c))
                 {
                     return PileIdentifier.OtherPlayerDeck;
                 }
 
-                if (ConsoleGame.Game.Player2.Discard.Contains(c))
+                if (ConsoleGame.Game.CurrentPlayer.OtherPlayer.Discard.Contains(c))
                 {
                     return PileIdentifier.OtherPlayerDiscard;
                 }
