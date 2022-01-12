@@ -100,12 +100,12 @@ namespace CardGameConsole
                     return PileIdentifier.OtherPlayerHand;
                 }
 
-                if (ConsoleGame.Game.Player2.OtherPlayer.Deck.Contains(c))
+                if (ConsoleGame.Game.Player2.Deck.Contains(c))
                 {
                     return PileIdentifier.OtherPlayerDeck;
                 }
 
-                if (ConsoleGame.Game.Player2.OtherPlayer.Discard.Contains(c))
+                if (ConsoleGame.Game.Player2.Discard.Contains(c))
                 {
                     return PileIdentifier.OtherPlayerDiscard;
                 }

@@ -1,4 +1,6 @@
-﻿using CardGameEngine.EventSystem.Events;
+﻿using CardGameEngine.Cards;
+using CardGameEngine.EventSystem.Events;
+using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.EventSystem
@@ -15,7 +17,7 @@ namespace CardGameEngine.EventSystem
         /// <summary>
         /// Objet lié à l'évènement
         /// </summary>
-        private S _sender;
+        protected S _sender;
 
         /// <summary>
         /// Valeur de la propriété
@@ -46,7 +48,7 @@ namespace CardGameEngine.EventSystem
         /// </summary>
         /// <param name="newVal">La nouvelle valeur</param>
         [MoonSharpVisible(true)]
-        internal T TryChangeValue(T newVal)
+        internal virtual T TryChangeValue(T newVal)
         {
             var evt = new ET
             {
@@ -68,6 +70,21 @@ namespace CardGameEngine.EventSystem
         public override string ToString()
         {
             return Value?.ToString() ?? "null";
+        }
+    }
+
+    class LevelEventProperty : EventProperty<Card, int, CardLevelChangeEvent>
+    {
+        internal LevelEventProperty(Card sender, EventManager evtManager, int value, bool isInevitable = false) : base(sender, evtManager, value, isInevitable)
+        {
+        }
+
+        internal override int TryChangeValue(int newVal)
+        {
+            var oldLevel = Value;
+            base.TryChangeValue(newVal);
+            _sender.OnLevelChange(oldLevel, Value);
+            return Value;
         }
     }
 }

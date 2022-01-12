@@ -14,6 +14,8 @@ namespace CardGameEngine.GameSystems.Effects
     /// </summary>
     internal class EffectsDatabase
     {
+        private readonly Action<string, string> _luaDebugPrint;
+
         /// <summary>
         /// Le dictionnaire stockant les effets valides avec leur nom comme clé
         /// </summary>
@@ -29,6 +31,8 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         /// <param name="s">Nom de l'effet</param>
         internal EffectSupplier this[string s] => _effectDictionary[s];
+        
+        
 
 
         /// <summary>
@@ -36,9 +40,11 @@ namespace CardGameEngine.GameSystems.Effects
         /// Redirige vers l'autre méthode LoadAllEffects en fonction du type des effets du sous-dossier
         /// </summary>
         /// <param name="path">Nom complet du dossier</param>
+        /// <param name="luaDebugPrint"></param>
         /// <seealso cref="LoadAllEffects(string, EffectType)"/>
-        internal EffectsDatabase(string path)
+        internal EffectsDatabase(string path, Action<string,string>? luaDebugPrint = null)
         {
+            _luaDebugPrint = luaDebugPrint ?? ((script, s) => {});
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
             Table dump = UserData.GetDescriptionOfRegisteredTypes(true);
             File.WriteAllText("./dump.txt", dump.Serialize());
@@ -89,7 +95,7 @@ namespace CardGameEngine.GameSystems.Effects
             {
                 // Charge le script de l'effet
                 var script = GetDefaultScript();
-                script.Options.DebugPrint = s => Console.WriteLine($"[LUA:{effectId}]: {s}");
+                script.Options.DebugPrint = s => _luaDebugPrint(effectId, s);
                 script.DoString(fileContent, codeFriendlyName: effectId);
 
                 // Récupère les cibles de l'effet

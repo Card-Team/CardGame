@@ -1,4 +1,4 @@
-﻿max_level = 3 --TODO-- A définir
+﻿max_level = 6 --TODO-- A définir
 image_id = 519
 
 name = "Victoire"
@@ -11,21 +11,22 @@ targets = {}
 
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
-    return false
+    return This.CurrentLevel.Value == This.MaxLevel
 end
 
 function do_effect()
-
+    Game.MakeWin(EffectOwner)
+    return false
 end
 
 function on_level_change(old, new)
     if (new < 3) then
         This.Description.TryChangeValue(base_description)
     elseif (new == max_level) then
-        Game.MakeWin(EffectOwner)
+        This.Description.TryChangeValue("Allez-y !")
     elseif (max_level - new < 5) then
-        This.Description.TryChangeValue("Plus que ".. max_level - current_level .." améliorations pour gagner la partie.")
+        This.Description.TryChangeValue("Plus que ".. (max_level - new) .." améliorations pour gagner la partie.")
     else
-        This.Description.TryChangeValue("La carte est au niveau : ".. current_level)
+        This.Description.TryChangeValue("La carte est au niveau : ".. new)
     end
 end

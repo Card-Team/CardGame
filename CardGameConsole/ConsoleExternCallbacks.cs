@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CardGameEngine;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
+using MoonSharp.Interpreter;
 using Spectre.Console;
 
 namespace CardGameConsole
@@ -50,9 +51,14 @@ namespace CardGameConsole
             return InputUtils.ChooseList("Veuillez faire un choix", card);
         }
 
+        public void LuaDebugPrint(string source, string debugPrint)
+        {
+            EventDisplayer.Events.Add($"[grey][underline][[Lua:{Markup.Escape(source)}]][/] {Markup.Escape(debugPrint)}[/]");
+        }
+
         public void ExternGameEnded(Player winner)
         {
-            Console.Write($"Le joueur {winner.GetName()} a gagné !");
+            ConsoleGame.Winner = winner;
         }
     }
 }

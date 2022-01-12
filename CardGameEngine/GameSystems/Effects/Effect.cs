@@ -46,7 +46,7 @@ namespace CardGameEngine.GameSystems.Effects
             Script = script;
         }
 
-        private void FillCommonGlobals(Game game, Player effectOwner, object theThis)
+        private void FillCommonGlobals(Game game, Player? effectOwner, object theThis)
         {
             //fonctions
             Script.Globals["SubscribeTo"] =
@@ -57,7 +57,7 @@ namespace CardGameEngine.GameSystems.Effects
 
             //propriétés
 
-            Script.Globals["EffectOwner"] = effectOwner;
+            if(effectOwner != null)Script.Globals["EffectOwner"] = effectOwner;
             Script.Globals["Game"] = game;
             Script.Globals["This"] = theThis;
 

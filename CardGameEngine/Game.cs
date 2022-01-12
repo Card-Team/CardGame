@@ -18,7 +18,7 @@ namespace CardGameEngine
     /// </summary>
     public class Game
     {
-        private const string VictoryCardEffectId = "_victory";
+        public const string VictoryCardEffectId = "_victoire";
 
         public const int DefaultMaxActionPoint = 5;
 
@@ -61,13 +61,12 @@ namespace CardGameEngine
 
             _externCallbacks = externCallbacks;
 
-            EffectsDatabase = new EffectsDatabase(effectFolder);
-            var cards1 = deck1.Select(s => EffectsDatabase[s]()).Select(e => new Card(this, e)).ToList();
-            var cards2 = deck2.Select(s => EffectsDatabase[s]()).Select(e => new Card(this, e)).ToList();
-
-
-            //TODO Add carte victoire
-
+            EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.LuaDebugPrint);
+            var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new []{VictoryCardEffectId}).Select(s => EffectsDatabase[s]())
+                .Select(e => new Card(this, e)).ToList();
+            var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new []{VictoryCardEffectId}).Select(s => EffectsDatabase[s]())
+                .Select(e => new Card(this, e)).ToList();
+            
             Player1 = new Player(this, cards1);
             Player2 = new Player(this, cards2);
 
@@ -91,15 +90,14 @@ namespace CardGameEngine
         }
 
         /// <summary>
-        /// Fait gagner la partie a un joueur
+        /// Fait gagner la partie a un joueur apres la fin de ce tour
         /// </summary>
         /// <param name="playerToWin">La joueur à faire gagner</param>
+        [MoonSharpVisible(true)]
         internal void MakeWin(Player playerToWin)
         {
-            CurrentPlayer = null;
-
-            var evt = new PlayerWinEvent(playerToWin);
-            using var post = EventManager.SendEvent(evt);
+            EventManager.Disabled = true;
+            _externCallbacks.ExternGameEnded(playerToWin);
         }
 
         /// <summary>
@@ -165,6 +163,7 @@ namespace CardGameEngine
                 throw new InvalidOperationException(
                     $"La carte {card} a eu une tentative d'activation alors qu'elle est virtuelle");
             }
+
             if (CurrentPlayer != player)
             {
                 throw new InvalidOperationException(
@@ -182,7 +181,7 @@ namespace CardGameEngine
                 throw new InvalidOperationException(
                     $"Tentative d'amélioration de la carte {card} alors qu'elle est au niveau maximum ({card.CurrentLevel})");
             }
-            
+
 
             if (!upgrade && card.CanBePlayed(this, player) == false) return false;
 
@@ -202,10 +201,10 @@ namespace CardGameEngine
             }
 
             if (card.CanBePlayed(this, effectowner) == false) ;
-            
-            return PlayCardEffect(effectowner, card, null,null);
+
+            return PlayCardEffect(effectowner, card, null, null);
         }
-        
+
         [MoonSharpVisible(true)]
         internal bool PlayCardFromEffect(Player effectowner, Card card)
         {
@@ -219,8 +218,7 @@ namespace CardGameEngine
 
             return PlayCardEffect(effectowner, card, GetPileOf(card), effectowner.Discard);
         }
-        
-        
+
 
         private bool PlayCardEffect(Player originalPlayer, Card card, CardPile? discardSource, DiscardPile? discardGoal)
         {

@@ -1,4 +1,3 @@
 ﻿extracteur
-pistolet
-affaiblissement
-pistolet
+debugamelioration
+visionnaire

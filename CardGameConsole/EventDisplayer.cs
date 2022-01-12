@@ -6,6 +6,7 @@ using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
 using CardGameEngine.EventSystem.Events.CardEvents;
 using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
+using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
 using Spectre.Console;
 using Spectre.Console.Rendering;
@@ -14,7 +15,7 @@ namespace CardGameConsole
 {
     public static class EventDisplayer
     {
-        private static List<string> _events = new List<string>();
+        public static List<string> Events { get; } = new List<string>();
 
         public static void RegisterAllEvents(EventManager eventManager)
         {
@@ -30,6 +31,9 @@ namespace CardGameConsole
 
             // Mise en amélioration d'une carte 
             eventManager.SubscribeToEvent<CardMarkUpgradeEvent>(OnCardMarkedUpgrade, postEvent: true);
+            
+            // Bouclage du deck
+            eventManager.SubscribeToEvent<DeckLoopEvent>(OnDeckLoop, postEvent: true);
 
             // Nombre de point d'action
             eventManager.SubscribeToEvent<ActionPointsEditEvent>(OnActionPointsEdit, postEvent: true);
@@ -52,6 +56,11 @@ namespace CardGameConsole
         private static void OnCardMarkedUpgrade(CardMarkUpgradeEvent evt)
         {
             WriteEvent($"[underline]{evt.Card.Name}[/] est prête à se faire améliorer");
+        }
+        
+        private static void OnDeckLoop(DeckLoopEvent evt)
+        {
+            WriteEvent($"Le deck de [bold]{evt.Player.GetName()}[/] a bouclé et contient maintenant [bold]{evt.Player.Deck.Count}[/] cartes");
         }
 
         private static void OnCardChangePile(CardMovePileEvent evt)
@@ -88,17 +97,17 @@ namespace CardGameConsole
 
         private static void WriteEvent(string evt)
         {
-            _events.Add(evt);
+            Events.Add(evt);
         }
 
         public static Panel DumpEvents()
         {
-            return new Panel(new Markup(string.Join("\n", _events)).Alignment(Justify.Right));
+            return new Panel(new Markup(string.Join("\n", Events)).Alignment(Justify.Right));
         }
 
         public static void ClearEvents()
         {
-            _events.Clear();
+            Events.Clear();
         }
 
         private static void OnPostCardPlay(CardPlayEvent evt)
@@ -110,7 +119,7 @@ namespace CardGameConsole
         {
             // Niveau monte
             if (evt.NewValue > evt.OldValue)
-                Console.WriteLine(evt.Card.IsMaxLevel
+                WriteEvent(evt.Card.IsMaxLevel
                     ? $"[underline]{evt.Card.Name}[/] est maintenant au [blue]niveau max ({evt.Card.CurrentLevel})[/]"
                     : $"[underline]{evt.Card.Name}[/] est maintenant au [blue]niveau {evt.Card.CurrentLevel}/{evt.Card.MaxLevel}[/]");
 

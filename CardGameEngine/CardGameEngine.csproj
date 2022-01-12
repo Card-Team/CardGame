@@ -99,7 +99,6 @@
         <Compile Include="EventSystem\Events\Event.cs" />
         <Compile Include="EventSystem\Events\GameStateEvents\DeckLoopEvent.cs" />
         <Compile Include="EventSystem\Events\GameStateEvents\EndTurnEvent.cs" />
-        <Compile Include="EventSystem\Events\GameStateEvents\PlayerWinEvent.cs" />
         <Compile Include="EventSystem\Events\GameStateEvents\StartTurnEvent.cs" />
         <Compile Include="EventSystem\Events\IPropertyChangeEvent.cs" />
         <Compile Include="EventSystem\Events\MaxActionPointsEditEvent.cs" />

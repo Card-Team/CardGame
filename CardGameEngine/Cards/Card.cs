@@ -21,6 +21,8 @@ namespace CardGameEngine.Cards
         /// </summary>
         public EventProperty<Card, string, CardNameChangeEvent> Name { get; }
 
+        public string EffectId => Effect.EffectId;
+
         /// <summary>
         /// Est-ce que la carte est virtuelle ?
         /// </summary>
@@ -103,7 +105,7 @@ namespace CardGameEngine.Cards
             Description = new EventProperty<Card, string, CardDescriptionChangeEvent>(this, game.EventManager,
                 effect.GetProperty<string>(LuaStrings.Card.DescriptionProperty));
 
-            CurrentLevel = new EventProperty<Card, int, CardLevelChangeEvent>(this, game.EventManager, 1);
+            CurrentLevel = new LevelEventProperty(this, game.EventManager, 1);
 
             Keywords = new List<Keyword>();
         }
@@ -120,35 +122,32 @@ namespace CardGameEngine.Cards
             using (var post = _game.EventManager.SendEvent(effectActivateEvent))
             {
                 SetUpScriptBeforeRunning(game, effectOwner);
-                try
-                {
-                    var result = Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
+                var result = Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
 
 
-                    if (result.Type == DataType.Boolean)
-                    {
-                        return result.Boolean;
-                    }
-                    else return true;
-                }
-                catch (ScriptRuntimeException exc)
+                if (result.Type == DataType.Boolean)
                 {
-                    throw;
+                    return result.Boolean;
                 }
+
+                return true;
             }
         }
 
         //todo voir comment l'appeller dans les evenements
-        private void SetUpScriptBeforeRunning(Game game, Player effectOwner)
+        private void SetUpScriptBeforeRunning(Game game, Player? effectOwner)
         {
             Effect.FillGlobals(game, effectOwner, this, script =>
             {
-                //globals spécifique au cartes :
-                script.Globals["AskForTarget"] =
-                    (Func<int, ITargetable>) (i => game.LuaAskForTarget(Effect, effectOwner, i));
+                if (effectOwner != null)
+                {
+                    //globals spécifique au cartes :
+                    script.Globals["AskForTarget"] =
+                        (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
 
-                script.Globals["TargetsExists"] =
-                    (Func<List<int>, bool>) (list => game.LuaTargetsExists(Effect, effectOwner, list));
+                    script.Globals["TargetsExists"] =
+                        (Func<List<int>, bool>)(list => game.LuaTargetsExists(Effect, effectOwner, list));
+                }
             });
         }
 
@@ -160,7 +159,7 @@ namespace CardGameEngine.Cards
         public bool CanBePlayed(Game game, Player effectOwner)
         {
             SetUpScriptBeforeRunning(game, effectOwner);
-            return Effect.RunMethod<bool>("precondition");
+            return Effect.RunMethod<bool>(LuaStrings.Card.PreconditionMethod);
         }
 
         public bool Upgrade()
@@ -178,12 +177,19 @@ namespace CardGameEngine.Cards
 
         internal void OnCardCreate()
         {
+            SetUpScriptBeforeRunning(_game,null);
             Effect.RunMethodOptional(LuaStrings.Card.OnCardCreateMethod);
         }
 
         public override string ToString()
         {
             return $"{Name.Value} : Lvl {CurrentLevel.Value}/{MaxLevel}, Cost {Cost.Value}";
+        }
+
+        public void OnLevelChange(int oldLevel, int newLevel)
+        {
+            SetUpScriptBeforeRunning(_game,null);
+            Effect.RunMethodOptional(LuaStrings.Card.OnLevelChangeMethod, oldLevel, newLevel);
         }
     }
 }

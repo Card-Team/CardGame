@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CardGameEngine;
+using CardGameEngine.Cards;
 using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
 using MoonSharp.Interpreter;
 using Spectre.Console;
+using Spectre.Console.Rendering;
 
 namespace CardGameConsole
 {
@@ -17,8 +19,10 @@ namespace CardGameConsole
         public static string Player1Name;
         public static string Player2Name;
 
-        private static Player? _winner;
-        private static bool _gameEnded;
+        public static Card Player1Vic;
+        public static Card Player2Vic;
+
+        public static Player? Winner;
 
         public static void Main(string[] args)
         {
@@ -56,7 +60,10 @@ namespace CardGameConsole
             {
                 Game.StartGame();
                 EventDisplayer.ClearEvents();
+                Player1Vic = Game.Player1.Cards.First(f => f.EffectId == Game.VictoryCardEffectId);
+                Player2Vic = Game.Player2.Cards.First(f => f.EffectId == Game.VictoryCardEffectId);
                 GameLoop();
+                AnsiConsole.Write(new Rule($"{Winner?.GetName()} a gagné la partie !").Centered());
             }
             catch (ScriptRuntimeException exception)
             {
@@ -78,7 +85,7 @@ namespace CardGameConsole
 
         private static void GameLoop()
         {
-            while (!_gameEnded)
+            while (Winner == null)
             {
                 var choice = -1;
 
@@ -91,21 +98,25 @@ namespace CardGameConsole
                             break;
                         case 4:
                             PlayCard(true);
+
                             break;
                     }
 
-                    //AnsiConsole.Clear();
+                    AnsiConsole.Clear();
                     AnsiConsole.Write(new Rule($"Tour de [bold]{Game.CurrentPlayer.GetName()}[/]").Centered());
 
                     Game.CurrentPlayer.PrintHand();
                     AnsiConsole.Write(
-                        new Columns(GetInfos(Game.CurrentPlayer),
+                        new Columns(GetInfos(Game.CurrentPlayer), 
+                            GetVictoryInfo(),
                             EventDisplayer.DumpEvents().Expand().Border(BoxBorder.None)));
+
+                    if (Winner != null) return;
 
                     var choices = new Dictionary<string, int>
                     {
-                        {"Lister votre défausse", 1},
-                        {"Lister les information adverses", 2}
+                        { "Lister votre défausse", 1 },
+                        { "Lister les information adverses", 2 }
                     };
 
                     if (Game.CurrentPlayer.Hand.CostPlayable().Playable().Any())
@@ -138,6 +149,28 @@ namespace CardGameConsole
             }
         }
 
+        private static Panel GetVictoryInfo()
+        {
+
+            var progress = new BarChart()
+                .Width(Player1Vic.MaxLevel + 60)
+                .WithMaxValue(Player1Vic.MaxLevel);
+
+            if (Game.CurrentPlayer == Game.Player1)
+            {
+                progress.AddItem("Votre progression", Player1Vic.CurrentLevel.Value,Color.Green)
+                    .AddItem($"La progression de {Game.Player2.GetName()}", Player2Vic.CurrentLevel.Value,Color.Red);
+            }
+            else
+            {
+                progress.AddItem("Votre progression", Player2Vic.CurrentLevel.Value,Color.Green)
+                    .AddItem($"La progression de {Game.Player1.GetName()}", Player1Vic.CurrentLevel.Value,Color.Red);
+            }
+
+
+            return new Panel(progress).Header($"Progression vers la victoire (max:{Player1Vic.MaxLevel})").HeaderAlignment(Justify.Center);
+        }
+
         private static Panel GetInfos(Player player)
         {
             if (player == Game.CurrentPlayer)
@@ -159,13 +192,6 @@ namespace CardGameConsole
         private static void RegisterEventListeners()
         {
             Game.EventManager.SubscribeToEvent<StartTurnEvent>(OnTurnStart, postEvent: true);
-            Game.EventManager.SubscribeToEvent<PlayerWinEvent>(OnGameEnd, postEvent: true);
-        }
-
-        private static void OnGameEnd(PlayerWinEvent evt)
-        {
-            Console.WriteLine($"{evt.Player} est le grand gagnant de cette compétition intensive, bravo ! ☺");
-            _gameEnded = true;
         }
 
         private static void OnTurnStart(StartTurnEvent turnEvent)

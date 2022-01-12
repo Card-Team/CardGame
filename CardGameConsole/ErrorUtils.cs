@@ -4,6 +4,7 @@ using System.Linq;
 using CardGameEngine;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Debugging;
+using Spectre.Console;
 
 namespace CardGameConsole
 {
@@ -37,6 +38,14 @@ namespace CardGameConsole
 
                 Console.WriteLine("");
             }
+            DumpEvents();
+        }
+
+        private static void DumpEvents()
+        {
+            var dumpEvents = EventDisplayer.DumpEvents();
+            
+            AnsiConsole.Write(dumpEvents.Header("Derniers évenements"));
         }
 
         public static void PrintError(InvalidOperationException exception)
@@ -45,6 +54,7 @@ namespace CardGameConsole
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"[Erreur Moteur] : {exception.Message}");
             Console.ForegroundColor = bef;
+            DumpEvents();
         }
 
         private static void ColoredSource(string scriptName, int padding, SourceRef watchItemLocation, bool isError)

@@ -25,6 +25,8 @@ namespace CardGameEngine.EventSystem
         private Dictionary<Type, List<IEventHandler>> _eventHandlersDict =
             new Dictionary<Type, List<IEventHandler>>();
 
+        internal bool Disabled { get; set; }
+
         /// <summary>
         /// Abonne le délégué fourni à l'évènement T donné
         /// </summary>
@@ -52,6 +54,7 @@ namespace CardGameEngine.EventSystem
 
         private IEventHandler SubscribeToEvent(Type type, IEventHandler handler)
         {
+            if (Disabled) return null!;
             if (!_eventHandlersDict.ContainsKey(type))
                 _eventHandlersDict.Add(type, new List<IEventHandler>());
 
@@ -98,7 +101,7 @@ namespace CardGameEngine.EventSystem
                                                 (evt is CancellableEvent cancelled && (!cancelled.Cancelled ||
                                                     eventHandler.EvenIfCancelled))))
                 {
-                    eventHandler.HandleEvent(evt);
+                    if(!Disabled)eventHandler.HandleEvent(evt);
                 }
             }
             return new PostEventSenderImpl<T>(evt, this);
