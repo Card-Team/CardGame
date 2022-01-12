@@ -127,7 +127,12 @@ namespace CardGameEngine.Cards.CardPiles
         [MoonSharpVisible(true)]
         internal virtual bool MoveTo(CardPile newCardPile, Card card, int newPosition)
         {
-            if (!_cardList.Contains(card)) throw new NotInPileException(card);
+            if (!_cardList.Contains(card))
+            {
+                //throw new NotInPileException(card);
+                Console.WriteLine(
+                    $"Tentative de déplacement de {card} depuis {this} vers {newCardPile}, alors qu'elle n'est pas dans {this}");
+            }
             if (Count + 1 > LimitSize) return false;
 
             CardMovePileEvent moveEvent = new CardMovePileEvent(card, this, IndexOf(card), newCardPile, newPosition);
