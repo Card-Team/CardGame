@@ -14,8 +14,8 @@ function card_filter(a_card)
 end
 
 targets = {
-    CreateTarget("Effet d'une carte aléatoire de ton deck", TargetTypes.Card, false, card_filter),
-    CreateTarget("Effet de 2 cartes aléatoires de ton deck", TargetTypes.Card, false, card_filter)
+    CreateTarget("Effet d'une carte aléatoire de ton deck", TargetTypes.Card, true, card_filter),
+    CreateTarget("Effet de 2 cartes aléatoires de ton deck", TargetTypes.Card, true, card_filter)
 }
 
 
@@ -28,13 +28,13 @@ end
 function do_effect()
     if (current_level == max_level) then
         --application des 2 effets cartes lvl2
-        effet1 = AskForTarget(1)                 --var qui recuper l'effet 1
-        effet2 = AskForTarget(2)                 --var qui recuper l'effet 2
-        Game.PlayCard(EffectOwner, effet1)       --joue l'effet de la 1 carte
-        Game.PlayCard(EffectOwner, effet2)       --joue l'effet de la 2 carte
+        effet1 = AskForTarget(1).Virtual()                   --var qui recuper l'effet 1
+        effet2 = AskForTarget(2).Virtual()                   --var qui recuper l'effet 2
+        Game.PlayCardVirtual(EffectOwner, effet1)                   --joue l'effet de la 1 carte
+        Game.PlayCardVirtual(EffectOwner, effet2)                   --joue l'effet de la 2 carte
     else
-        effet1 = AskForTarget(1)
-        Game.PlayCard(EffectOwner, effet1)
+        effet1 = AskForTarget(1).Virtual()
+        Game.PlayCardVirtual(EffectOwner, effet1)
     end
 end
 

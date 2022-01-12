@@ -4,7 +4,7 @@ image_id = 569
 name = "Pistolet"
 pa_cost = 2
 
-description = "lvl 1 -> Défausse la carte au plus faible cout de l'adversaire, lvl2 -> défausse celle au plus haut cout" 
+description = "lvl 1 -> Défausse la carte au plus faible cout de la main de l'adversaire, lvl2 -> défausse celle au plus haut cout" 
 
 
 

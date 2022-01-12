@@ -94,7 +94,7 @@ namespace CardGameConsole
                             break;
                     }
 
-                    AnsiConsole.Clear();
+                    //AnsiConsole.Clear();
                     AnsiConsole.Write(new Rule($"Tour de [bold]{Game.CurrentPlayer.GetName()}[/]").Centered());
 
                     Game.CurrentPlayer.PrintHand();
