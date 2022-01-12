@@ -177,14 +177,14 @@ namespace CardGameConsole
             {
                 return new Panel(new Markup($"Nombre de cartes dans votre défausse : {player.Discard.Count}\n" +
                                             $"Nombre de cartes dans votre deck : {player.Deck.Count}\n" +
-                                            $"Nombre de [green]points d'action[/] : {player.ActionPoints.Value}"))
+                                            $"Nombre de [green]points d'action[/] : {player.ActionPoints.Value}/{player.MaxActionPoints.Value}"))
                     .Header("Vos informations", Justify.Right);
             }
             else
             {
                 return new Panel(new Markup($"Nombre de cartes dans la main adverse : {player.Hand.Count}\n" +
                                             $"Cartes de la défausse adverse : {player.Discard.Count}\n" +
-                                            $"Nombre de [green]points d'action[/] de l'adversaire : {player.ActionPoints.Value}"))
+                                            $"Nombre de [green]points d'action[/] de l'adversaire : {player.ActionPoints.Value}/{player.MaxActionPoints.Value}"))
                     .Header("[red]Informations de l'adversaire[/]", Justify.Right);
             }
         }

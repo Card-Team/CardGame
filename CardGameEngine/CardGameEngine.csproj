@@ -84,6 +84,7 @@
         <Compile Include="EventSystem\Events\CardEvents\CardMarkUpgradeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\CardMovePileEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\CardPlayEvent.cs" />
+        <Compile Include="EventSystem\Events\CardEvents\CardUnMarkUpgradeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordAddEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordRemoveEvent.cs" />

@@ -21,7 +21,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <summary>
         /// EventManager de la partie
         /// </summary>
-        private EventManager EventManager { get; }
+        protected EventManager EventManager { get; }
 
         /// <summary>
         /// Nombre de cartes maximal dans la pile

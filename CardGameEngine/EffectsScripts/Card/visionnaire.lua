@@ -34,6 +34,7 @@ function precondition()
     end
 end
 
+
 function do_effect()
     --voir les dernieres cartes
     if This.CurrentLevel.Value == 1 then

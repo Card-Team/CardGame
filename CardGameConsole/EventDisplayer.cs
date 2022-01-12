@@ -32,6 +32,8 @@ namespace CardGameConsole
             // Mise en amélioration d'une carte 
             eventManager.SubscribeToEvent<CardMarkUpgradeEvent>(OnCardMarkedUpgrade, postEvent: true);
             
+            eventManager.SubscribeToEvent<CardUnMarkUpgradeEvent>(OnCardRemovedMarkedUpgrade, postEvent: true);
+            
             // Bouclage du deck
             eventManager.SubscribeToEvent<DeckLoopEvent>(OnDeckLoop, postEvent: true);
 
@@ -50,12 +52,17 @@ namespace CardGameConsole
         private static void OnActionPointsEdit(ActionPointsEditEvent evt)
         {
             WriteEvent(
-                $"Il vous reste [bold]{evt.NewPointCount}[/] [green]points d'action[/]");
+                $"Il vous reste [bold]{evt.NewPointCount}[/] [green]points d'action (sur {evt.Player.MaxActionPoints.Value})[/]");
         }
 
         private static void OnCardMarkedUpgrade(CardMarkUpgradeEvent evt)
         {
             WriteEvent($"[underline]{evt.Card.Name}[/] est prête à se faire améliorer");
+        }
+        
+        private static void OnCardRemovedMarkedUpgrade(CardUnMarkUpgradeEvent evt)
+        {
+            WriteEvent($"[underline]{evt.Card.Name}[/] [bold]ne sera pas améliorée[/]");
         }
         
         private static void OnDeckLoop(DeckLoopEvent evt)

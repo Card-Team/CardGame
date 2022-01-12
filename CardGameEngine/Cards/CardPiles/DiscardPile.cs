@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CardGameEngine.EventSystem;
+using CardGameEngine.EventSystem.Events.CardEvents;
 using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.Cards.CardPiles
@@ -45,6 +46,20 @@ namespace CardGameEngine.Cards.CardPiles
             }
 
             return moveResult;
+        }
+
+        [MoonSharpVisible(true)]
+        public void UnMarkForUpgrade(Card card)
+        {
+            var evt = new CardUnMarkUpgradeEvent(card);
+
+            using (var post = EventManager.SendEvent(evt))
+            {
+                if(post.Event.Cancelled)
+                    return;
+
+                MarkedForUpgrade.Remove(post.Event.Card);
+            }
         }
 
         public bool IsMarkedForUpgrade(Card card)

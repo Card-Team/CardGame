@@ -89,6 +89,9 @@ namespace CardGameEngine.GameSystems
             }
         }
 
+        [MoonSharpVisible(true)]
+        internal bool HasCard(Card card) => Cards.Contains(card);
+
         /// <summary>
         /// Transfère toutes les cartes de la défausse dans la pioche
         /// </summary>
