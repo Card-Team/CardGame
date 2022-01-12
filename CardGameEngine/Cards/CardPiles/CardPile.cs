@@ -140,7 +140,10 @@ namespace CardGameEngine.Cards.CardPiles
                 return false;
             }
 
-            if (Count + 1 > LimitSize) return false;
+            if (newCardPile.LimitSize != null && newCardPile.Count + 1 > newCardPile.LimitSize)
+            {
+                return false;
+            }
 
             CardMovePileEvent moveEvent = new CardMovePileEvent(card, this, IndexOf(card), newCardPile, newPosition);
             using (var postEvent = EventManager.SendEvent(moveEvent))
