@@ -7,7 +7,7 @@ pa_cost = 0
 description = "Augement le niveau d'une carte de 5"
 
 function card_filter(a_card)
-    return a_card.CurrentLevel.Value < a_card.MaxLevel
+    return not a_card.IsMaxLevel
 end
 
 targets = {

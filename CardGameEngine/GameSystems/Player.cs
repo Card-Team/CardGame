@@ -106,7 +106,7 @@ namespace CardGameEngine.GameSystems
                 var toLoop = post.Event.Player;
                 foreach (var card in toLoop.Discard.ToList())
                 {
-                    if (toLoop.Discard.IsMarkedForUpgrade(card))
+                    if (toLoop.Discard.IsMarkedForUpgrade(card) && !card.IsMaxLevel)
                     {
                         card.Upgrade();
                     }
