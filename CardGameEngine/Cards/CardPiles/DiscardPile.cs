@@ -17,7 +17,7 @@ namespace CardGameEngine.Cards.CardPiles
         private HashSet<Card> MarkedForUpgrade { get; }
 
         // TODO 
-        internal DiscardPile(EventManager eventManager) : base(eventManager)
+        internal DiscardPile(Game game) : base(game)
         {
             MarkedForUpgrade = new HashSet<Card>();
         }

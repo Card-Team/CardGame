@@ -65,9 +65,9 @@ namespace CardGameEngine.GameSystems
             _game = game;
             _eventManager = game.EventManager;
 
-            Deck = new CardPile(game.EventManager, cards);
-            Hand = new CardPile(game.EventManager, 5);
-            Discard = new DiscardPile(game.EventManager);
+            Deck = new CardPile(game, cards);
+            Hand = new CardPile(game, 5);
+            Discard = new DiscardPile(game);
 
             ActionPoints = new EventProperty<Player, int, ActionPointsEditEvent>(this, game.EventManager, 0);
             MaxActionPoints =

@@ -13,6 +13,8 @@ namespace CardGameEngine.Cards.CardPiles
     /// </summary>
     public class CardPile : IEnumerable<Card>
     {
+        private readonly Game _game;
+
         /// <summary>
         /// Liste des cartes dans la pile
         /// </summary>
@@ -47,9 +49,10 @@ namespace CardGameEngine.Cards.CardPiles
         /// </summary>
         /// <param name="eventManager">EventManager de la partie</param>
         /// <param name="limitSize">Taille limite de la pile, null pour aucune limite</param>
-        internal CardPile(EventManager eventManager, int? limitSize = null)
+        internal CardPile(Game game, int? limitSize = null)
         {
-            EventManager = eventManager;
+            this._game = game;
+            EventManager = game.EventManager;
             _cardList = new List<Card>();
             LimitSize = limitSize;
         }
@@ -59,9 +62,10 @@ namespace CardGameEngine.Cards.CardPiles
         /// </summary>
         /// <param name="eventManager">EventManager de la partie</param>
         /// <param name="cards"></param>
-        internal CardPile(EventManager eventManager, List<Card> cards)
+        internal CardPile(Game game, List<Card> cards)
         {
-            EventManager = eventManager;
+            EventManager = game.EventManager;
+            _game = game;
             _cardList = cards;
             LimitSize = null;
         }
@@ -95,7 +99,8 @@ namespace CardGameEngine.Cards.CardPiles
         private void Insert(int newPosition, Card card)
         {
             if (card.IsVirtual)
-                throw new InvalidOperationException($"Tentative d'insertion de la carte virtuelle {card} dans une pile");
+                throw new InvalidOperationException(
+                    $"Tentative d'insertion de la carte virtuelle {card} dans une pile");
             _cardList.Insert(newPosition, card);
         }
 
@@ -130,9 +135,11 @@ namespace CardGameEngine.Cards.CardPiles
             if (!_cardList.Contains(card))
             {
                 //throw new NotInPileException(card);
-                Console.WriteLine(
+                _game.Log(GetType().Name,
                     $"Tentative de déplacement de {card} depuis {this} vers {newCardPile}, alors qu'elle n'est pas dans {this}");
+                return false;
             }
+
             if (Count + 1 > LimitSize) return false;
 
             CardMovePileEvent moveEvent = new CardMovePileEvent(card, this, IndexOf(card), newCardPile, newPosition);

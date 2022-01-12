@@ -14,7 +14,7 @@ namespace CardGameEngine.GameSystems.Effects
     /// </summary>
     internal class EffectsDatabase
     {
-        private readonly Action<string, string> _luaDebugPrint;
+        private readonly Action<string,string, string> _luaDebugPrint;
 
         /// <summary>
         /// Le dictionnaire stockant les effets valides avec leur nom comme clé
@@ -42,9 +42,9 @@ namespace CardGameEngine.GameSystems.Effects
         /// <param name="path">Nom complet du dossier</param>
         /// <param name="luaDebugPrint"></param>
         /// <seealso cref="LoadAllEffects(string, EffectType)"/>
-        internal EffectsDatabase(string path, Action<string,string>? luaDebugPrint = null)
+        internal EffectsDatabase(string path, Action<string,string,string>? luaDebugPrint = null)
         {
-            _luaDebugPrint = luaDebugPrint ?? ((script, s) => {});
+            _luaDebugPrint = luaDebugPrint ?? ((from,script, s) => {});
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
             Table dump = UserData.GetDescriptionOfRegisteredTypes(true);
             File.WriteAllText("./dump.txt", dump.Serialize());
@@ -95,7 +95,7 @@ namespace CardGameEngine.GameSystems.Effects
             {
                 // Charge le script de l'effet
                 var script = GetDefaultScript();
-                script.Options.DebugPrint = s => _luaDebugPrint(effectId, s);
+                script.Options.DebugPrint = s => _luaDebugPrint("Lua",effectId, s);
                 script.DoString(fileContent, codeFriendlyName: effectId);
 
                 // Récupère les cibles de l'effet

@@ -61,7 +61,7 @@ namespace CardGameEngine
 
             _externCallbacks = externCallbacks;
 
-            EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.LuaDebugPrint);
+            EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.DebugPrint);
             var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new []{VictoryCardEffectId}).Select(s => EffectsDatabase[s]())
                 .Select(e => new Card(this, e)).ToList();
             var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new []{VictoryCardEffectId}).Select(s => EffectsDatabase[s]())
@@ -393,6 +393,11 @@ namespace CardGameEngine
         internal bool LuaTargetsExists(Effect effect, Player effectOwner, IEnumerable<int> list)
         {
             return list.All(targetId => GetValidTargets(effect.AllTargets[targetId - 1]).Any());
+        }
+
+        public void Log(string source,string message)
+        {
+            _externCallbacks.DebugPrint("C#",source,message);
         }
     }
 }

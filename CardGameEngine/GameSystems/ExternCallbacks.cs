@@ -54,6 +54,6 @@ namespace CardGameEngine.GameSystems
         /// </summary>
         /// <param name="source">Le script source</param>
         /// <param name="debugPrint">Le texte</param>
-        public void LuaDebugPrint(string source, string debugPrint);
+        public void DebugPrint(string from,string source, string debugPrint);
     }
 }

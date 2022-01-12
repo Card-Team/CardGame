@@ -51,9 +51,9 @@ namespace CardGameConsole
             return InputUtils.ChooseList("Veuillez faire un choix", card);
         }
 
-        public void LuaDebugPrint(string source, string debugPrint)
+        public void DebugPrint(string from,string source, string debugPrint)
         {
-            EventDisplayer.Events.Add($"[grey][underline][[Lua:{Markup.Escape(source)}]][/] {Markup.Escape(debugPrint)}[/]");
+            EventDisplayer.Events.Add($"[grey][underline][[{Markup.Escape(from)}:{Markup.Escape(source)}]][/] {Markup.Escape(debugPrint)}[/]");
         }
 
         public void ExternGameEnded(Player winner)
