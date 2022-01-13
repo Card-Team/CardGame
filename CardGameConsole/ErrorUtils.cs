@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine;
+using CardGameEngine.GameSystems.Effects;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Debugging;
 using Spectre.Console;
@@ -10,113 +11,116 @@ namespace CardGameConsole
 {
     public static class ErrorUtils
     {
-        private const string ScriptError = "[Erreur de script] : ";
+        private const string ScriptError = "[red][[Erreur de script]][/] : ";
 
-        public static void PrintError(ScriptRuntimeException exc)
+        public static void PrintError(InterpreterException exc)
         {
             PrintError(exc, exc.CallStack.ToList());
         }
 
-        public static void PrintError(ScriptRuntimeException exception, List<WatchItem> callstack)
+        public static void PrintError(InterpreterException exception, List<WatchItem> callstack)
         {
-            var splitted = exception.DecoratedMessage.Split(':');
-            var scriptName = splitted[0].Trim();
-            var msg = splitted[2].Trim();
-            Console.Error.WriteLine($"[Erreur de script] : {scriptName} -> {msg}");
+            var splitted = exception.DecoratedMessage.Split(':').ToList();
+            var scriptName = string.Join(":", splitted.GetRange(0, splitted.Count - 2));
+            var msg = exception.Message;
+            AnsiConsole.Write(new Markup($"[[Erreur de script]] : [blue]{scriptName}[/] -> [underline]{msg}[/]\n"));
             for (var index = 0; index < callstack.Count; index++)
             {
                 var watchItem = callstack[index];
-                var text = $"[Erreur de script] : Dans {watchItem.Name} {FormatSourceLocation(watchItem.Location)}";
-                Console.Error.Write(
-                    text);
-                if (watchItem.Location is { IsClrLocation: false } && !watchItem.Name.StartsWith("<"))
+                var text =
+                    $"[[Erreur de script]] : Dans [blue]{watchItem.Name}[/] [underline]{FormatSourceLocation(watchItem.Location)}[/]";
+                if (watchItem.Location is { IsClrLocation: false } && (!watchItem.Name?.StartsWith("<") ?? true))
                 {
-                    Console.Write(" : ");
-                    ColoredSource(scriptName, text.Length - ScriptError.Length, watchItem.Location,
-                        index == 0);
+                    text += " : " + ColoredSource(scriptName, text.Length - ScriptError.Length - 2, watchItem.Location,
+                        index == 0) + "\n";
                 }
 
-                Console.WriteLine("");
+                AnsiConsole.Write(new Markup(text));
             }
+
             DumpEvents();
         }
 
         private static void DumpEvents()
         {
             var dumpEvents = EventDisplayer.DumpEvents();
-            
-            AnsiConsole.Write(dumpEvents.Header("Derniers évenements"));
+
+            if (dumpEvents != null)
+                AnsiConsole.Write(dumpEvents.Header("Derniers évenements"));
         }
 
         public static void PrintError(InvalidOperationException exception)
         {
-            var bef = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"[Erreur Moteur] : {exception.Message}");
-            Console.ForegroundColor = bef;
+            AnsiConsole.Write(new Markup($"[red][[Erreur Moteur]] : {exception.Message}[/]"));
+            AnsiConsole.WriteException(exception);
             DumpEvents();
         }
 
-        private static void ColoredSource(string scriptName, int padding, SourceRef watchItemLocation, bool isError)
+        private static string ColoredSource(string scriptName, int padding, SourceRef watchItemLocation, bool isError)
         {
             var scriptContent = ConsoleGame.Game.GetScriptByName(scriptName);
-            if (scriptContent == null) return;
+            if (scriptContent == null) return "";
 
             bool isMultiLine = watchItemLocation.FromLine != watchItemLocation.ToLine && watchItemLocation.ToChar != 0;
 
             var strings = scriptContent.Split('\n');
             string firstLine = strings[watchItemLocation.FromLine - 1];
             string lastLine = strings[watchItemLocation.ToLine - 1];
+
+            var accumulator = "";
+
             if (!isMultiLine)
             {
                 var before = Console.ForegroundColor;
                 for (var i = 0; i < firstLine.Length; i++)
                 {
-                    if (i < watchItemLocation.FromChar ||
-                        (watchItemLocation.ToChar != 0 && i > watchItemLocation.ToChar))
+                    if (i == watchItemLocation.FromChar)
                     {
-                        Console.ForegroundColor = before;
+                        accumulator += "[red]";
                     }
-                    else
+                    else if (watchItemLocation.ToChar == 0 && i == firstLine.Length - 1 ||
+                             watchItemLocation.ToChar != 0 && i == watchItemLocation.ToChar)
                     {
-                        Console.ForegroundColor = isError ? ConsoleColor.Red : ConsoleColor.Magenta;
+                        accumulator += "[/]";
                     }
 
-                    Console.Write(firstLine[i]);
+                    accumulator += firstLine[i];
                 }
 
-                Console.ForegroundColor = before;
+                return accumulator;
             }
             else
             {
-                Console.Write("|");
+                accumulator += "|";
                 foreach (var t in firstLine)
                 {
-                    Console.Write(t);
+                    accumulator += t;
                 }
 
-                Console.WriteLine("");
+                accumulator += "\n";
 
-                Console.Write(ScriptError);
+                accumulator += ScriptError;
                 for (var i = 0; i < padding; i++)
                 {
-                    Console.Write(" ");
+                    accumulator += " ";
                 }
 
-                Console.Write("|");
-                Console.WriteLine("...");
+                accumulator += "\n|";
+                accumulator += "...\n";
 
-                Console.Write(ScriptError);
+                accumulator += ScriptError;
                 for (var i = 0; i < padding; i++)
                 {
-                    Console.Write(" ");
+                    accumulator += " ";
                 }
 
-                Console.Write("|");
+                accumulator += "\n|";
                 foreach (var t in lastLine)
                 {
-                    Console.Write(t);
+                    accumulator += t;
                 }
+
+                return accumulator;
             }
         }
 
@@ -126,12 +130,22 @@ namespace CardGameConsole
             {
                 return "";
             }
+
             return $"({location.FromLine},{location.FromChar})-({location.ToLine},{location.ToChar})";
         }
 
         public static void PrintError(LuaException exception)
         {
             PrintError(exception.RuntimeException, exception.CallStack);
+        }
+
+        public static void PrintError(InvalidEffectException exception)
+        {
+            AnsiConsole.Write(new Markup($"[red][[Effet invalide]]: {exception.Message}[/]"));
+            if (exception.InnerException != null)
+                PrintError(exception.InnerException);
+            else
+                DumpEvents();
         }
     }
 }

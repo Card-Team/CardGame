@@ -61,7 +61,7 @@ namespace CardGameEngine.EventSystem
             {
                 if (!_isInevitable && postEvent.Event.Cancelled)
                     return Value;
-                Value = _isInevitable ? newVal : postEvent.Event.NewValue;
+                StealthChange(_isInevitable ? newVal : postEvent.Event.NewValue);
             }
 
             return Value;
@@ -71,11 +71,20 @@ namespace CardGameEngine.EventSystem
         {
             return Value?.ToString() ?? "null";
         }
+
+        /// <summary>
+        ///     Modifie la propriété sans déclencher d'évenement
+        /// </summary>
+        public void StealthChange(T value)
+        {
+            Value = value;
+        }
     }
 
     class LevelEventProperty : EventProperty<Card, int, CardLevelChangeEvent>
     {
-        internal LevelEventProperty(Card sender, EventManager evtManager, int value, bool isInevitable = false) : base(sender, evtManager, value, isInevitable)
+        internal LevelEventProperty(Card sender, EventManager evtManager, int value, bool isInevitable = false) : base(
+            sender, evtManager, value, isInevitable)
         {
         }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.EventSystem.Events;
 using MoonSharp.Interpreter;
-using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine.EventSystem
 {
@@ -101,9 +100,10 @@ namespace CardGameEngine.EventSystem
                                                 (evt is CancellableEvent cancelled && (!cancelled.Cancelled ||
                                                     eventHandler.EvenIfCancelled))))
                 {
-                    if(!Disabled)eventHandler.HandleEvent(evt);
+                    if (!Disabled) eventHandler.HandleEvent(evt);
                 }
             }
+
             return new PostEventSenderImpl<T>(evt, this);
         }
 
@@ -146,7 +146,6 @@ namespace CardGameEngine.EventSystem
                                                          (!cancelled.Cancelled || eventHandler.EvenIfCancelled)))
                 {
                     eventHandler.HandleEvent(evt);
-                    
                 }
             }
         }
@@ -218,7 +217,7 @@ namespace CardGameEngine.EventSystem
         private class LuaEventHandler : EventHandlerBase
         {
             public override Type EventType { get; }
-            
+
             private readonly Closure _evt;
 
             public LuaEventHandler(Type eventType, Closure closure, bool evenIfCancelled, bool postEvent) : base(
@@ -228,10 +227,10 @@ namespace CardGameEngine.EventSystem
                 EventType = eventType;
                 _evt = closure;
             }
-            
+
             public override void HandleEvent(Event evt)
             {
-                _evt.Call(Convert.ChangeType(evt, EventType),this);
+                _evt.Call(Convert.ChangeType(evt, EventType), this);
             }
         }
 

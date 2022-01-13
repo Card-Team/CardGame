@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using CardGameEngine;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
-using MoonSharp.Interpreter;
 using Spectre.Console;
 
 namespace CardGameConsole
@@ -25,8 +21,8 @@ namespace CardGameConsole
         {
             return InputUtils.ChooseList($"Veuillez choisir un joueur pour {targetName}", new Dictionary<string, Player>
             {
-                {ConsoleGame.Player1Name, ConsoleGame.Game.Player1},
-                {ConsoleGame.Player2Name, ConsoleGame.Game.Player2}
+                { ConsoleGame.Player1Name, ConsoleGame.Game.Player1 },
+                { ConsoleGame.Player2Name, ConsoleGame.Game.Player2 }
             });
         }
 
@@ -48,12 +44,13 @@ namespace CardGameConsole
 
         public Card ExternChooseBetween(Player player, List<Card> card)
         {
-            return InputUtils.ChooseList("Veuillez faire un choix", card);
+            return InputUtils.ChooseFrom(player, card, false, false)!;
         }
 
-        public void DebugPrint(string from,string source, string debugPrint)
+        public void DebugPrint(string from, string source, string debugPrint)
         {
-            EventDisplayer.Events.Add($"[grey][underline][[{Markup.Escape(from)}:{Markup.Escape(source)}]][/] {Markup.Escape(debugPrint)}[/]");
+            EventDisplayer.Events.Add(
+                $"[grey][underline][[{Markup.Escape(from)}:{Markup.Escape(source)}]][/] {Markup.Escape(debugPrint)}[/]");
         }
 
         public void ExternGameEnded(Player winner)

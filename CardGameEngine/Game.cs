@@ -9,6 +9,7 @@ using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
 using CardGameEngine.GameSystems.Targeting;
+using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop;
 
 namespace CardGameEngine
@@ -62,11 +63,13 @@ namespace CardGameEngine
             _externCallbacks = externCallbacks;
 
             EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.DebugPrint);
-            var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new []{VictoryCardEffectId}).Select(s => EffectsDatabase[s]())
+            var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
+                .Select(s => EffectsDatabase[s]())
                 .Select(e => new Card(this, e)).ToList();
-            var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new []{VictoryCardEffectId}).Select(s => EffectsDatabase[s]())
+            var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
+                .Select(s => EffectsDatabase[s]())
                 .Select(e => new Card(this, e)).ToList();
-            
+
             Player1 = new Player(this, cards1);
             Player2 = new Player(this, cards2);
 
@@ -137,7 +140,7 @@ namespace CardGameEngine
         }
 
         /// <summary>
-        /// Termine le tour du joueur
+        /// Externe : Termine le tour du joueur
         /// </summary>
         public void EndPlayerTurn()
         {
@@ -148,9 +151,10 @@ namespace CardGameEngine
 
             StartPlayerTurn(CurrentPlayer.OtherPlayer);
         }
+        //todo tableau de proposition de chainage autorisé pour une carte
 
         /// <summary>
-        /// Un joueur utilise une carte
+        /// Externe : Un joueur utilise une carte
         /// </summary>
         /// <param name="player">Le joueur</param>
         /// <param name="card">La carte jouée</param>
@@ -183,48 +187,58 @@ namespace CardGameEngine
             }
 
 
-            if (!upgrade && card.CanBePlayed(this, player) == false) return false;
+            if (!upgrade && card.CanBePlayed(player) == false)
+                throw new InvalidOperationException(
+                    "La précondition de la carte est fausse");
 
-            var newVal = Math.Max(0, player.ActionPoints.Value - card.Cost.Value);
-            player.ActionPoints.TryChangeValue(newVal);
-
-            return upgrade ? UpgradeCard(card) : PlayCardEffect(player, card, player.Hand, player.Discard);
+            return upgrade ? UpgradeCard(card) : PlayCard(player, card);
         }
+
 
         [MoonSharpVisible(true)]
-        internal bool PlayCardVirtual(Player effectowner, Card card)
+        internal bool PlayCard(Player effectowner, Card card, CardPile? discardSource = null,
+            DiscardPile? discardGoal = null)
         {
-            if (!card.IsVirtual)
+            discardSource ??= effectowner.Hand;
+            discardGoal ??= effectowner.Discard;
+
+            if (card.CanBePlayed(effectowner) == false) return false;
+
+            var playEvt = new CardPlayEvent(effectowner, card);
+            using (var post = EventManager.SendEvent(playEvt))
             {
-                throw new InvalidOperationException(
-                    $"PlayCardVirtual appelé avec une carte non virtuelle ({card})");
+                if (post.Event.Cancelled)
+                    return false;
+                var player = post.Event.WhoPlayed;
+                card = post.Event.Card;
+
+                // points d'actions
+                var newVal = Math.Max(0, player.ActionPoints.Value - card.Cost.Value);
+                player.ActionPoints.TryChangeValue(newVal);
+
+                //effet
+                var shouldDiscard = PlayCardEffect(effectowner, card);
+
+                //défausse
+                if (shouldDiscard) discardSource.MoveTo(discardGoal, card, 0);
+
+                return true;
             }
-
-            if (card.CanBePlayed(this, effectowner) == false) ;
-
-            return PlayCardEffect(effectowner, card, null, null);
         }
 
+
+        /// <summary>
+        ///     Active l'effet de la carte
+        /// </summary>
+        /// <param name="effectowner"></param>
+        /// <param name="card"></param>
+        /// <param name="discardSource"></param>
+        /// <param name="discardGoal"></param>
+        /// <returns></returns>
         [MoonSharpVisible(true)]
-        internal bool PlayCardFromEffect(Player effectowner, Card card)
+        private bool PlayCardEffect(Player effectowner, Card card)
         {
-            if (card.IsVirtual)
-            {
-                throw new InvalidOperationException(
-                    $"PlayCardFromEffect appelé avec une carte virtuelle ({card})");
-            }
-
-            if (card.CanBePlayed(this, effectowner) == false) ;
-
-            return PlayCardEffect(effectowner, card, GetPileOf(card), effectowner.Discard);
-        }
-
-
-        private bool PlayCardEffect(Player originalPlayer, Card card, CardPile? discardSource, DiscardPile? discardGoal)
-        {
-            var playResult = true;
-            var playEvent = new CardPlayEvent(originalPlayer, card);
-
+            var playEvent = new CardEffectPlayEvent(effectowner, card);
             using (var post = EventManager.SendEvent(playEvent))
             {
                 if (post.Event.Cancelled)
@@ -232,30 +246,8 @@ namespace CardGameEngine
                     return false;
                 }
 
-                var doitDefausser = post.Event.Card.DoEffect(this, post.Event.WhoPlayed);
-
-                //défaussement
-
-                if (doitDefausser && discardSource != null && discardSource.Contains(post.Event.Card))
-                {
-                    if (discardGoal == null)
-                    {
-                        throw new InvalidOperationException(
-                            $"La carte {post.Event.Card} doit etre défaussé de {discardSource} mais aucune déstination n'a été donnée");
-                    }
-
-                    if (!discardSource.MoveTo(discardGoal, post.Event.Card, 0))
-                    {
-                        playResult = false;
-                    }
-                }
-                else
-                {
-                    playResult = false;
-                }
+                return post.Event.Card.DoEffect(post.Event.WhoPlayed);
             }
-
-            return playResult;
         }
 
         private bool UpgradeCard(Card card)
@@ -332,10 +324,18 @@ namespace CardGameEngine
         /// <param name="player">Le joueur a qui demander</param>
         /// <param name="cards">La liste de cartes parmi lesquelles choisir</param>
         /// <returns></returns>
-        public Card ChooseBetween(Player player, List<Card> cards)
+        [MoonSharpVisible(true)]
+        internal Card ChooseBetween(Player player, params Card[] cards)
         {
-            //todo cartes virtuelles
-            throw new NotImplementedException();
+            return _externCallbacks.ExternChooseBetween(player, cards.ToList());
+        }
+
+        [MoonSharpVisible(true)]
+        internal Card MakeVirtual(string nom, string description, int? imageId, Closure? effect)
+        {
+            var makeVirtual = new Card(this, nom, description, imageId ?? 0, effect);
+            makeVirtual.OnCardCreate();
+            return makeVirtual;
         }
 
         /// <summary>
@@ -352,7 +352,14 @@ namespace CardGameEngine
 
             if (target.IsAutomatic)
             {
-                resolved = target.GetAutomaticTarget();
+                try
+                {
+                    resolved = target.GetAutomaticTarget();
+                }
+                catch (InvalidEffectException exc)
+                {
+                    throw new InvalidEffectException(effect, exc.Message);
+                }
             }
             else
             {
@@ -395,9 +402,9 @@ namespace CardGameEngine
             return list.All(targetId => GetValidTargets(effect.AllTargets[targetId - 1]).Any());
         }
 
-        public void Log(string source,string message)
+        public void Log(string source, string message)
         {
-            _externCallbacks.DebugPrint("C#",source,message);
+            _externCallbacks.DebugPrint("C#", source, message);
         }
     }
 }

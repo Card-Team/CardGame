@@ -135,8 +135,9 @@ namespace CardGameEngine.Cards.CardPiles
             if (!_cardList.Contains(card))
             {
                 //throw new NotInPileException(card);
-                _game.Log(GetType().Name,
-                    $"Tentative de déplacement de {card} depuis {this} vers {newCardPile}, alors qu'elle n'est pas dans {this}");
+                if (!card.IsVirtual)
+                    _game.Log(GetType().Name,
+                        $"Tentative de déplacement de {card} depuis {this} vers {newCardPile}, alors qu'elle n'est pas dans {this}");
                 return false;
             }
 

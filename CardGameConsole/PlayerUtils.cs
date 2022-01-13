@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CardGameEngine.Cards;
 using CardGameEngine.GameSystems;
@@ -65,7 +64,7 @@ namespace CardGameConsole
                         }
                         else
                         {
-                            var precondition = card.CanBePlayed(ConsoleGame.Game, ConsoleGame.Game.CurrentPlayer);
+                            var precondition = card.CanBePlayed(ConsoleGame.Game.CurrentPlayer);
                             var cost2Much = card.Cost.Value > ConsoleGame.Game.CurrentPlayer.ActionPoints.Value;
                             var maxLevel = card.CurrentLevel.Value == card.MaxLevel;
 
@@ -132,7 +131,7 @@ namespace CardGameConsole
 
         public static IEnumerable<Card> Playable(this IEnumerable<Card> cards)
         {
-            return cards.Where(c => c.CanBePlayed(ConsoleGame.Game, ConsoleGame.Game.CurrentPlayer));
+            return cards.Where(c => c.CanBePlayed(ConsoleGame.Game.CurrentPlayer));
         }
 
         public static IEnumerable<Card> Upgradable(this IEnumerable<Card> cards)

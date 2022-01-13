@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events.CardEvents;
 using MoonSharp.Interpreter.Interop;
 
@@ -16,7 +15,6 @@ namespace CardGameEngine.Cards.CardPiles
         /// </summary>
         private HashSet<Card> MarkedForUpgrade { get; }
 
-        // TODO 
         internal DiscardPile(Game game) : base(game)
         {
             MarkedForUpgrade = new HashSet<Card>();
@@ -55,7 +53,7 @@ namespace CardGameEngine.Cards.CardPiles
 
             using (var post = EventManager.SendEvent(evt))
             {
-                if(post.Event.Cancelled)
+                if (post.Event.Cancelled)
                     return;
 
                 MarkedForUpgrade.Remove(post.Event.Card);

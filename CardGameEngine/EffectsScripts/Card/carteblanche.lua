@@ -16,23 +16,29 @@ targets = {
     CreateTarget("jouer un effet d'une carte de ta main", TargetTypes.Card, false, card_filter),
 }
 
-
+carte_copie = nil
 
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
-    return TargetsExists({ 1 })
+    local targ = TargetsExists({ 1 })
+    if carte_copie == nil then
+        return targ
+    else
+        return targ and carte_copie.CanBePlayed(EffectOwner)
+    end
 end
 
-carte_copie = nil
 function do_effect()
     if (carte_copie == nil) then
         carte_copie = AskForTarget(1).Virtual()         --creer une copie virtuel de la carte ciblé
         This.Cost.TryChangeValue(carte_copie.Cost.Value)
-        This.Description.TryChangeValue("Cette carte a jouer l'effet de la carte " ..carte_copie.Name.Value)
+        This.Description.TryChangeValue("Carte Blanche : " .. carte_copie.Description.Value)
+        This.Name.TryChangeValue(carte_copie.Name.Value)
         return false    --pour pas carteblanche se fasse defaussé (A REVOIR !!)
     else
-        Game.PlayCardVirtual(EffectOwner, carte_copie)
+        Game.PlayCardEffect(EffectOwner, carte_copie)
         This.Description.TryChangeValue(base_description)
+        This.Name.TryChangeValue(name)
     end
 end
 

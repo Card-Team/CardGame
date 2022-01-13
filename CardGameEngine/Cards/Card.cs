@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using CardGameEngine.EventSystem;
-using CardGameEngine.EventSystem.Events;
 using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 using CardGameEngine.GameSystems;
 using CardGameEngine.GameSystems.Effects;
@@ -61,12 +60,13 @@ namespace CardGameEngine.Cards
         public bool IsMaxLevel => CurrentLevel.Value == MaxLevel;
 
         private readonly Game _game;
+        private readonly Closure? _virtualClosure;
 
         [MoonSharpVisible(true)]
         internal Card Virtual()
         {
             Card virt = new Card(_game, _game.EffectsDatabase[Effect.EffectId](), true);
-            
+
             virt.OnCardCreate();
 
             return virt;
@@ -76,7 +76,7 @@ namespace CardGameEngine.Cards
         public Card Clone()
         {
             Card clone = new Card(_game, _game.EffectsDatabase[Effect.EffectId](), false);
-            
+
             clone.OnCardCreate();
 
             return clone;
@@ -110,43 +110,48 @@ namespace CardGameEngine.Cards
             Keywords = new List<Keyword>();
         }
 
+        public Card(Game game, string name, string description, int imageId, Closure? effect) : this(game,
+            game.EffectsDatabase.Blank(), true)
+        {
+            Name.StealthChange(name);
+            Description.StealthChange(description);
+            _virtualClosure = effect;
+        }
+
 
         /// <summary>
         /// Exécute l'effet de la carte
         /// </summary>
         /// <param name="game">La partie en cours</param>
         /// <returns>Vrai si la carte doit etre défaussée, faux sinon</returns>
-        internal bool DoEffect(Game game, Player effectOwner)
+        internal bool DoEffect(Player effectOwner)
         {
-            var effectActivateEvent = new EffectActivateEvent(Effect);
-            using (var post = _game.EventManager.SendEvent(effectActivateEvent))
-            {
-                SetUpScriptBeforeRunning(game, effectOwner);
-                var result = Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
+            SetUpScriptBeforeRunning(effectOwner);
+            DynValue result;
+            if (IsVirtual)
+                result = _virtualClosure?.Call() ?? DynValue.Nil;
+            else
+                result = Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
 
 
-                if (result.Type == DataType.Boolean)
-                {
-                    return result.Boolean;
-                }
+            if (result.Type == DataType.Boolean) return result.Boolean;
 
-                return true;
-            }
+            return true;
         }
 
-        //todo voir comment l'appeller dans les evenements
-        private void SetUpScriptBeforeRunning(Game game, Player? effectOwner)
+        private void SetUpScriptBeforeRunning(Player? effectOwner)
         {
-            Effect.FillGlobals(game, effectOwner, this, script =>
+            if (IsVirtual) return;
+            Effect.FillGlobals(_game, effectOwner, this, script =>
             {
                 if (effectOwner != null)
                 {
                     //globals spécifique au cartes :
                     script.Globals["AskForTarget"] =
-                        (Func<int, ITargetable>)(i => game.LuaAskForTarget(Effect, effectOwner, i));
+                        (Func<int, ITargetable>)(i => _game.LuaAskForTarget(Effect, effectOwner, i));
 
                     script.Globals["TargetsExists"] =
-                        (Func<List<int>, bool>)(list => game.LuaTargetsExists(Effect, effectOwner, list));
+                        (Func<List<int>, bool>)(list => _game.LuaTargetsExists(Effect, effectOwner, list));
                 }
             });
         }
@@ -156,14 +161,15 @@ namespace CardGameEngine.Cards
         /// </summary>
         /// <param name="game">La partie en cours</param>
         /// <returns>Un booléen en fonction de la validité</returns>
-        public bool CanBePlayed(Game game, Player effectOwner)
+        public bool CanBePlayed(Player effectOwner)
         {
-            SetUpScriptBeforeRunning(game, effectOwner);
-            return Effect.RunMethod<bool>(LuaStrings.Card.PreconditionMethod);
+            SetUpScriptBeforeRunning(effectOwner);
+            return IsVirtual || Effect.RunMethod<bool>(LuaStrings.Card.PreconditionMethod);
         }
 
         public bool Upgrade()
         {
+            if (IsVirtual) return false;
             if (CurrentLevel.Value == MaxLevel)
             {
                 throw new InvalidOperationException(
@@ -177,18 +183,19 @@ namespace CardGameEngine.Cards
 
         internal void OnCardCreate()
         {
-            SetUpScriptBeforeRunning(_game,null);
+            SetUpScriptBeforeRunning(null);
             Effect.RunMethodOptional(LuaStrings.Card.OnCardCreateMethod);
         }
 
         public override string ToString()
         {
-            return $"{Name.Value} : Lvl {CurrentLevel.Value}/{MaxLevel}, Cost {Cost.Value}";
+            return $"{Name.Value} :" +
+                   (IsVirtual ? $" {Description.Value}" : $" Lvl {CurrentLevel.Value}/{MaxLevel}, Cost {Cost.Value}");
         }
 
         public void OnLevelChange(int oldLevel, int newLevel)
         {
-            SetUpScriptBeforeRunning(_game,null);
+            SetUpScriptBeforeRunning(null);
             Effect.RunMethodOptional(LuaStrings.Card.OnLevelChangeMethod, oldLevel, newLevel);
         }
     }

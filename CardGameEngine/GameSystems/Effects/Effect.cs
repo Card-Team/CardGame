@@ -12,7 +12,7 @@ namespace CardGameEngine.GameSystems.Effects
     /// <summary>
     /// Classe représentant un effet
     /// </summary>
-    internal class Effect
+    public class Effect
     {
         /// <summary>
         /// Type de l'effet
@@ -50,14 +50,14 @@ namespace CardGameEngine.GameSystems.Effects
         {
             //fonctions
             Script.Globals["SubscribeTo"] =
-                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>) game.EventManager.LuaSubscribeToEvent;
+                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>)game.EventManager.LuaSubscribeToEvent;
 
             Script.Globals["UnsubscribeTo"] =
-                (Action<EventManager.IEventHandler>) game.EventManager.LuaUnsubscribeFromEvent;
+                (Action<EventManager.IEventHandler>)game.EventManager.LuaUnsubscribeFromEvent;
 
             //propriétés
 
-            if(effectOwner != null)Script.Globals["EffectOwner"] = effectOwner;
+            if (effectOwner != null) Script.Globals["EffectOwner"] = effectOwner;
             Script.Globals["Game"] = game;
             Script.Globals["This"] = theThis;
 

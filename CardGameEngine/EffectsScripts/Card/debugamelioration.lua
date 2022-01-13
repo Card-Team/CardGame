@@ -21,9 +21,22 @@ function precondition()
 end
 
 function do_effect()
+
+    local up = Game.MakeVirtual("Augmentation", "augmentation 5")
+    local down = Game.MakeVirtual("Diminution", "diminution 5")
+
+    local chosen = Game.ChooseBetween(EffectOwner, up, down)
+
+    Game.PlayCardEffect(EffectOwner, chosen)
+
     local toUp = AskForTarget(1)
-    local newLevel = math.min(toUp.CurrentLevel.Value + 5,toUp.MaxLevel)
-    if(newLevel ~= toUp.CurrentLevel.Value) then
+    local newLevel = toUp.CurrentLevel.Value
+    if chosen == up then
+        newLevel = math.min(newLevel + 5, toUp.MaxLevel)
+    else
+        newLevel = math.max(newLevel - 5, 0)
+    end
+    if (newLevel ~= toUp.CurrentLevel.Value) then
         toUp.CurrentLevel.TryChangeValue(newLevel)
     end
     return false

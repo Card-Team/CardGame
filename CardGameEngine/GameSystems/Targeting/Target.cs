@@ -74,7 +74,6 @@ namespace CardGameEngine.GameSystems.Targeting
 
             throw new InvalidEffectException(
                 "l'effet est invalide car la  cible est automatique mais n'a pas de carte filter");
-            //TODO afficher l'effet
         }
     }
 }

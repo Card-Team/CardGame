@@ -20,12 +20,13 @@ namespace CardGameEngine.GameSystems.Effects
         /// <seealso cref="CheckArtefact(string)"/>
         /// <seealso cref="CheckCard(string)"/>
         /// <seealso cref="CheckKeyword(string)"/>
-        internal static bool CheckEffect(string path, EffectType effectType)
+        internal static bool CheckEffect(string path, EffectType effectType, out object error)
         {
+            error = "";
             return effectType switch
             {
                 EffectType.Artefact => true,
-                EffectType.Card => CheckCard(path),
+                EffectType.Card => CheckCard(path, out error),
                 EffectType.Keyword => true,
                 _ => throw new ArgumentOutOfRangeException(nameof(effectType), effectType, null) // Ne peut pas arriver
             };
@@ -36,7 +37,7 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         /// <param name="path">Nom complet du fichier de la carte</param>
         /// <returns>Un booléen en fonction de la validité</returns>
-        private static bool CheckCard(string path)
+        private static bool CheckCard(string path, out object error)
         {
             Script script = EffectsDatabase.GetDefaultScript();
 
@@ -46,48 +47,50 @@ namespace CardGameEngine.GameSystems.Effects
             }
             catch (ScriptRuntimeException sre)
             {
-                Console.WriteLine($"Erreur à l'exécution de {path}");
-                Console.WriteLine(sre.DecoratedMessage);
+                error = sre;
                 return false;
             }
             catch (SyntaxErrorException see)
             {
-                Console.WriteLine($"Erreur de syntaxe dans {path}");
-                Console.WriteLine(see.DecoratedMessage);
+                error = see;
                 return false;
             }
 
             // Élements lua requis et leur type respectif
             Dictionary<string, DataType> typeCheckReq = new Dictionary<string, DataType>
             {
-                {LuaStrings.Card.MaxLevelProperty, DataType.Number},
-                {LuaStrings.Card.ImageIdProperty, DataType.Number},
-                {LuaStrings.Card.NameProperty, DataType.String},
-                {LuaStrings.Card.CostProperty, DataType.Number},
-                {LuaStrings.Card.TargetsProperty, DataType.Table},
-                {LuaStrings.Card.DescriptionProperty, DataType.String},
-                {LuaStrings.Card.PreconditionMethod, DataType.Function},
-                {LuaStrings.Card.DoEffectMethod, DataType.Function},
+                { LuaStrings.Card.MaxLevelProperty, DataType.Number },
+                { LuaStrings.Card.ImageIdProperty, DataType.Number },
+                { LuaStrings.Card.NameProperty, DataType.String },
+                { LuaStrings.Card.CostProperty, DataType.Number },
+                { LuaStrings.Card.TargetsProperty, DataType.Table },
+                { LuaStrings.Card.DescriptionProperty, DataType.String },
+                { LuaStrings.Card.PreconditionMethod, DataType.Function },
+                { LuaStrings.Card.DoEffectMethod, DataType.Function }
             };
 
             // Élements lua optionnels et leur type respectif
             Dictionary<string, DataType> typeCheckOpt = new Dictionary<string, DataType>
             {
-                {LuaStrings.Card.OnLevelChangeMethod, DataType.Function},
-                {LuaStrings.Card.OnCardCreateMethod, DataType.Function},
+                { LuaStrings.Card.OnLevelChangeMethod, DataType.Function },
+                { LuaStrings.Card.OnCardCreateMethod, DataType.Function }
             };
 
             // Vérifie si tous les élements requis sont existants et du bon type
             foreach (var keyValuePair in typeCheckReq)
             {
                 var key = script.Globals.Get(keyValuePair.Key);
-                if (key.Type != keyValuePair.Value)
+                var type = keyValuePair.Value.ToLuaTypeString();
+                if (key.IsNilOrNan())
                 {
+                    error = $"{type} {keyValuePair.Key} non trouvé";
                     return false;
                 }
 
-                if (key.Type == DataType.Number && (double.IsNaN(key.Number) || double.IsInfinity(key.Number)))
+                if (key.Type != keyValuePair.Value)
                 {
+                    error =
+                        $"{keyValuePair.Key} est {type} alors que {keyValuePair.Value.ToLuaTypeString()} est attendu";
                     return false;
                 }
             }
@@ -96,17 +99,23 @@ namespace CardGameEngine.GameSystems.Effects
             foreach (var keyValuePair in typeCheckOpt)
             {
                 var key = script.Globals.Get(keyValuePair.Key);
+                var type = keyValuePair.Value.ToLuaTypeString();
                 if (key.Type != keyValuePair.Value && key.Type != DataType.Nil)
                 {
+                    error =
+                        $"{keyValuePair.Key} est {type} alors que {keyValuePair.Value.ToLuaTypeString()} est attendu";
                     return false;
                 }
 
                 if (key.Type == DataType.Number && (double.IsNaN(key.Number) || double.IsInfinity(key.Number)))
                 {
+                    error =
+                        $"{keyValuePair.Key} est {type} alors que {keyValuePair.Value.ToLuaTypeString()} est attendu";
                     return false;
                 }
             }
 
+            error = "";
             // Aucun problème trouvé, effet validé
             return true;
         }

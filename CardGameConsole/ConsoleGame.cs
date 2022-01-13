@@ -6,9 +6,9 @@ using CardGameEngine;
 using CardGameEngine.Cards;
 using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
+using CardGameEngine.GameSystems.Effects;
 using MoonSharp.Interpreter;
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace CardGameConsole
 {
@@ -46,18 +46,19 @@ namespace CardGameConsole
             // Console.WriteLine("Veuillez m'indiquer le fichier contenant vos cartes (CardGameConsole/Decks/) :");
             var deck2 = File.ReadLines("../../Decks/non.txt").ToList();
 
-            Game = new Game("../../../CardGameEngine/EffectsScripts/", new ConsoleExternCallbacks(), deck1, deck2);
-
-            Console.WriteLine(Game.Player1.Deck.ToString());
-            Console.WriteLine(Game.Player2.Deck.ToString());
-
-            RegisterEventListeners();
-            EventDisplayer.RegisterAllEvents(Game.EventManager);
-
-            Console.WriteLine("Début de partie :");
-
             try
             {
+                Game = new Game("../../../CardGameEngine/EffectsScripts/", new ConsoleExternCallbacks(), deck1, deck2);
+
+                Console.WriteLine(Game.Player1.Deck.ToString());
+                Console.WriteLine(Game.Player2.Deck.ToString());
+                ScriptRuntimeException exc;
+                RegisterEventListeners();
+                EventDisplayer.RegisterAllEvents(Game.EventManager);
+
+                Console.WriteLine("Début de partie :");
+
+
                 Game.StartGame();
                 EventDisplayer.ClearEvents();
                 Player1Vic = Game.Player1.Cards.First(f => f.EffectId == Game.VictoryCardEffectId);
@@ -65,7 +66,11 @@ namespace CardGameConsole
                 GameLoop();
                 AnsiConsole.Write(new Rule($"{Winner?.GetName()} a gagné la partie !").Centered());
             }
-            catch (ScriptRuntimeException exception)
+            catch (InvalidEffectException exc)
+            {
+                ErrorUtils.PrintError(exc);
+            }
+            catch (InterpreterException exception)
             {
                 ErrorUtils.PrintError(exception);
             }
@@ -79,7 +84,11 @@ namespace CardGameConsole
                 {
                     ErrorUtils.PrintError(exception);
                 }
-                else throw;
+                else AnsiConsole.WriteException(exception);
+            }
+            catch (Exception exception)
+            {
+                AnsiConsole.WriteException(exception);
             }
         }
 
@@ -107,9 +116,9 @@ namespace CardGameConsole
 
                     Game.CurrentPlayer.PrintHand();
                     AnsiConsole.Write(
-                        new Columns(GetInfos(Game.CurrentPlayer), 
+                        new Columns(GetInfos(Game.CurrentPlayer),
                             GetVictoryInfo(),
-                            EventDisplayer.DumpEvents().Expand().Border(BoxBorder.None)));
+                            (EventDisplayer.DumpEvents() ?? new Panel("")).Expand().Border(BoxBorder.None)));
 
                     if (Winner != null) return;
 
@@ -151,24 +160,24 @@ namespace CardGameConsole
 
         private static Panel GetVictoryInfo()
         {
-
             var progress = new BarChart()
                 .Width(Player1Vic.MaxLevel + 60)
                 .WithMaxValue(Player1Vic.MaxLevel);
 
             if (Game.CurrentPlayer == Game.Player1)
             {
-                progress.AddItem("Votre progression", Player1Vic.CurrentLevel.Value,Color.Green)
-                    .AddItem($"La progression de {Game.Player2.GetName()}", Player2Vic.CurrentLevel.Value,Color.Red);
+                progress.AddItem("Votre progression", Player1Vic.CurrentLevel.Value, Color.Green)
+                    .AddItem($"La progression de {Game.Player2.GetName()}", Player2Vic.CurrentLevel.Value, Color.Red);
             }
             else
             {
-                progress.AddItem("Votre progression", Player2Vic.CurrentLevel.Value,Color.Green)
-                    .AddItem($"La progression de {Game.Player1.GetName()}", Player1Vic.CurrentLevel.Value,Color.Red);
+                progress.AddItem("Votre progression", Player2Vic.CurrentLevel.Value, Color.Green)
+                    .AddItem($"La progression de {Game.Player1.GetName()}", Player1Vic.CurrentLevel.Value, Color.Red);
             }
 
 
-            return new Panel(progress).Header($"Progression vers la victoire (max:{Player1Vic.MaxLevel})").HeaderAlignment(Justify.Center);
+            return new Panel(progress).Header($"Progression vers la victoire (max:{Player1Vic.MaxLevel})")
+                .HeaderAlignment(Justify.Center);
         }
 
         private static Panel GetInfos(Player player)

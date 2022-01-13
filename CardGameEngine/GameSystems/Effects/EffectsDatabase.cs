@@ -6,6 +6,7 @@ using CardGameEngine.GameSystems.Targeting;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop;
 using MoonSharp.Interpreter.Serialization;
+using MoonSharp.VsCodeDebugger;
 
 namespace CardGameEngine.GameSystems.Effects
 {
@@ -14,7 +15,7 @@ namespace CardGameEngine.GameSystems.Effects
     /// </summary>
     internal class EffectsDatabase
     {
-        private readonly Action<string,string, string> _luaDebugPrint;
+        private readonly Action<string, string, string> _luaDebugPrint;
 
         /// <summary>
         /// Le dictionnaire stockant les effets valides avec leur nom comme clé
@@ -26,13 +27,15 @@ namespace CardGameEngine.GameSystems.Effects
 
         internal delegate Effect EffectSupplier();
 
+        private static MoonSharpVsCodeDebugServer vsdebug = new MoonSharpVsCodeDebugServer();
+
         /// <summary>
         /// Accède au dictionnaire des effets de l'objet
         /// </summary>
         /// <param name="s">Nom de l'effet</param>
         internal EffectSupplier this[string s] => _effectDictionary[s];
-        
-        
+
+        internal EffectSupplier Blank { get; }
 
 
         /// <summary>
@@ -41,10 +44,11 @@ namespace CardGameEngine.GameSystems.Effects
         /// </summary>
         /// <param name="path">Nom complet du dossier</param>
         /// <param name="luaDebugPrint"></param>
+        /// <param name="debuggerToUse"></param>
         /// <seealso cref="LoadAllEffects(string, EffectType)"/>
-        internal EffectsDatabase(string path, Action<string,string,string>? luaDebugPrint = null)
+        internal EffectsDatabase(string path, Action<string, string, string>? luaDebugPrint = null)
         {
-            _luaDebugPrint = luaDebugPrint ?? ((from,script, s) => {});
+            _luaDebugPrint = luaDebugPrint ?? ((from, script, s) => { });
             UserData.RegistrationPolicy = InteropRegistrationPolicy.Automatic;
             Table dump = UserData.GetDescriptionOfRegisteredTypes(true);
             File.WriteAllText("./dump.txt", dump.Serialize());
@@ -55,6 +59,8 @@ namespace CardGameEngine.GameSystems.Effects
                 if (validFile)
                     LoadAllEffects(directory, type);
             }
+
+            Blank = _effectDictionary["_blank"];
         }
 
         /// <summary>
@@ -84,9 +90,13 @@ namespace CardGameEngine.GameSystems.Effects
             string effectId = Path.GetFileNameWithoutExtension(path);
 
             // Teste la validité de l'effet
-            if (!EffectChecker.CheckEffect(path, effectType))
+            if (!EffectChecker.CheckEffect(path, effectType, out var error))
             {
-                throw new InvalidEffectException(effectId, effectType);
+                throw error switch
+                {
+                    InterpreterException exc => new InvalidEffectException(effectId, effectType, exc),
+                    _ => new InvalidEffectException(effectId, effectType, error.ToString())
+                };
             }
 
             var fileContent = File.ReadAllText(path);
@@ -95,7 +105,9 @@ namespace CardGameEngine.GameSystems.Effects
             {
                 // Charge le script de l'effet
                 var script = GetDefaultScript();
-                script.Options.DebugPrint = s => _luaDebugPrint("Lua",effectId, s);
+                script.Options.DebugPrint = s => _luaDebugPrint("Lua", effectId, s);
+
+
                 script.DoString(fileContent, codeFriendlyName: effectId);
 
                 // Récupère les cibles de l'effet
@@ -121,7 +133,7 @@ namespace CardGameEngine.GameSystems.Effects
                 // Élements c# à intégrer dans le fichier lua
                 Globals =
                 {
-                    ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>) CreateTarget,
+                    ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>)CreateTarget,
                     ["TargetTypes"] = UserData.CreateStatic<TargetTypes>(),
                 }
             };

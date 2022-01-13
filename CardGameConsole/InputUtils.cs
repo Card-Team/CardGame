@@ -8,7 +8,8 @@ namespace CardGameConsole
 {
     public static class InputUtils
     {
-        public static Card? ChooseFrom(Player pov, IEnumerable<Card> list, bool annulable = false)
+        public static Card? ChooseFrom(Player pov, IEnumerable<Card> list, bool annulable = false,
+            bool splitCards = true)
         {
             var split = list.SplitIntoPiles().ToList();
             var flattened = new Dictionary<string, Card>();
@@ -24,15 +25,18 @@ namespace CardGameConsole
                 var built = new List<string>();
                 foreach (var (card, visible) in pile.WithVisionInfo(pov))
                 {
-                    var text = $"{index} - {(visible ? card.ToString() : "Inconnu")}";
+                    var text = $"{index} - {(visible || !splitCards ? card.ToString() : "Inconnu")}";
                     built.Add(text);
                     flattened[text] = card;
                     index++;
                 }
 
 
-                prompt.AddChoiceGroup(pile.Key.Display(pov),
-                    built);
+                if (splitCards)
+                    prompt.AddChoiceGroup(pile.Key.Display(pov),
+                        built);
+                else
+                    prompt.AddChoices(built);
             }
 
             if (annulable)
@@ -57,12 +61,6 @@ namespace CardGameConsole
                     .AddChoices(elements.Keys));
 
             return elements[result];
-        }
-
-
-        public static T ChooseList<T>(string title, IEnumerable<T> elements)
-        {
-            return ChooseList(title, elements.ToDictionary(e => e?.ToString() ?? "null", e => e));
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.AccessControl;
+﻿using System.Collections.Generic;
 using CardGameEngine.EventSystem;
 using CardGameEngine.EventSystem.Events;
 using CardGameEngine.EventSystem.Events.CardEvents;
@@ -9,7 +6,6 @@ using CardGameEngine.EventSystem.Events.CardEvents.PropertyChange;
 using CardGameEngine.EventSystem.Events.GameStateEvents;
 using CardGameEngine.GameSystems;
 using Spectre.Console;
-using Spectre.Console.Rendering;
 
 namespace CardGameConsole
 {
@@ -24,6 +20,8 @@ namespace CardGameConsole
 
             // Carte jouée puis effet exécuté
             eventManager.SubscribeToEvent<CardPlayEvent>(OnCardPlay, postEvent: false);
+            eventManager.SubscribeToEvent<CardEffectPlayEvent>(OnCardEffectPlay, postEvent: false);
+            eventManager.SubscribeToEvent<CardEffectPlayEvent>(OnPostCardEffectPlay, postEvent: true);
             eventManager.SubscribeToEvent<CardPlayEvent>(OnPostCardPlay, postEvent: true);
 
             // Déplacement d'une carte
@@ -31,9 +29,9 @@ namespace CardGameConsole
 
             // Mise en amélioration d'une carte 
             eventManager.SubscribeToEvent<CardMarkUpgradeEvent>(OnCardMarkedUpgrade, postEvent: true);
-            
+
             eventManager.SubscribeToEvent<CardUnMarkUpgradeEvent>(OnCardRemovedMarkedUpgrade, postEvent: true);
-            
+
             // Bouclage du deck
             eventManager.SubscribeToEvent<DeckLoopEvent>(OnDeckLoop, postEvent: true);
 
@@ -52,22 +50,23 @@ namespace CardGameConsole
         private static void OnActionPointsEdit(ActionPointsEditEvent evt)
         {
             WriteEvent(
-                $"Il vous reste [bold]{evt.NewPointCount}[/] [green]points d'action (sur {evt.Player.MaxActionPoints.Value})[/]");
+                $"Vous avez désormais [bold]{evt.NewPointCount}[/] [green]points d'action (sur {evt.Player.MaxActionPoints.Value})[/]");
         }
 
         private static void OnCardMarkedUpgrade(CardMarkUpgradeEvent evt)
         {
             WriteEvent($"[underline]{evt.Card.Name}[/] est prête à se faire améliorer");
         }
-        
+
         private static void OnCardRemovedMarkedUpgrade(CardUnMarkUpgradeEvent evt)
         {
             WriteEvent($"[underline]{evt.Card.Name}[/] [bold]ne sera pas améliorée[/]");
         }
-        
+
         private static void OnDeckLoop(DeckLoopEvent evt)
         {
-            WriteEvent($"Le deck de [bold]{evt.Player.GetName()}[/] a bouclé et contient maintenant [bold]{evt.Player.Deck.Count}[/] cartes");
+            WriteEvent(
+                $"Le deck de [bold]{evt.Player.GetName()}[/] a bouclé et contient maintenant [bold]{evt.Player.Deck.Count}[/] cartes");
         }
 
         private static void OnCardChangePile(CardMovePileEvent evt)
@@ -99,7 +98,18 @@ namespace CardGameConsole
 
         private static void OnCardPlay(CardPlayEvent evt)
         {
-            WriteEvent($"[underline]{evt.Card.Name}[/] vient d'être activée");
+            WriteEvent($"[underline]{evt.Card.Name}[/] vient d'être jouée par [bold]{evt.WhoPlayed.GetName()}[/]");
+        }
+
+        private static void OnCardEffectPlay(CardEffectPlayEvent evt)
+        {
+            WriteEvent(
+                $"L'effet de [underline]{evt.Card.Name}[/] vient d'être activé par [bold]{evt.WhoPlayed.GetName()}[/]");
+        }
+
+        private static void OnPostCardEffectPlay(CardEffectPlayEvent evt)
+        {
+            WriteEvent($"L'effet de [underline]{evt.Card.Name}[/] a terminé son execution");
         }
 
         private static void WriteEvent(string evt)
@@ -107,9 +117,9 @@ namespace CardGameConsole
             Events.Add(evt);
         }
 
-        public static Panel DumpEvents()
+        public static Panel? DumpEvents()
         {
-            return new Panel(new Markup(string.Join("\n", Events)).Alignment(Justify.Right));
+            return Events.Count == 0 ? null : new Panel(new Markup(string.Join("\n", Events)).Alignment(Justify.Right));
         }
 
         public static void ClearEvents()
@@ -119,7 +129,7 @@ namespace CardGameConsole
 
         private static void OnPostCardPlay(CardPlayEvent evt)
         {
-            WriteEvent($"[underline]L'effet de {evt.Card.Name}[/] a été exécuté avec succès");
+            WriteEvent($"La carte [underline]{evt.Card.Name}[/] a fini d'etre jouée");
         }
 
         private static void OnCardLevelChange(CardLevelChangeEvent evt)
