@@ -41,6 +41,7 @@ namespace CardGameEngine
         /// <summary>
         /// Gestionnaire des évènements de la partie
         /// </summary>
+        [MoonSharpVisible(false)]
         public EventManager EventManager { get; }
 
         /// <summary>
@@ -55,6 +56,7 @@ namespace CardGameEngine
         private readonly IExternCallbacks _externCallbacks;
 
 
+        [MoonSharpVisible(false)]
         public Game(string effectFolder, IExternCallbacks externCallbacks, IEnumerable<string> deck1,
             IEnumerable<string> deck2)
         {
@@ -76,6 +78,7 @@ namespace CardGameEngine
             CurrentPlayer = Player1;
         }
 
+        [MoonSharpVisible(false)]
         public void StartGame()
         {
             for (var i = 0; i < 2; i++)
@@ -126,6 +129,7 @@ namespace CardGameEngine
         /// <summary>
         /// Essaye de finir le tour du joueur actuel
         /// </summary>
+        [MoonSharpVisible(true)]
         internal bool TryEndPlayerTurn()
         {
             var turnEvent = new EndTurnEvent(CurrentPlayer);
@@ -142,6 +146,7 @@ namespace CardGameEngine
         /// <summary>
         /// Externe : Termine le tour du joueur
         /// </summary>
+        [MoonSharpVisible(false)]
         public void EndPlayerTurn()
         {
             EndTurnEvent turnEvent = new EndTurnEvent(CurrentPlayer);
@@ -269,6 +274,7 @@ namespace CardGameEngine
             }
         }
 
+        [MoonSharpVisible(true)]
         internal Player GetCurrentOwner(Card card)
         {
             if (Player1.Cards.Contains(card))
@@ -284,6 +290,7 @@ namespace CardGameEngine
             throw new InvalidOperationException($"La carte {card} n'appartient a aucun joueur");
         }
 
+        [MoonSharpVisible(true)]
         internal CardPile GetPileOf(Card card)
         {
             var currentOwner = GetCurrentOwner(card);
@@ -380,6 +387,7 @@ namespace CardGameEngine
             return resolved;
         }
 
+        [MoonSharpVisible(false)]
         public string? GetScriptByName(string effectName)
         {
             return EffectsDatabase.GetScript(effectName);
@@ -402,6 +410,7 @@ namespace CardGameEngine
             return list.All(targetId => GetValidTargets(effect.AllTargets[targetId - 1]).Any());
         }
 
+        [MoonSharpVisible(false)]
         public void Log(string source, string message)
         {
             _externCallbacks.DebugPrint("C#", source, message);

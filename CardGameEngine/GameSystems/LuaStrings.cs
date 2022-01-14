@@ -1,6 +1,6 @@
 ﻿namespace CardGameEngine.GameSystems
 {
-    public static class LuaStrings
+    internal static class LuaStrings
     {
         public static class Card
         {

@@ -23,6 +23,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <summary>
         /// EventManager de la partie
         /// </summary>
+        [MoonSharpVisible(false)]
         protected EventManager EventManager { get; }
 
         /// <summary>
@@ -108,6 +109,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// Renvoie un itérateur pour la liste
         /// </summary>
         /// <returns>L'itérateur créé</returns>
+        [MoonSharpVisible(false)]
         IEnumerator<Card> IEnumerable<Card>.GetEnumerator()
         {
             return _cardList.GetEnumerator();

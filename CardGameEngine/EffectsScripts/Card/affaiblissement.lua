@@ -1,4 +1,4 @@
-﻿---@module affaiblissement
+﻿---@type number
 max_level = 1
 image_id = 523
 
