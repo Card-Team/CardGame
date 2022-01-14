@@ -1,4 +1,5 @@
-﻿max_level = 6 --TODO-- A définir
+﻿---@module _victoire
+max_level = 6 --TODO-- A définir
 image_id = 519
 
 name = "Victoire"

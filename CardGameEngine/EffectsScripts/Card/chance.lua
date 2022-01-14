@@ -1,4 +1,5 @@
-﻿max_level = 1
+﻿---@module chance
+max_level = 1
 image_id = 709
 
 name = "chance"
@@ -13,7 +14,7 @@ function cardFilter()
     --contains pour verifier si il a selectionner une carte de sa main
     if OtherHand.Contains(card) then
         --faire le do effect
-    else 
+    else
         print("Dommage c'est pas la bonne")
     end
 end
@@ -22,7 +23,6 @@ targets = {
     --cible avec la precondition qui renvoie faux s'il y'a aucune carte dans sa main
     CreateTarget("Devine une carte de la main du joueurs", TargetTypes.Card, true, cardFilter),
 }
-
 
 function precondition()
     return EffectOwner.OtherPlayer.Hand.Count > 0

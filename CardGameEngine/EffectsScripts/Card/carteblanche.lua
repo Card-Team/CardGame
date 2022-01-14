@@ -1,4 +1,5 @@
-﻿max_level = 1
+﻿---@module carteblanche
+max_level = 1
 image_id = 517
 
 name = "Carte Blanche"

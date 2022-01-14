@@ -18,7 +18,7 @@
 
 
 ---@type Card
-local This
+This = {}
 
 
 

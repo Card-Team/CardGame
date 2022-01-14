@@ -1,4 +1,5 @@
-﻿max_level = 1
+﻿---@module _blank
+max_level = 1
 image_id = 519
 
 name = "Vide"

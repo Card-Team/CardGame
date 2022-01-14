@@ -1,4 +1,5 @@
-﻿max_level = 2
+﻿---@module example
+max_level = 2
 image_id = 500
 
 name = "Nom"

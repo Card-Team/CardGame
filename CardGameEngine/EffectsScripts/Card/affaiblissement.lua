@@ -1,4 +1,5 @@
-﻿max_level = 1
+﻿---@module affaiblissement
+max_level = 1
 image_id = 523
 
 name = "affaiblissement"
@@ -17,7 +18,6 @@ targets = {
     CreateTarget("points d'action baisser aleatoirement", TargetTypes.Card, true, card_filter),
 }
 
-
 --- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
     return EffectOwner.Deck.Count > 0
@@ -25,9 +25,9 @@ end
 
 coutCard=0
 
-function baisserPointAction(startEvent,ecouteurs)
+function baisserPointAction(startEvent, ecouteurs)
     local pointActionAdv = startEvent.Player.ActionPoints.Value                   --point d'action de l'adversaire
-    startEvent.Player.ActionPoints.TryChangeValue(math.max(pointActionAdv - coutCard,0))--commence l'evenement au prochain tour : il baissera ses points d'action apres le prochain tour
+    startEvent.Player.ActionPoints.TryChangeValue(math.max(pointActionAdv - coutCard, 0))--commence l'evenement au prochain tour : il baissera ses points d'action apres le prochain tour
     UnsubscribeTo(ecouteurs)
 end
 

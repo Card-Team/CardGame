@@ -1,3 +1,4 @@
+---@module montgolfiere
 --immutable data
 max_level = 3
 image_id = 512
@@ -22,7 +23,6 @@ end
 targets = {
     CreateTarget("La carte à remonter", TargetTypes.Card, false, card_filter)
 }
-
 
 function precondition()
     return TargetsExists({ 1 })

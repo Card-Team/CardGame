@@ -1,4 +1,5 @@
-﻿max_level = 2
+﻿---@module visionnaire
+max_level = 2
 image_id = 636
 
 name = "Visionnaire"
@@ -33,7 +34,6 @@ function precondition()
         return EffectOwner.Deck.Count >= 3
     end
 end
-
 
 function do_effect()
     --voir les dernieres cartes

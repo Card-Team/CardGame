@@ -1,4 +1,5 @@
-﻿max_level = 1
+﻿---@module debugamelioration
+max_level = 1
 image_id = 523
 
 name = "Amélioration Débug"
@@ -13,7 +14,6 @@ end
 targets = {
     CreateTarget("Carta a augmenter", TargetTypes.Card, false, card_filter),
 }
-
 
 --- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()

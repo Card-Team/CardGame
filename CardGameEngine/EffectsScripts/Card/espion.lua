@@ -1,4 +1,5 @@
-﻿max_level = 1
+﻿---@module espion
+max_level = 1
 image_id = 626
 
 name = "Espion"
@@ -17,7 +18,6 @@ end
 targets = {
     CreateTarget("carte qui fait voir", TargetTypes.Card, true, cardFilter),
 }
-
 
 function precondition()
     return EffectOwner.OtherPlayer.Hand.Count > 0

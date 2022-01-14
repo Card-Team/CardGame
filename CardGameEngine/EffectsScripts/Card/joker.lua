@@ -1,4 +1,5 @@
-﻿max_level = 2
+﻿---@module joker
+max_level = 2
 image_id = 520
 
 name = "Joker"

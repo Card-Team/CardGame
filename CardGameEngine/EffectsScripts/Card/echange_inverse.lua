@@ -1,4 +1,5 @@
-﻿max_level = 1
+﻿---@module echange_inverse
+max_level = 1
 image_id = 518
 
 name = "Echange inversé"
@@ -16,7 +17,6 @@ end
 targets = {
     CreateTarget("la carte avec laquelle elle s'échange dans la défausse", TargetTypes.Card, true, card_filter),
 }
-
 
 --- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()

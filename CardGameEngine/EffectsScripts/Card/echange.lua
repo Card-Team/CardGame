@@ -1,4 +1,5 @@
-﻿max_level = 1
+﻿---@module echange
+max_level = 1
 image_id = 514
 
 name = "Échange"
