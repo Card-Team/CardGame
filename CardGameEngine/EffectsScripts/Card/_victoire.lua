@@ -1,13 +1,18 @@
-﻿---@module _victoire
+﻿---@type number
 max_level = 6 --TODO-- A définir
+---@type number
 image_id = 519
 
+---@type string
 name = "Victoire"
+---@type number
 pa_cost = 1
 
-base_description = "Améliore la carte jusqu'au niveau " .. max_level .. " pour gagner."
+---@type string
+local base_description = "Améliore la carte jusqu'au niveau " .. max_level .. " pour gagner."
 description = base_description
 
+---@type Target[]
 targets = {}
 
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non

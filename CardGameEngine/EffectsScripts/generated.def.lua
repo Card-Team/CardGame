@@ -1,4 +1,4 @@
----@module generated
+
 
 ---@class Game
 ---@field public CurrentPlayer Player
@@ -6,18 +6,22 @@
 ---@field public Player2 Player
 ---@field public MakeWin fun(playerToWin:Player)
 ---@field public TryEndPlayerTurn fun():boolean
+---@field public PlayCard fun(effectowner:Player,card:Card):boolean
 ---@field public PlayCard fun(effectowner:Player,card:Card,discardSource:CardPile,discardGoal:DiscardPile):boolean
+---@field public PlayCardEffect fun(effectowner:Player,card:Card):boolean
 ---@field public GetCurrentOwner fun(card:Card):Player
 ---@field public GetPileOf fun(card:Card):CardPile
 ---@field public RevealCard fun(player:Player,card:Card)
 ---@field public ActivateArtifact fun(player:Player,artefact:Artefact)
 ---@field public ChooseBetween fun(player:Player,cards:Card[]):Card
+---@field public MakeVirtual fun(nom:string,description:string):Card
 ---@field public MakeVirtual fun(nom:string,description:string,imageId:number | nil,effect:fun()):Card
 
 
 ---@class Player
 ---@field public Deck CardPile
 ---@field public Hand CardPile
+---@field public Discard DiscardPile
 ---@field public Artefacts Artefact[]
 ---@field public ActionPoints EventProperty<Player,number,ActionPointsEditEvent>
 ---@field public MaxActionPoints EventProperty<Player,number,MaxActionPointsEditEvent>
@@ -202,61 +206,95 @@
 ---@field public IsMarkedForUpgrade fun(card:Card):boolean
 
 
+---@class IEventHandler
+---@field public EvenIfCancelled boolean
+---@field public PostEvent boolean
+---@field public EventType Type<Event>
+---@field public HandleEvent fun(evt:Event)
+
+
 -- EFFETS
 
----@class Type
+---@class Type<T:Event>
 
-ActionPointsEditEvent = --[[---@type Type]] {}
+---@type Type<ActionPointsEditEvent>
+ActionPointsEditEvent = --[[---@type Type<ActionPointsEditEvent>]] {}
 
-CancellableEvent = --[[---@type Type]] {}
+---@type Type<CancellableEvent>
+CancellableEvent = --[[---@type Type<CancellableEvent>]] {}
 
-Event = --[[---@type Type]] {}
+---@type Type<Event>
+Event = --[[---@type Type<Event>]] {}
 
-MaxActionPointsEditEvent = --[[---@type Type]] {}
+---@type Type<MaxActionPointsEditEvent>
+MaxActionPointsEditEvent = --[[---@type Type<MaxActionPointsEditEvent>]] {}
 
-DeckLoopEvent = --[[---@type Type]] {}
+---@type Type<DeckLoopEvent>
+DeckLoopEvent = --[[---@type Type<DeckLoopEvent>]] {}
 
-EndTurnEvent = --[[---@type Type]] {}
+---@type Type<EndTurnEvent>
+EndTurnEvent = --[[---@type Type<EndTurnEvent>]] {}
 
-StartTurnEvent = --[[---@type Type]] {}
+---@type Type<StartTurnEvent>
+StartTurnEvent = --[[---@type Type<StartTurnEvent>]] {}
 
-CardDeleteEvent = --[[---@type Type]] {}
+---@type Type<CardDeleteEvent>
+CardDeleteEvent = --[[---@type Type<CardDeleteEvent>]] {}
 
-CardEvent = --[[---@type Type]] {}
+---@type Type<CardEvent>
+CardEvent = --[[---@type Type<CardEvent>]] {}
 
-CardMarkUpgradeEvent = --[[---@type Type]] {}
+---@type Type<CardMarkUpgradeEvent>
+CardMarkUpgradeEvent = --[[---@type Type<CardMarkUpgradeEvent>]] {}
 
-CardMovePileEvent = --[[---@type Type]] {}
+---@type Type<CardMovePileEvent>
+CardMovePileEvent = --[[---@type Type<CardMovePileEvent>]] {}
 
-CardPlayEvent = --[[---@type Type]] {}
+---@type Type<CardPlayEvent>
+CardPlayEvent = --[[---@type Type<CardPlayEvent>]] {}
 
-CardUnMarkUpgradeEvent = --[[---@type Type]] {}
+---@type Type<CardUnMarkUpgradeEvent>
+CardUnMarkUpgradeEvent = --[[---@type Type<CardUnMarkUpgradeEvent>]] {}
 
-TransferrableCardEvent = --[[---@type Type]] {}
+---@type Type<TransferrableCardEvent>
+TransferrableCardEvent = --[[---@type Type<TransferrableCardEvent>]] {}
 
-TargetingEvent = --[[---@type Type]] {}
+---@type Type<TargetingEvent>
+TargetingEvent = --[[---@type Type<TargetingEvent>]] {}
 
-CardCostChangeEvent = --[[---@type Type]] {}
+---@type Type<CardCostChangeEvent>
+CardCostChangeEvent = --[[---@type Type<CardCostChangeEvent>]] {}
 
-CardDescriptionChangeEvent = --[[---@type Type]] {}
+---@type Type<CardDescriptionChangeEvent>
+CardDescriptionChangeEvent = --[[---@type Type<CardDescriptionChangeEvent>]] {}
 
-CardLevelChangeEvent = --[[---@type Type]] {}
+---@type Type<CardLevelChangeEvent>
+CardLevelChangeEvent = --[[---@type Type<CardLevelChangeEvent>]] {}
 
-CardNameChangeEvent = --[[---@type Type]] {}
+---@type Type<CardNameChangeEvent>
+CardNameChangeEvent = --[[---@type Type<CardNameChangeEvent>]] {}
 
-CardPropertyChangeEvent = --[[---@type Type]] {}
+---@type Type<CardPropertyChangeEvent<any>>
+CardPropertyChangeEvent = --[[---@type Type<CardPropertyChangeEvent<any>>]] {}
 
-CardKeywordAddEvent = --[[---@type Type]] {}
+---@type Type<CardKeywordAddEvent>
+CardKeywordAddEvent = --[[---@type Type<CardKeywordAddEvent>]] {}
 
-CardKeywordEvent = --[[---@type Type]] {}
+---@type Type<CardKeywordEvent>
+CardKeywordEvent = --[[---@type Type<CardKeywordEvent>]] {}
 
-CardKeywordRemoveEvent = --[[---@type Type]] {}
+---@type Type<CardKeywordRemoveEvent>
+CardKeywordRemoveEvent = --[[---@type Type<CardKeywordRemoveEvent>]] {}
 
-CardKeywordTriggerEvent = --[[---@type Type]] {}
+---@type Type<CardKeywordTriggerEvent>
+CardKeywordTriggerEvent = --[[---@type Type<CardKeywordTriggerEvent>]] {}
 
-ArtefactActivateEvent = --[[---@type Type]] {}
+---@type Type<ArtefactActivateEvent>
+ArtefactActivateEvent = --[[---@type Type<ArtefactActivateEvent>]] {}
 
-ArtefactChargeEditEvent = --[[---@type Type]] {}
+---@type Type<ArtefactChargeEditEvent>
+ArtefactChargeEditEvent = --[[---@type Type<ArtefactChargeEditEvent>]] {}
 
-ArtefactEvent = --[[---@type Type]] {}
+---@type Type<ArtefactEvent>
+ArtefactEvent = --[[---@type Type<ArtefactEvent>]] {}
 

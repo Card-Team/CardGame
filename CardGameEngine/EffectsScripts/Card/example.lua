@@ -1,21 +1,27 @@
-﻿---@module example
+﻿---@type number
 max_level = 2
+---@type number
 image_id = 500
 
+---@type string
 name = "Nom"
+---@type number
 pa_cost = 2
 
+---@type string
 description = "une description de la carte qui peut changer"
 
-function card_filter(a_card)
-    -- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
-    return a_card.Name == "Exemple"
+---@param a_card Card
+local function card_filter(a_card)
+	-- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
+	return a_card.Name == "Exemple"
 end
 
+---@type Target[]
 targets = {
-    -- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
-    CreateTarget("Une cible carte", TargetTypes.Card, false, card_filter),
-    CreateTarget("Un joueur", TargetTypes.Player, true),
+	-- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
+	CreateTarget("Une cible carte", TargetTypes.Card, false, card_filter),
+	CreateTarget("Un joueur", TargetTypes.Player, true),
 }
 
 

@@ -241,7 +241,7 @@ namespace CardGameEngine
         /// <param name="discardGoal"></param>
         /// <returns></returns>
         [MoonSharpVisible(true)]
-        private bool PlayCardEffect(Player effectowner, Card card)
+        internal bool PlayCardEffect(Player effectowner, Card card)
         {
             var playEvent = new CardEffectPlayEvent(effectowner, card);
             using (var post = EventManager.SendEvent(playEvent))
@@ -338,7 +338,7 @@ namespace CardGameEngine
         }
 
         [MoonSharpVisible(true)]
-        internal Card MakeVirtual(string nom, string description, int? imageId, Closure? effect)
+        internal Card MakeVirtual(string nom, string description, int? imageId = null, Closure? effect = null)
         {
             var makeVirtual = new Card(this, nom, description, imageId ?? 0, effect);
             makeVirtual.OnCardCreate();

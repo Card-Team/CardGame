@@ -28,7 +28,7 @@ namespace CardGameEngine.GameSystems
         /// <summary>
         /// Défausse du joueur
         /// </summary>
-        public DiscardPile Discard;
+        public DiscardPile Discard { get; }
 
         /// <summary>
         /// Référence à la partie

@@ -1,6 +1,9 @@
 ﻿<component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
     <codeStyleSettings language="Lua">
+      <option name="ALIGN_MULTILINE_PARAMETERS_IN_CALLS" value="true" />
+      <option name="CALL_PARAMETERS_WRAP" value="1" />
+      <option name="METHOD_PARAMETERS_WRAP" value="1" />
       <indentOptions>
         <option name="USE_TAB_CHARACTER" value="true" />
         <option name="KEEP_INDENTS_ON_EMPTY_LINES" value="true" />

@@ -60,7 +60,10 @@ namespace CardGameEngine.GameSystems.Effects
                     LoadAllEffects(directory, type);
             }
 
-            Blank = _effectDictionary["_blank"];
+            if (_effectDictionary.ContainsKey("_blank"))
+                Blank = _effectDictionary["_blank"];
+            else
+                _luaDebugPrint("C#", "EffectsDatabase.cs", "Blank effect not found");
         }
 
         /// <summary>

@@ -1,22 +1,26 @@
-﻿---@module joker
+﻿---@type number
 max_level = 2
+---@type number
 image_id = 520
 
+---@type string
 name = "Joker"
+---@type number
 pa_cost = 2
 
-base_description = "Cette carte peut copier l'effet d'une carte du deck"
+local base_description = "Cette carte peut copier l'effet d'une carte du deck"
 description = base_description
 
-function card_filter(a_card)
-    local cardDeckPlayer = EffectOwner.Deck
-    local random = math.random(0, cardDeckPlayer.Count - 1)
-    return cardDeckPlayer[random]
+local function card_filter()
+	local cardDeckPlayer = EffectOwner.Deck
+	local random = math.random(0, cardDeckPlayer.Count - 1)
+	return cardDeckPlayer[random]
 end
 
+---@type Target[]
 targets = {
-    CreateTarget("Effet d'une carte aléatoire de ton deck", TargetTypes.Card, true, card_filter),
-    CreateTarget("Effet de 2 cartes aléatoires de ton deck", TargetTypes.Card, true, card_filter)
+	CreateTarget("Effet d'une carte aléatoire de ton deck", TargetTypes.Card, true, card_filter),
+	CreateTarget("Effet de 2 cartes aléatoires de ton deck", TargetTypes.Card, true, card_filter)
 }
 
 
@@ -27,22 +31,24 @@ function precondition()
 end
 
 function do_effect()
-    if (current_level == max_level) then
-        --application des 2 effets cartes lvl2
-        effet1 = AskForTarget(1).Virtual()                   --var qui recuper l'effet 1
-        effet2 = AskForTarget(2).Virtual()                   --var qui recuper l'effet 2
-        Game.PlayCardVirtual(EffectOwner, effet1)                   --joue l'effet de la 1 carte
-        Game.PlayCardVirtual(EffectOwner, effet2)                   --joue l'effet de la 2 carte
-    else
-        effet1 = AskForTarget(1).Virtual()
-        Game.PlayCardVirtual(EffectOwner, effet1)
-    end
+	if (This.CurrentLevel.Value == max_level) then
+		--application des 2 effets cartes lvl2
+		local effet1 = (--[[---@type Card]] AskForTarget(1)).Virtual()                   --var qui recuper l'effet 1
+		local effet2 = (--[[---@type Card]] AskForTarget(2)).Virtual()                   --var qui recuper l'effet 2
+		Game.PlayCardEffect(EffectOwner, effet1)                   --joue l'effet de la 1 carte
+		Game.PlayCardEffect(EffectOwner, effet2)                   --joue l'effet de la 2 carte
+	else
+		local effet1 = (--[[---@type Card]] AskForTarget(1)).Virtual()
+		Game.PlayCardEffect(EffectOwner, effet1)
+	end
 end
 
+---@param old number
+---@param new number
 function on_level_change(old, new)
-    if (new == max_level) then
-        This.Description.TryChangeValue("Cette carte peut copier l'effet d'une carte du deck")
-    else
-        This.Description.TryChangeValue(base_description)
-    end
+	if (new == max_level) then
+		This.Description.TryChangeValue("Cette carte peut copier l'effet d'une carte du deck")
+	else
+		This.Description.TryChangeValue(base_description)
+	end
 end

@@ -40,10 +40,16 @@ namespace CardGameEngine.LuaDocGen
 
             finalString += "\n\n-- EFFETS\n\n";
 
-            finalString += $"{Comment("class")} Type\n\n";
+            finalString += $"{Comment("class")} Type<T:Event>\n\n";
 
             foreach (var effectType in effectTypes)
-                finalString += $"{GetNameWithoutGenericArity(effectType)} = --[[---@type Type]] {{}}\n\n";
+            {
+                var typename = GetNameWithoutGenericArity(effectType);
+                var genericname = typename;
+                if (typename == "CardPropertyChangeEvent") genericname = "CardPropertyChangeEvent<any>";
+                finalString += $"---@type Type<{genericname}>\n";
+                finalString += $"{typename} = --[[---@type Type<{genericname}>]] {{}}\n\n";
+            }
 
             AnsiConsole.Write(new Panel(Markup.Escape(finalString)));
             File.WriteAllText(settings.outputPath, finalString);
@@ -52,8 +58,8 @@ namespace CardGameEngine.LuaDocGen
 
         private readonly string[] blacklist =
         {
-            "IPropertyChange", "Exception", "IEventHandler", "Effect", "EventManager", "IExternCallbacks",
-            "GetEnumerator"
+            "IPropertyChange", "Exception", "Effect", "EventManager", "IExternCallbacks",
+            "IEnumerator"
         };
 
         private string BuildEnumComment(TypeInfo enumInfo)
@@ -92,13 +98,19 @@ namespace CardGameEngine.LuaDocGen
             return builder.ToString();
         }
 
-        private string MethodComment(MethodInfo propertyInfo)
+        private string MethodComment(MethodInfo propertyInfo, bool removeOptional = false)
         {
-            var start = $"{Comment("field")} public {propertyInfo.Name} ";
+            var start = "";
+            if (removeOptional == false && propertyInfo.GetParameters().Any(p => p.IsOptional))
+                start += MethodComment(propertyInfo, true) + "\n";
+
+            start += $"{Comment("field")} public {propertyInfo.Name} ";
 
 
-            var parameters = propertyInfo.GetParameters()
-                .Where(f => !f.IsOut)
+            var whered = propertyInfo.GetParameters()
+                .Where(f => !f.IsOut);
+            if (removeOptional) whered = whered.Where(p => !p.IsOptional);
+            var parameters = whered
                 .Select(s => $"{s.Name}:{ToLuaType(s.ParameterType)}");
 
             start += $"fun({string.Join(",", parameters)})";
@@ -132,6 +144,8 @@ namespace CardGameEngine.LuaDocGen
 
         private string ToLuaType(Type propertyInfoPropertyType)
         {
+            if (propertyInfoPropertyType == typeof(Type)) return "Type<Event>";
+
             if (propertyInfoPropertyType.IsGenericType)
             {
                 //todo peut etre ajouter list pour avoir contains et tout a moins que moonsharp transforme en tableau
@@ -141,6 +155,7 @@ namespace CardGameEngine.LuaDocGen
 
                 if (propertyInfoPropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     return $"{ToLuaType(propertyInfoPropertyType.GetGenericArguments()[0])} | nil";
+
 
                 var genArgs = string.Join(",", propertyInfoPropertyType.GetGenericArguments().Select(ToLuaType));
                 return $"{GetNameWithoutGenericArity(propertyInfoPropertyType.GetGenericTypeDefinition())}<{genArgs}>";
@@ -193,7 +208,7 @@ namespace CardGameEngine.LuaDocGen
 
         private bool IsBlacklisted(MethodInfo methodInfo)
         {
-            return IsBlacklisted(methodInfo.Name) || IsBlacklisted(methodInfo.ReturnType) ||
+            return IsBlacklisted(methodInfo.ReturnType) ||
                    methodInfo.GetParameters().Any(IsBlacklisted);
         }
 
