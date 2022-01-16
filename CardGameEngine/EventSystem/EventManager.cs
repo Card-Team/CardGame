@@ -120,6 +120,11 @@ namespace CardGameEngine.EventSystem
             {
                 if (_eventHandlersDict.TryGetValue(currentType, out var handlerList))
                 {
+                    //todo garder en memoire les désabonnements pendant l'envoi d'un évenements
+                    // et verifier si l'eventhandler est dans la liste des désabonnement avant le yield
+                    // aussi avoir une liste des abonnements pendant l'envoi
+                    // et faire une deuxieme boucle foreach apres celle la qui appelle les nouvellement abbonés
+                    // modifier SendEvent pour appliquer la liste des désabonnement et la liste des suppressions apres avoir envoyé
                     foreach (var eventHandler in handlerList.ToList())
                     {
                         yield return eventHandler;
