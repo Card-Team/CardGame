@@ -52,7 +52,6 @@ namespace CardGameConsole
 
                 Console.WriteLine(Game.Player1.Deck.ToString());
                 Console.WriteLine(Game.Player2.Deck.ToString());
-                ScriptRuntimeException exc;
                 RegisterEventListeners();
                 EventDisplayer.RegisterAllEvents(Game.EventManager);
 
@@ -209,17 +208,7 @@ namespace CardGameConsole
 
         private static void PlayCard(bool upgrade)
         {
-            var available = Game.CurrentPlayer.Hand.CostPlayable();
-            if (!upgrade)
-            {
-                available = available.Playable();
-            }
-            else
-            {
-                available = available.Upgradable();
-            }
-
-            var cards = available.ToList();
+            var cards = Game.CurrentPlayer.Hand.Where(c => Game.CanPlay(Game.CurrentPlayer, c, upgrade)).ToList();
 
             if (cards.Count == 0)
             {

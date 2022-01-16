@@ -326,6 +326,25 @@ namespace CardGameEngine
 
 
         /// <summary>
+        ///     Renvoi vrai si le joueur peut jouer la carte
+        /// </summary>
+        /// <param name="player"></param>
+        /// <param name="card"></param>
+        /// <param name="upgrade"></param>
+        /// <returns></returns>
+        public bool CanPlay(Player player, Card card, bool upgrade)
+        {
+            if (player.ActionPoints.Value < card.Cost.Value) return false;
+
+            return upgrade switch
+            {
+                true when player != CurrentPlayer => false,
+                true => !card.IsMaxLevel,
+                false => card.CanBePlayed(player)
+            };
+        }
+
+        /// <summary>
         /// Demande au joueur originalPlayer de choisir une carte parmi la liste cards et renvoie son choix
         /// </summary>
         /// <param name="player">Le joueur a qui demander</param>
