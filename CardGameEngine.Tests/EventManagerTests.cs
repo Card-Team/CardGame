@@ -328,5 +328,52 @@ namespace CardGameTests
             Assert.That(firstReceived, Is.Not.Null.And.SameAs(secondReceived),
                 "Les deux écouteurs à la chaine n'ont pas reçu le même object évènement");
         }
+
+        [Test(Description = "Test de l'abonnement pendant une écoute")]
+        public void TestSubscribeDuringResolve()
+        {
+            var evt = new TestEventType();
+
+            TestEventType? expected = null;
+
+            EventManager.OnEvent<TestEventType> consumer = e => expected = e;
+
+            EventManager.OnEvent<TestEventType> subbingConsumer = e => { _eventManager.SubscribeToEvent(consumer); };
+
+            _eventManager.SubscribeToEvent(subbingConsumer);
+
+            _eventManager.SendEvent(evt);
+
+            Assert.That(expected, Is.Not.Null.And.SameAs(evt),
+                "L'évenement n'a pas été recu par l'écouteur qui c'est abonné pendant la résolution");
+        }
+
+        private static EventManager.IEventHandler _handler;
+
+        [Test(Description = "Test du désabonnement pendant une écoute")]
+        public void TestUnsubscribeDuringResolve()
+        {
+            var evt = new TestEventType();
+
+            TestEventType? expected = null;
+
+            EventManager.OnEvent<TestEventType> consumer = e => expected = e;
+
+
+            EventManager.OnEvent<TestEventType> subbingConsumer = e =>
+            {
+                expected = null;
+                _eventManager.UnsubscribeFromEvent(_handler);
+            };
+
+            _eventManager.SubscribeToEvent(subbingConsumer);
+            _handler = _eventManager.SubscribeToEvent(consumer);
+
+
+            _eventManager.SendEvent(evt);
+
+            Assert.That(expected, Is.Null.And.Not.SameAs(evt),
+                "L'évenement n'a été recu par l'écouteur alors qu'il s'est désabonné pendant la résolution");
+        }
     }
 }

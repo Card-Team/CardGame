@@ -33,6 +33,6 @@ function do_effect()
 	-- le code de l'effet de la carte
 end
 
-function on_game_start()
+function on_card_create()
 	-- fonction appelée au lancement de la partie
 end

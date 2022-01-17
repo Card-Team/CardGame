@@ -8,6 +8,12 @@ name = "Nom"
 ---@type number
 pa_cost = 2 / 0
 
+---@param a_card Card
+local function card_filter(a_card)
+	-- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
+	return a_card.Name == "Exemple"
+end
+
 ---@type Target[]
 targets = {
 	-- Nom, Type, Automatique ou non,Fonction de filtre des cibles potentielles
@@ -15,10 +21,7 @@ targets = {
 	CreateTarget("Un joueur", TargetTypes.Player, true),
 }
 
-local function card_filter(a_card)
-	-- permet uniquement le ciblage de carte ayant comme nom 'Exemple'
-	return a_card.Name == "Exemple"
-end
+
 
 -- fonction qui renvoie un booléen si la carte peut être jouée ou non
 function precondition()
@@ -36,6 +39,6 @@ function on_level_change(oldLevel, newLevel)
 	-- fonction appelée quand la carte change de niveau (OPTIONNEL)
 end
 
-function on_game_start()
+function on_card_create()
 	-- fonction appelée au lancement de la partie
 end

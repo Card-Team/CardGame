@@ -32,7 +32,7 @@ function do_effect()
 	-- le code de l'effet de la carte
 end
 
-function on_game_start(oldLevel, newLevel)
+function on_card_create(oldLevel, newLevel)
 	-- fonction appelée quand la carte change de niveau (OPTIONNEL)
 end
 

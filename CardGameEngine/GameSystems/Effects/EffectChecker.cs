@@ -79,15 +79,15 @@ namespace CardGameEngine.GameSystems.Effects
             // Vérifie si tous les élements requis sont existants et du bon type
             foreach (var keyValuePair in typeCheckReq)
             {
-                var key = script.Globals.Get(keyValuePair.Key);
+                var dynval = script.Globals.Get(keyValuePair.Key);
                 var type = keyValuePair.Value.ToLuaTypeString();
-                if (key.IsNilOrNan())
+                if (dynval.IsNilOrNan() || dynval.Type == DataType.Number && double.IsInfinity(dynval.Number))
                 {
                     error = $"{type} {keyValuePair.Key} non trouvé";
                     return false;
                 }
 
-                if (key.Type != keyValuePair.Value)
+                if (dynval.Type != keyValuePair.Value)
                 {
                     error =
                         $"{keyValuePair.Key} est {type} alors que {keyValuePair.Value.ToLuaTypeString()} est attendu";

@@ -38,6 +38,6 @@ function on_level_change(oldLevel, newLevel)
 	-- fonction appelée quand la carte change de niveau (OPTIONNEL)
 end
 
-function on_game_start()
+function on_card_create()
 	-- fonction appelée au lancement de la partie
 end
