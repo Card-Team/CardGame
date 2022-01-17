@@ -33,7 +33,7 @@ local coutCard = 0
 
 ---@param startEvent StartTurnEvent
 ---@param ecouteurs IEventHandler
-function baisserPointAction(startEvent, ecouteurs)
+local function baisserPointAction(startEvent, ecouteurs)
 	local pointActionAdv = startEvent.Player.ActionPoints.Value                   --point d'action de l'adversaire
 	startEvent.Player.ActionPoints.TryChangeValue(math.max(pointActionAdv - coutCard,
 														   0))--commence l'evenement au prochain tour : il baissera ses points d'action apres le prochain tour
