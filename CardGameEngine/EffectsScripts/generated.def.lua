@@ -1,23 +1,85 @@
-
-
 ---@class Game
 ---@field public CurrentPlayer Player
+---@field public AllowedToPlayPlayer Player
 ---@field public Player1 Player
 ---@field public Player2 Player
----@field public MakeWin fun(playerToWin:Player)
----@field public TryEndPlayerTurn fun():boolean
----@field public PlayCard fun(effectowner:Player,card:Card):boolean
----@field public PlayCard fun(effectowner:Player,card:Card,discardSource:CardPile,discardGoal:DiscardPile):boolean
----@field public PlayCardEffect fun(effectowner:Player,card:Card):boolean
----@field public GetCurrentOwner fun(card:Card):Player
----@field public GetPileOf fun(card:Card):CardPile
----@field public RevealCard fun(player:Player,card:Card)
----@field public ActivateArtifact fun(player:Player,artefact:Artefact)
----@field public CanPlay fun(player:Player,card:Card,upgrade:boolean):boolean
----@field public ChooseBetween fun(player:Player,cards:Card[]):Card
----@field public MakeVirtual fun(nom:string,description:string):Card
----@field public MakeVirtual fun(nom:string,description:string,imageId:number | nil,effect:fun()):Card
+Game = {}
+--- Documentation a venir
+---@param playerToWin Player Documentation a venir
+function Game.MakeWin (playerToWin)
+end
 
+--- Documentation a venir
+
+---@return boolean Documentation a venir
+function Game.TryEndPlayerTurn ()
+end
+
+--- Documentation a venir
+---@param effectowner Player Documentation a venir
+---@param card Card Documentation a venir
+---@param discardSource (CardPile) | nil Documentation a venir
+---@param discardGoal (DiscardPile) | nil Documentation a venir
+---@return boolean Documentation a venir
+---@overload fun(effectowner:Player,card:Card)
+function Game.PlayCard (effectowner, card, discardSource, discardGoal)
+end
+
+--- Documentation a venir
+---@param effectowner Player Documentation a venir
+---@param card Card Documentation a venir
+---@return boolean Documentation a venir
+function Game.PlayCardEffect (effectowner, card)
+end
+
+--- Documentation a venir
+---@param card Card Documentation a venir
+---@return Player Documentation a venir
+function Game.GetCurrentOwner (card)
+end
+
+--- Documentation a venir
+---@param card Card Documentation a venir
+---@return CardPile Documentation a venir
+function Game.GetPileOf (card)
+end
+
+--- Documentation a venir
+---@param player Player Documentation a venir
+---@param card Card Documentation a venir
+function Game.RevealCard (player, card)
+end
+
+--- Documentation a venir
+---@param player Player Documentation a venir
+---@param artefact Artefact Documentation a venir
+function Game.ActivateArtifact (player, artefact)
+end
+
+--- Documentation a venir
+---@param player Player Documentation a venir
+---@param card Card Documentation a venir
+---@param upgrade boolean Documentation a venir
+---@return boolean Documentation a venir
+function Game.CanPlay (player, card, upgrade)
+end
+
+--- Documentation a venir
+---@param player Player Documentation a venir
+---@param cards Card[] Documentation a venir
+---@return Card Documentation a venir
+function Game.ChooseBetween (player, cards)
+end
+
+--- Documentation a venir
+---@param nom string Documentation a venir
+---@param description string Documentation a venir
+---@param imageId (number | nil) | nil Documentation a venir
+---@param effect (fun()) | nil Documentation a venir
+---@return Card Documentation a venir
+---@overload fun(nom:string,description:string)
+function Game.MakeVirtual (nom, description, imageId, effect)
+end
 
 ---@class Player
 ---@field public Deck CardPile
@@ -28,20 +90,43 @@
 ---@field public MaxActionPoints EventProperty<Player,number,MaxActionPointsEditEvent>
 ---@field public OtherPlayer Player
 ---@field public Cards Card[]
----@field public DrawCard fun()
----@field public HasCard fun(card:Card):boolean
----@field public LoopDeck fun()
+Player = {}
+--- Documentation a venir
 
+function Player.DrawCard ()
+end
+
+--- Documentation a venir
+---@param card Card Documentation a venir
+---@return boolean Documentation a venir
+function Player.HasCard (card)
+end
+
+--- Documentation a venir
+
+function Player.LoopDeck ()
+end
 
 ---@class ITargetable
-
+ITargetable = {}
 
 ---@class Target
 ---@field public TargetType number
 ---@field public IsAutomatic boolean
 ---@field public Name string
----@field public IsValidTarget fun(card:Card):boolean
----@field public GetAutomaticTarget fun():ITargetable
+Target = {}
+--- Documentation a venir
+---@param card Card Documentation a venir
+---@return boolean Documentation a venir
+function Target.IsValidTarget (card)
+end
+
+--- Documentation a venir
+
+---@return ITargetable Documentation a venir
+function Target.GetAutomaticTarget ()
+end
+
 
 
 ---@class TargetTypes
@@ -51,127 +136,144 @@
 
 ---@class EventProperty<S,T,ET>
 ---@field public Value T
----@field public TryChangeValue fun(newVal:T):T
----@field public ToString fun():string
----@field public StealthChange fun(value:T)
+EventProperty = {}
+--- Documentation a venir
+---@param newVal T Documentation a venir
+---@return T Documentation a venir
+function EventProperty.TryChangeValue (newVal)
+end
 
+--- Documentation a venir
+
+---@return string Documentation a venir
+function EventProperty.ToString ()
+end
+
+--- Documentation a venir
+---@param value T Documentation a venir
+function EventProperty.StealthChange (value)
+end
 
 ---@class ActionPointsEditEvent : CancellableEvent
 ---@field public Player Player
 ---@field public OldPointCount number
 ---@field public NewPointCount number
-
+ActionPointsEditEvent = {}
 
 ---@class CancellableEvent : Event
 ---@field public Cancelled boolean
-
+CancellableEvent = {}
 
 ---@class Event
-
+Event = {}
 
 ---@class MaxActionPointsEditEvent : CancellableEvent
 ---@field public Player Player
 ---@field public OldMaxPointCount number
 ---@field public NewMaxPointCount number
-
+MaxActionPointsEditEvent = {}
 
 ---@class ChainOpportunityEvent : CancellableEvent
 ---@field public Chainer Player
-
+ChainOpportunityEvent = {}
 
 ---@class DeckLoopEvent : Event
 ---@field public Player Player
-
+DeckLoopEvent = {}
 
 ---@class EndTurnEvent : CancellableEvent
 ---@field public Player Player
-
+EndTurnEvent = {}
 
 ---@class StartTurnEvent : Event
 ---@field public Player Player
-
+StartTurnEvent = {}
 
 ---@class CardDeleteEvent : TransferrableCardEvent
-
+CardDeleteEvent = {}
 
 ---@class CardEvent : CancellableEvent
 ---@field public Card Card
-
+CardEvent = {}
 
 ---@class CardMarkUpgradeEvent : CardEvent
-
+CardMarkUpgradeEvent = {}
 
 ---@class CardMovePileEvent : CardEvent
 ---@field public SourcePile CardPile
 ---@field public SourceIndex number
 ---@field public DestPile CardPile
 ---@field public DestIndex number
-
+CardMovePileEvent = {}
 
 ---@class CardPlayEvent : TransferrableCardEvent
 ---@field public WhoPlayed Player
-
+CardPlayEvent = {}
 
 ---@class CardUnMarkUpgradeEvent : CardEvent
-
+CardUnMarkUpgradeEvent = {}
 
 ---@class TransferrableCardEvent : CardEvent
 ---@field public Card Card
-
+TransferrableCardEvent = {}
 
 ---@class TargetingEvent : Event
 ---@field public TargetData Target
 ---@field public ResolvedTarget ITargetable
-
+TargetingEvent = {}
 
 ---@class CardCostChangeEvent : CardPropertyChangeEvent<number>
-
+CardCostChangeEvent = {}
 
 ---@class CardDescriptionChangeEvent : CardPropertyChangeEvent<string>
-
+CardDescriptionChangeEvent = {}
 
 ---@class CardLevelChangeEvent : CardPropertyChangeEvent<number>
-
+CardLevelChangeEvent = {}
 
 ---@class CardNameChangeEvent : CardPropertyChangeEvent<string>
-
+CardNameChangeEvent = {}
 
 ---@class CardPropertyChangeEvent<T> : CardEvent
 ---@field public OldValue T
 ---@field public NewValue T
-
+CardPropertyChangeEvent = {}
 
 ---@class CardKeywordAddEvent : CardKeywordEvent
-
+CardKeywordAddEvent = {}
 
 ---@class CardKeywordEvent : CardEvent
 ---@field public Keyword Keyword
-
+CardKeywordEvent = {}
 
 ---@class CardKeywordRemoveEvent : CardKeywordEvent
-
+CardKeywordRemoveEvent = {}
 
 ---@class CardKeywordTriggerEvent : CardKeywordEvent
-
+CardKeywordTriggerEvent = {}
 
 ---@class ArtefactActivateEvent : ArtefactEvent
-
+ArtefactActivateEvent = {}
 
 ---@class ArtefactChargeEditEvent : ArtefactEvent
 ---@field public NewChargeCount number
 ---@field public OldChargeCount number
-
+ArtefactChargeEditEvent = {}
 
 ---@class ArtefactEvent : CancellableEvent
 ---@field public Artefact Artefact
-
+ArtefactEvent = {}
 
 ---@class Artefact
 ---@field public Name string
 ---@field public MaxCharge number
 ---@field public CurrentCharge EventProperty<Artefact,number,ArtefactChargeEditEvent>
----@field public CanBeActivated fun(game:Game):boolean
-
+Artefact = {}
+--- Documentation a venir
+---@param game Game Documentation a venir
+---@return boolean Documentation a venir
+function Artefact.CanBeActivated (game)
+end
 
 ---@class Card
 ---@field public Name EventProperty<Card,string,CardNameChangeEvent>
@@ -182,41 +284,123 @@
 ---@field public Description EventProperty<Card,string,CardDescriptionChangeEvent>
 ---@field public Keywords Keyword[]
 ---@field public IsMaxLevel boolean
----@field public Virtual fun():Card
----@field public Clone fun():Card
----@field public CanBePlayed fun(effectOwner:Player):boolean
----@field public Upgrade fun():boolean
----@field public ToString fun():string
----@field public OnLevelChange fun(oldLevel:number,newLevel:number)
+Card = {}
+--- Documentation a venir
 
+---@return Card Documentation a venir
+function Card.Virtual ()
+end
+
+--- Documentation a venir
+
+---@return Card Documentation a venir
+function Card.Clone ()
+end
+
+--- Documentation a venir
+---@param effectOwner Player Documentation a venir
+---@return boolean Documentation a venir
+function Card.CanBePlayed (effectOwner)
+end
+
+--- Documentation a venir
+
+---@return boolean Documentation a venir
+function Card.Upgrade ()
+end
+
+--- Documentation a venir
+
+---@return string Documentation a venir
+function Card.ToString ()
+end
+
+--- Documentation a venir
+---@param oldLevel number Documentation a venir
+---@param newLevel number Documentation a venir
+function Card.OnLevelChange (oldLevel, newLevel)
+end
 
 ---@class Keyword
 ---@field public Name string
-
+Keyword = {}
 
 ---@class CardPile
 ---@field public Count number
 ---@field public IsEmpty boolean
 ---@field public [number] Card
----@field public Contains fun(card:Card):boolean
----@field public IndexOf fun(card:Card):number
----@field public MoveTo fun(newCardPile:CardPile,card:Card,newPosition:number):boolean
----@field public MoveInternal fun(card:Card,newPosition:number):boolean
----@field public ToString fun():string
+CardPile = {}
+--- Documentation a venir
+---@param card Card Documentation a venir
+---@return boolean Documentation a venir
+function CardPile.Contains (card)
+end
 
+--- Documentation a venir
+---@param card Card Documentation a venir
+---@return number Documentation a venir
+function CardPile.IndexOf (card)
+end
+
+--- Documentation a venir
+---@param newCardPile CardPile Documentation a venir
+---@param card Card Documentation a venir
+---@param newPosition number Documentation a venir
+---@return boolean Documentation a venir
+function CardPile.MoveTo (newCardPile, card, newPosition)
+end
+
+--- Documentation a venir
+---@param card Card Documentation a venir
+---@param newPosition number Documentation a venir
+---@return boolean Documentation a venir
+function CardPile.MoveInternal (card, newPosition)
+end
+
+--- Documentation a venir
+
+---@return string Documentation a venir
+function CardPile.ToString ()
+end
 
 ---@class DiscardPile : CardPile
----@field public MoveForUpgrade fun(oldLocation:CardPile,toUp:Card):boolean
----@field public MoveTo fun(newCardPile:CardPile,card:Card,newPosition:number):boolean
----@field public UnMarkForUpgrade fun(card:Card)
----@field public IsMarkedForUpgrade fun(card:Card):boolean
+DiscardPile = {}
+--- Documentation a venir
+---@param oldLocation CardPile Documentation a venir
+---@param toUp Card Documentation a venir
+---@return boolean Documentation a venir
+function DiscardPile.MoveForUpgrade (oldLocation, toUp)
+end
 
+--- Documentation a venir
+---@param newCardPile CardPile Documentation a venir
+---@param card Card Documentation a venir
+---@param newPosition number Documentation a venir
+---@return boolean Documentation a venir
+function DiscardPile.MoveTo (newCardPile, card, newPosition)
+end
+
+--- Documentation a venir
+---@param card Card Documentation a venir
+function DiscardPile.UnMarkForUpgrade (card)
+end
+
+--- Documentation a venir
+---@param card Card Documentation a venir
+---@return boolean Documentation a venir
+function DiscardPile.IsMarkedForUpgrade (card)
+end
 
 ---@class IEventHandler
 ---@field public EvenIfCancelled boolean
 ---@field public PostEvent boolean
 ---@field public EventType Type<Event>
----@field public HandleEvent fun(evt:Event)
+IEventHandler = {}
+--- Documentation a venir
+---@param evt Event Documentation a venir
+function IEventHandler.HandleEvent (evt)
+end
+
 
 
 -- EFFETS

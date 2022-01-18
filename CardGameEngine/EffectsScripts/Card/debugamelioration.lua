@@ -28,6 +28,7 @@ end
 
 function do_effect()
 	
+	
 	local up = Game.MakeVirtual("Augmentation", "augmentation 5")
 	local down = Game.MakeVirtual("Diminution", "diminution 5")
 	

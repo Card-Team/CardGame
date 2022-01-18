@@ -90,34 +90,51 @@ namespace CardGameEngine.LuaDocGen
             foreach (var propertyInfo in typeInfo.DeclaredProperties.Where(IsVisibleToLua))
                 builder.AppendLine(PropertyComment(propertyInfo));
 
+            // stub
+
+            var varname = GetNameWithoutGenericArity(typeInfo);
+
+            builder.AppendLine($"{varname} = {{}}");
+
+
             //methods
 
             foreach (var propertyInfo in typeInfo.DeclaredMethods.Where(IsVisibleToLua))
-                builder.AppendLine(MethodComment(propertyInfo));
+                builder.AppendLine(MethodComment(varname, propertyInfo));
 
             return builder.ToString();
         }
 
-        private string MethodComment(MethodInfo propertyInfo, bool removeOptional = false)
+        private string MethodComment(string typename, MethodInfo propertyInfo)
         {
-            var start = "";
-            if (removeOptional == false && propertyInfo.GetParameters().Any(p => p.IsOptional))
-                start += MethodComment(propertyInfo, true) + "\n";
-
-            start += $"{Comment("field")} public {propertyInfo.Name} ";
-
-
+            var builder = new StringBuilder();
+            builder.AppendLine("--- Documentation a venir");
             var whered = propertyInfo.GetParameters()
                 .Where(f => !f.IsOut);
-            if (removeOptional) whered = whered.Where(p => !p.IsOptional);
             var parameters = whered
-                .Select(s => $"{s.Name}:{ToLuaType(s.ParameterType)}");
+                .Select(s => $"{Comment("param")} {s.Name} {ToLuaType(s)} Documentation a venir");
 
-            start += $"fun({string.Join(",", parameters)})";
+            builder.AppendLine(string.Join("\n", parameters));
 
-            if (propertyInfo.ReturnType != typeof(void)) start += $":{ToLuaType(propertyInfo.ReturnType)}";
+            if (propertyInfo.ReturnType != typeof(void))
+                builder.AppendLine($"{Comment("return")} {ToLuaType(propertyInfo.ReturnType)} Documentation a venir");
 
-            return start;
+            if (propertyInfo.GetParameters().Any(p => p.IsOptional))
+            {
+                //overload without optional
+                var parlist = propertyInfo.GetParameters().Where(p => !p.IsOptional)
+                    .Select(s => $"{s.Name}:{ToLuaType(s.ParameterType)}");
+                var parstring = string.Join(",", parlist);
+                var overload = $"{Comment("overload")} fun({parstring})";
+                builder.AppendLine(overload);
+            }
+
+            var fulparlist = propertyInfo.GetParameters().Select(s => s.Name);
+            var fulparstring = string.Join(",", fulparlist);
+
+            builder.AppendLine($"function {typename}.{propertyInfo.Name} ({fulparstring}) end");
+
+            return builder.ToString();
         }
 
         private string PropertyComment(PropertyInfo propertyInfo)
@@ -140,6 +157,14 @@ namespace CardGameEngine.LuaDocGen
             var name = t.Name;
             var index = name.IndexOf('`');
             return index == -1 ? name : name.Substring(0, index);
+        }
+
+        private string ToLuaType(ParameterInfo parameterInfo)
+        {
+            if (parameterInfo.HasDefaultValue && parameterInfo.DefaultValue == null)
+                return $"({ToLuaType(parameterInfo.ParameterType)}) | nil";
+
+            return ToLuaType(parameterInfo.ParameterType);
         }
 
         private string ToLuaType(Type propertyInfoPropertyType)
