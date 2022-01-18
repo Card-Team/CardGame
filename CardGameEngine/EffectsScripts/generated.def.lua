@@ -10,7 +10,6 @@ function Game.MakeWin (playerToWin)
 end
 
 --- Documentation a venir
-
 ---@return boolean Documentation a venir
 function Game.TryEndPlayerTurn ()
 end
@@ -92,7 +91,6 @@ end
 ---@field public Cards Card[]
 Player = {}
 --- Documentation a venir
-
 function Player.DrawCard ()
 end
 
@@ -103,7 +101,6 @@ function Player.HasCard (card)
 end
 
 --- Documentation a venir
-
 function Player.LoopDeck ()
 end
 
@@ -122,7 +119,6 @@ function Target.IsValidTarget (card)
 end
 
 --- Documentation a venir
-
 ---@return ITargetable Documentation a venir
 function Target.GetAutomaticTarget ()
 end
@@ -144,7 +140,6 @@ function EventProperty.TryChangeValue (newVal)
 end
 
 --- Documentation a venir
-
 ---@return string Documentation a venir
 function EventProperty.ToString ()
 end
@@ -286,13 +281,11 @@ end
 ---@field public IsMaxLevel boolean
 Card = {}
 --- Documentation a venir
-
 ---@return Card Documentation a venir
 function Card.Virtual ()
 end
 
 --- Documentation a venir
-
 ---@return Card Documentation a venir
 function Card.Clone ()
 end
@@ -304,13 +297,11 @@ function Card.CanBePlayed (effectOwner)
 end
 
 --- Documentation a venir
-
 ---@return boolean Documentation a venir
 function Card.Upgrade ()
 end
 
 --- Documentation a venir
-
 ---@return string Documentation a venir
 function Card.ToString ()
 end
@@ -358,7 +349,6 @@ function CardPile.MoveInternal (card, newPosition)
 end
 
 --- Documentation a venir
-
 ---@return string Documentation a venir
 function CardPile.ToString ()
 end
@@ -403,7 +393,10 @@ end
 
 
 
+
+
 -- EFFETS
+
 
 ---@class Type<T:Event>
 
@@ -490,4 +483,5 @@ ArtefactChargeEditEvent = --[[---@type Type<ArtefactChargeEditEvent>]] {}
 
 ---@type Type<ArtefactEvent>
 ArtefactEvent = --[[---@type Type<ArtefactEvent>]] {}
+
 
