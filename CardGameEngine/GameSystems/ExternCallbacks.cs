@@ -51,7 +51,8 @@ namespace CardGameEngine.GameSystems
         ///     Délégué appelé lorsque le moteur du jeu veut proposer au joueur de chainer une carte
         /// </summary>
         /// <param name="player">Le joueur qui peut chainer</param>
-        public void ExternChainOpportunity(Player player);
+        /// <returns>Vrai si une action a été réalisée, faux sinon</returns>
+        public bool ExternChainOpportunity(Player player);
 
 
         /// <summary>

@@ -24,9 +24,14 @@ namespace CardGameEngine
         public const int DefaultMaxActionPoint = 5;
 
         /// <summary>
-        /// Le joueur en train de jouer
+        /// Le joueur en train de jouer (c'est son tour)
         /// </summary>
         public Player CurrentPlayer { get; internal set; }
+
+        /// <summary>
+        ///     Le joueur qui a le droit de jouer
+        /// </summary>
+        public Player AllowedToPlayPlayer { get; internal set; }
 
         /// <summary>
         /// Le joueur 1
@@ -123,6 +128,8 @@ namespace CardGameEngine
                 }
 
                 CurrentPlayer.DrawCard();
+
+                AllowedToPlayPlayer = postSender.Event.Player;
             }
         }
 
@@ -173,7 +180,7 @@ namespace CardGameEngine
                     $"La carte {card} a eu une tentative d'activation alors qu'elle est virtuelle");
             }
 
-            if (CurrentPlayer != player)
+            if (AllowedToPlayPlayer != player)
             {
                 throw new InvalidOperationException(
                     $"Player {player} tried to play a card when it's turn of {CurrentPlayer}");
@@ -196,7 +203,11 @@ namespace CardGameEngine
                 throw new InvalidOperationException(
                     "La précondition de la carte est fausse");
 
-            return upgrade ? UpgradeCard(card) : PlayCard(player, card);
+            var result = upgrade ? UpgradeCard(card) : PlayCard(player, card);
+            if (AllowedToPlayPlayer != CurrentPlayer)
+                //fin de chaine apres action
+                AllowedToPlayPlayer = CurrentPlayer;
+            return result;
         }
 
 
@@ -246,12 +257,27 @@ namespace CardGameEngine
             var playEvent = new CardEffectPlayEvent(effectowner, card);
             using (var post = EventManager.SendEvent(playEvent))
             {
+                ChainOpportunity(effectowner.OtherPlayer);
                 if (post.Event.Cancelled)
                 {
                     return false;
                 }
 
                 return post.Event.Card.DoEffect(post.Event.WhoPlayed);
+            }
+        }
+
+
+        internal void ChainOpportunity(Player player)
+        {
+            //todo check if effect can be chained
+            using (var postchain = EventManager.SendEvent(new ChainOpportunityEvent(player)))
+            {
+                if (postchain.Event.Cancelled) return;
+                AllowedToPlayPlayer = AllowedToPlayPlayer.OtherPlayer;
+                if (!_externCallbacks.ExternChainOpportunity(postchain.Event.Chainer))
+                    //si abandon de chaine , on rechange
+                    AllowedToPlayPlayer = AllowedToPlayPlayer.OtherPlayer;
             }
         }
 
@@ -351,7 +377,7 @@ namespace CardGameEngine
         /// <param name="cards">La liste de cartes parmi lesquelles choisir</param>
         /// <returns></returns>
         [MoonSharpVisible(true)]
-        internal Card ChooseBetween(Player player, params Card[] cards)
+        internal Card ChooseBetween(Player player, IEnumerable<Card> cards)
         {
             return _externCallbacks.ExternChooseBetween(player, cards.ToList());
         }

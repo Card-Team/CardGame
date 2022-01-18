@@ -1,4 +1,6 @@
-﻿namespace CardGameEngine.EventSystem.Events
+﻿using MoonSharp.Interpreter.Interop;
+
+namespace CardGameEngine.EventSystem.Events
 {
     /// <summary>
     /// Classe abstraite représentant les évènement pouvant être annulés
@@ -8,6 +10,7 @@
         /// <summary>
         /// Booléen indiquant l'annulation de l'évènement
         /// </summary>
-        internal bool Cancelled { get; set; }
+        [MoonSharpVisible(true)]
+        public bool Cancelled { get; internal set; }
     }
 }

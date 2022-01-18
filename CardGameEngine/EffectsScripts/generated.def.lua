@@ -13,6 +13,7 @@
 ---@field public GetPileOf fun(card:Card):CardPile
 ---@field public RevealCard fun(player:Player,card:Card)
 ---@field public ActivateArtifact fun(player:Player,artefact:Artefact)
+---@field public CanPlay fun(player:Player,card:Card,upgrade:boolean):boolean
 ---@field public ChooseBetween fun(player:Player,cards:Card[]):Card
 ---@field public MakeVirtual fun(nom:string,description:string):Card
 ---@field public MakeVirtual fun(nom:string,description:string,imageId:number | nil,effect:fun()):Card
@@ -62,6 +63,7 @@
 
 
 ---@class CancellableEvent : Event
+---@field public Cancelled boolean
 
 
 ---@class Event
@@ -71,6 +73,10 @@
 ---@field public Player Player
 ---@field public OldMaxPointCount number
 ---@field public NewMaxPointCount number
+
+
+---@class ChainOpportunityEvent : CancellableEvent
+---@field public Chainer Player
 
 
 ---@class DeckLoopEvent : Event
@@ -228,6 +234,9 @@ Event = --[[---@type Type<Event>]] {}
 
 ---@type Type<MaxActionPointsEditEvent>
 MaxActionPointsEditEvent = --[[---@type Type<MaxActionPointsEditEvent>]] {}
+
+---@type Type<ChainOpportunityEvent>
+ChainOpportunityEvent = --[[---@type Type<ChainOpportunityEvent>]] {}
 
 ---@type Type<DeckLoopEvent>
 DeckLoopEvent = --[[---@type Type<DeckLoopEvent>]] {}

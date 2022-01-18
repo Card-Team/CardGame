@@ -49,3 +49,6 @@ EffectOwner = --[[---@type Player]] {}
 
 ---@type TargetTypes
 TargetTypes = --[[---@type TargetTypes]]{}
+
+---@type Event[]
+EventStack = {}

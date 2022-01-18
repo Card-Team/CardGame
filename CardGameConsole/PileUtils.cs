@@ -34,34 +34,36 @@ namespace CardGameConsole
                 _ => throw new ArgumentOutOfRangeException(nameof(pileIdentifier), pileIdentifier, null)
             };
         }
-        public static PileIdentifier Identifier(this CardPile pile)
+
+        public static PileIdentifier Identifier(this CardPile pile, Player? pov = null)
         {
-            if (pile == ConsoleGame.Game.CurrentPlayer.Hand)
+            pov ??= ConsoleGame.Game.CurrentPlayer;
+            if (pile == pov.Hand)
             {
                 return PileIdentifier.CurrentPlayerHand;
             }
 
-            if (pile == ConsoleGame.Game.CurrentPlayer.Deck)
+            if (pile == pov.Deck)
             {
                 return PileIdentifier.CurrentPlayerDeck;
             }
 
-            if (pile == ConsoleGame.Game.CurrentPlayer.Discard)
+            if (pile == pov.Discard)
             {
                 return PileIdentifier.CurrentPlayerDiscard;
             }
 
-            if (pile == ConsoleGame.Game.CurrentPlayer.OtherPlayer.Hand)
+            if (pile == pov.OtherPlayer.Hand)
             {
                 return PileIdentifier.OtherPlayerHand;
             }
 
-            if (pile == ConsoleGame.Game.CurrentPlayer.OtherPlayer.Deck)
+            if (pile == pov.OtherPlayer.Deck)
             {
                 return PileIdentifier.OtherPlayerDeck;
             }
 
-            if (pile == ConsoleGame.Game.CurrentPlayer.OtherPlayer.Discard)
+            if (pile == pov.OtherPlayer.Discard)
             {
                 return PileIdentifier.OtherPlayerDiscard;
             }

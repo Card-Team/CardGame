@@ -13,20 +13,20 @@ namespace CardGameConsole
             return player == ConsoleGame.Game.Player1 ? ConsoleGame.Player1Name : ConsoleGame.Player2Name;
         }
 
-        public static void PrintHand(this Player player)
+        public static void PrintHand(this Player player, Player? pov = null)
         {
             if (player.Hand.IsEmpty)
                 AnsiConsole.WriteLine("La main est vide");
             else
-                PrintCardsTable(player.Hand.GroupBy(c => player.Hand.Identifier()));
+                PrintCardsTable(pov ?? player, player.Hand.GroupBy(c => player.Hand.Identifier()));
         }
 
-        public static void PrintDiscard(this Player player)
+        public static void PrintDiscard(this Player player, Player? pov = null)
         {
             if (player.Discard.IsEmpty)
                 AnsiConsole.WriteLine("La défausse est vide");
             else
-                PrintCardsTable(player.Discard.GroupBy(c => player.Discard.Identifier()));
+                PrintCardsTable(pov ?? player, player.Discard.GroupBy(c => player.Discard.Identifier(pov)));
         }
 
         public static void PrintCardsTable(IEnumerable<Card> cards, string title)
@@ -42,7 +42,7 @@ namespace CardGameConsole
             AnsiConsole.Write(table);
         }
 
-        private static void PrintCardsTable(IEnumerable<IGrouping<PileIdentifier, Card>> cards)
+        private static void PrintCardsTable(Player pov, IEnumerable<IGrouping<PileIdentifier, Card>> cards)
         {
             foreach (var group in cards)
             {
@@ -50,7 +50,7 @@ namespace CardGameConsole
                                group.Key == PileIdentifier.OtherPlayerDiscard;
                 Table table = GetDefaultTable(group.Key.Display(), defausse);
 
-                foreach (var (card, visible) in group.WithVisionInfo())
+                foreach (var (card, visible) in group.WithVisionInfo(pov))
                 {
                     List<Markup> cols = new List<Markup>();
                     if (visible)
@@ -64,8 +64,8 @@ namespace CardGameConsole
                         }
                         else
                         {
-                            var precondition = card.CanBePlayed(ConsoleGame.Game.CurrentPlayer);
-                            var cost2Much = card.Cost.Value > ConsoleGame.Game.CurrentPlayer.ActionPoints.Value;
+                            var precondition = card.CanBePlayed(pov);
+                            var cost2Much = card.Cost.Value > pov.ActionPoints.Value;
                             var maxLevel = card.CurrentLevel.Value == card.MaxLevel;
 
                             cols.Add(precondition && !cost2Much
@@ -95,14 +95,14 @@ namespace CardGameConsole
 
                     if (group.Key == PileIdentifier.CurrentPlayerDiscard)
                     {
-                        cols.Add(new Markup(ConsoleGame.Game.CurrentPlayer.Discard.IsMarkedForUpgrade(card)
+                        cols.Add(new Markup(pov.Discard.IsMarkedForUpgrade(card)
                             ? "[grey]×[/]"
                             : " "));
                     }
                     else if (group.Key == PileIdentifier.OtherPlayerDiscard)
                     {
                         cols.Add(new Markup(
-                            ConsoleGame.Game.CurrentPlayer.OtherPlayer.Discard.IsMarkedForUpgrade(card)
+                            pov.OtherPlayer.Discard.IsMarkedForUpgrade(card)
                                 ? "[grey]×[/]"
                                 : " "));
                     }

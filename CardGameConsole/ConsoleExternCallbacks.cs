@@ -47,6 +47,15 @@ namespace CardGameConsole
             return InputUtils.ChooseFrom(player, card, false, false)!;
         }
 
+        public bool ExternChainOpportunity(Player player)
+        {
+            var res = InputUtils.ChooseList($"{player.GetName()}, voulez vous chainer ?",
+                new Dictionary<string, int> { { "oui", 1 }, { "non", 2 } });
+            if (res == 1) return ConsoleGame.DoTurnPrompt(player, true);
+
+            return false;
+        }
+
         public void DebugPrint(string from, string source, string debugPrint)
         {
             EventDisplayer.Events.Add(

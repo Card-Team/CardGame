@@ -28,9 +28,9 @@ namespace CardGameEngine.EventSystem
         private readonly Dictionary<Type, List<IEventHandler>> _eventHandlersDict =
             new Dictionary<Type, List<IEventHandler>>();
 
-        private int _nestedEventCounter;
+        private bool IsResolvingEvent => CurrentEventList.Count > 0;
 
-        private bool IsResolvingEvent => _nestedEventCounter > 0;
+        public List<Event> CurrentEventList { get; } = new List<Event>();
 
         internal bool Disabled { get; set; }
 
@@ -106,7 +106,7 @@ namespace CardGameEngine.EventSystem
         /// <seealso cref="Event" />
         internal IPostEventSender<T> SendEvent<T>(T evt) where T : Event
         {
-            _nestedEventCounter++;
+            CurrentEventList.Add(evt);
             foreach (var eventHandler in GetHandlerOfAssignableFrom<T>())
                 if (!eventHandler.PostEvent && (evt is CancellableEvent == false ||
                                                 evt is CancellableEvent cancelled && (!cancelled.Cancelled ||
@@ -115,8 +115,6 @@ namespace CardGameEngine.EventSystem
                         eventHandler.HandleEvent(evt);
 
             EmptySubQueue();
-
-            _nestedEventCounter--;
             return new PostEventSenderImpl<T>(evt, this);
         }
 
@@ -173,18 +171,17 @@ namespace CardGameEngine.EventSystem
         /// <typeparam name="T">Le type d'évènement</typeparam>
         /// <returns></returns>
         /// <seealso cref="Event" />
-        private void SendEventPost<T>(T evt) where T : Event
+        private void SendEventPost<T>(T evt, bool isCancelled) where T : Event
         {
-            _nestedEventCounter++;
-            foreach (var eventHandler in GetHandlerOfAssignableFrom<T>().Where(eventHandler => eventHandler.PostEvent))
-                if (evt is CancellableEvent == false || evt is CancellableEvent cancelled &&
-                    (!cancelled.Cancelled || eventHandler.EvenIfCancelled))
-                    if (!Disabled)
-                        eventHandler.HandleEvent(evt);
+            foreach (var eventHandler in GetHandlerOfAssignableFrom<T>()
+                         .Where(eventHandler => eventHandler.PostEvent && isCancelled == eventHandler.EvenIfCancelled))
+                if (!Disabled)
+                    eventHandler.HandleEvent(evt);
+
 
             EmptySubQueue();
 
-            _nestedEventCounter--;
+            CurrentEventList.RemoveAt(CurrentEventList.Count - 1);
         }
 
         /// <summary>
@@ -300,7 +297,9 @@ namespace CardGameEngine.EventSystem
             /// </summary>
             public void Dispose()
             {
-                _eventManager.SendEventPost(Event);
+                var cancelled = false;
+                if (Event is CancellableEvent cev) cancelled = cev.Cancelled;
+                _eventManager.SendEventPost(Event, cancelled);
             }
         }
     }

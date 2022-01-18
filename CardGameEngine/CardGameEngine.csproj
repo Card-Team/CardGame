@@ -106,6 +106,7 @@
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardPropertyChangeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\TargetingEvent.cs" />
         <Compile Include="EventSystem\Events\Event.cs" />
+        <Compile Include="EventSystem\Events\GameStateEvents\ChainOpportunityEvent.cs"/>
         <Compile Include="EventSystem\Events\GameStateEvents\DeckLoopEvent.cs" />
         <Compile Include="EventSystem\Events\GameStateEvents\EndTurnEvent.cs" />
         <Compile Include="EventSystem\Events\GameStateEvents\StartTurnEvent.cs" />

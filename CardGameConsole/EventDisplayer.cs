@@ -21,7 +21,8 @@ namespace CardGameConsole
             // Carte jouée puis effet exécuté
             eventManager.SubscribeToEvent<CardPlayEvent>(OnCardPlay, postEvent: false);
             eventManager.SubscribeToEvent<CardEffectPlayEvent>(OnCardEffectPlay, postEvent: false);
-            eventManager.SubscribeToEvent<CardEffectPlayEvent>(OnPostCardEffectPlay, postEvent: true);
+            eventManager.SubscribeToEvent<CardEffectPlayEvent>(OnPostCardEffectPlay, postEvent: true,
+                evenIfCancelled: true);
             eventManager.SubscribeToEvent<CardPlayEvent>(OnPostCardPlay, postEvent: true);
 
             // Déplacement d'une carte
@@ -44,13 +45,14 @@ namespace CardGameConsole
 
         private static void OnMaxActionPointsEdit(MaxActionPointsEditEvent evt)
         {
-            WriteEvent($"Votre limite de [green]points d'action[/] est maintenant de [bold]{evt.NewMaxPointCount}[/]");
+            WriteEvent(
+                $"la limite de [green]points d'action[/] de {evt.Player.GetName()} est maintenant de [bold]{evt.NewMaxPointCount}[/]");
         }
 
         private static void OnActionPointsEdit(ActionPointsEditEvent evt)
         {
             WriteEvent(
-                $"Vous avez désormais [bold]{evt.NewPointCount}[/] [green]points d'action (sur {evt.Player.MaxActionPoints.Value})[/]");
+                $"{evt.Player.GetName()} a désormais [bold]{evt.NewPointCount}[/] [green]points d'action (sur {evt.Player.MaxActionPoints.Value})[/]");
         }
 
         private static void OnCardMarkedUpgrade(CardMarkUpgradeEvent evt)
@@ -109,6 +111,8 @@ namespace CardGameConsole
 
         private static void OnPostCardEffectPlay(CardEffectPlayEvent evt)
         {
+            if (evt.Cancelled) WriteEvent($"L'effet de [underline]{evt.Card.Name}[/] [red] a été annulé[/]");
+
             WriteEvent($"L'effet de [underline]{evt.Card.Name}[/] a terminé son execution");
         }
 

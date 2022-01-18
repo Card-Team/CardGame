@@ -83,11 +83,16 @@ namespace CardGameConsole
                 {
                     ErrorUtils.PrintError(exception);
                 }
-                else AnsiConsole.WriteException(exception);
+                else
+                {
+                    AnsiConsole.WriteException(exception);
+                    ErrorUtils.DumpEvents();
+                }
             }
             catch (Exception exception)
             {
                 AnsiConsole.WriteException(exception);
+                ErrorUtils.DumpEvents();
             }
         }
 
@@ -95,75 +100,76 @@ namespace CardGameConsole
         {
             while (Winner == null)
             {
-                var choice = -1;
-
-                while (choice != 0)
-                {
-                    switch (choice)
-                    {
-                        case 3:
-                            PlayCard(false);
-                            break;
-                        case 4:
-                            PlayCard(true);
-
-                            break;
-                    }
-
-                    AnsiConsole.Clear();
-                    AnsiConsole.Write(new Rule($"Tour de [bold]{Game.CurrentPlayer.GetName()}[/]").Centered());
-
-                    Game.CurrentPlayer.PrintHand();
-                    AnsiConsole.Write(
-                        new Columns(GetInfos(Game.CurrentPlayer),
-                            GetVictoryInfo(),
-                            (EventDisplayer.DumpEvents() ?? new Panel("")).Expand().Border(BoxBorder.None)));
-
-                    if (Winner != null) return;
-
-                    var choices = new Dictionary<string, int>
-                    {
-                        { "Lister votre défausse", 1 },
-                        { "Lister les information adverses", 2 }
-                    };
-
-                    if (Game.CurrentPlayer.Hand.CostPlayable().Playable().Any())
-                    {
-                        choices["Jouer une carte"] = 3;
-                    }
-
-                    if (Game.CurrentPlayer.Hand.CostPlayable().Upgradable().Any())
-                    {
-                        choices["Améliorer une carte"] = 4;
-                    }
-
-                    choices["Terminer votre tour"] = 0;
-
-                    switch (choice)
-                    {
-                        case 1:
-                            Game.CurrentPlayer.PrintDiscard();
-                            break;
-                        case 2:
-                            AnsiConsole.Write(GetInfos(Game.CurrentPlayer.OtherPlayer));
-                            break;
-                    }
-
-                    choice = InputUtils.ChooseList("Veuillez choisir une action :", choices);
-                }
-
+                if (DoTurnPrompt(Game.CurrentPlayer)) return;
                 EventDisplayer.ClearEvents();
                 Game.EndPlayerTurn();
             }
         }
 
-        private static Panel GetVictoryInfo()
+        public static bool DoTurnPrompt(Player player, bool isChaining = false)
+        {
+            var choice = -1;
+
+            while (choice != 0)
+            {
+                switch (choice)
+                {
+                    case 3:
+                        PlayCard(player, false);
+                        if (isChaining) return true;
+                        break;
+                    case 4:
+                        PlayCard(player, true);
+                        break;
+                }
+
+                AnsiConsole.Clear();
+                var title = isChaining ? $"Chainage de {player.GetName()}" : $"Tour de [bold]{player.GetName()}[/]";
+                AnsiConsole.Write(new Rule(title).Centered());
+
+                player.PrintHand();
+                AnsiConsole.Write(
+                    new Columns(GetInfos(player),
+                        GetVictoryInfo(player),
+                        (EventDisplayer.DumpEvents() ?? new Panel("")).Expand().Border(BoxBorder.None)));
+
+                if (Winner != null) return true;
+
+                var choices = new Dictionary<string, int>
+                {
+                    { "Lister votre défausse", 1 },
+                    { "Lister les information adverses", 2 }
+                };
+
+                if (player.Hand.CostPlayable().Playable().Any()) choices["Jouer une carte"] = 3;
+
+                if (!isChaining && player.Hand.CostPlayable().Upgradable().Any()) choices["Améliorer une carte"] = 4;
+
+                choices["Terminer votre tour"] = 0;
+
+                switch (choice)
+                {
+                    case 1:
+                        player.PrintDiscard();
+                        break;
+                    case 2:
+                        AnsiConsole.Write(GetInfos(player.OtherPlayer));
+                        break;
+                }
+
+                choice = InputUtils.ChooseList("Veuillez choisir une action :", choices);
+            }
+
+            return false;
+        }
+
+        private static Panel GetVictoryInfo(Player player)
         {
             var progress = new BarChart()
                 .Width(Player1Vic.MaxLevel + 60)
                 .WithMaxValue(Player1Vic.MaxLevel);
 
-            if (Game.CurrentPlayer == Game.Player1)
+            if (player == Game.Player1)
             {
                 progress.AddItem("Votre progression", Player1Vic.CurrentLevel.Value, Color.Green)
                     .AddItem($"La progression de {Game.Player2.GetName()}", Player2Vic.CurrentLevel.Value, Color.Red);
@@ -206,9 +212,9 @@ namespace CardGameConsole
         {
         }
 
-        private static void PlayCard(bool upgrade)
+        private static void PlayCard(Player player, bool upgrade)
         {
-            var cards = Game.CurrentPlayer.Hand.Where(c => Game.CanPlay(Game.CurrentPlayer, c, upgrade)).ToList();
+            var cards = player.Hand.Where(c => Game.CanPlay(player, c, upgrade)).ToList();
 
             if (cards.Count == 0)
             {
@@ -216,14 +222,13 @@ namespace CardGameConsole
                 return;
             }
 
-            var chosen = InputUtils.ChooseFrom(Game.CurrentPlayer, cards, true);
+            var chosen = InputUtils.ChooseFrom(player, cards, true);
             if (chosen == null)
             {
                 return;
             }
 
-            EventDisplayer.ClearEvents();
-            Game.PlayCard(Game.CurrentPlayer, chosen, upgrade);
+            Game.PlayCard(player, chosen, upgrade);
         }
     }
 }

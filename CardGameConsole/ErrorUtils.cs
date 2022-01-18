@@ -15,7 +15,7 @@ namespace CardGameConsole
 
         public static void PrintError(InterpreterException exc)
         {
-            PrintError(exc, exc.CallStack.ToList());
+            PrintError(exc, exc.CallStack?.ToList() ?? new List<WatchItem>());
         }
 
         public static void PrintError(InterpreterException exception, List<WatchItem> callstack)
@@ -41,7 +41,7 @@ namespace CardGameConsole
             DumpEvents();
         }
 
-        private static void DumpEvents()
+        public static void DumpEvents()
         {
             var dumpEvents = EventDisplayer.DumpEvents();
 

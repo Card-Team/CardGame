@@ -60,6 +60,7 @@ namespace CardGameEngine.GameSystems.Effects
             if (effectOwner != null) Script.Globals["EffectOwner"] = effectOwner;
             Script.Globals["Game"] = game;
             Script.Globals["This"] = theThis;
+            Script.Globals["EventStack"] = game.EventManager.CurrentEventList;
 
             //types des évenements
 
