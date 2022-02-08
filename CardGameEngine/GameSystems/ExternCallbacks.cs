@@ -48,7 +48,7 @@ namespace CardGameEngine.GameSystems
         public void ExternGameEnded(Player winner);
 
         /// <summary>
-        ///     Délégué appelé lorsque le moteur du jeu veut proposer au joueur de chainer une carte
+        /// Délégué appelé lorsque le moteur du jeu veut proposer au joueur de chainer une carte
         /// </summary>
         /// <param name="player">Le joueur qui peut chainer</param>
         /// <returns>Vrai si une action a été réalisée, faux sinon</returns>
@@ -61,5 +61,13 @@ namespace CardGameEngine.GameSystems
         /// <param name="source">Le script source</param>
         /// <param name="debugPrint">Le texte</param>
         public void DebugPrint(string from, string source, string debugPrint);
+
+        /// <summary>
+        /// Fonction renvoyant un entier aléatoire, i, entre les deux bornes (a <= i < b)
+        /// </summary>
+        /// <param name="a">Première borne</param>
+        /// <param name="b">Deuxième borne</param>
+        /// <returns>La valeur générée</returns>
+        public int GetExternalRandomNumber(int a, int b);
     }
 }

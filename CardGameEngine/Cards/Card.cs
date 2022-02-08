@@ -48,6 +48,11 @@ namespace CardGameEngine.Cards
         public EventProperty<Card, string, CardDescriptionChangeEvent> Description { get; }
 
         /// <summary>
+        /// Id de l'image de la carte
+        /// </summary>
+        private EventProperty<Card, int, CardImageIdChangeEvent> ImageId { get; }
+
+        /// <summary>
         /// Effet de la carte
         /// </summary>
         internal Effect Effect { get; }
@@ -55,7 +60,12 @@ namespace CardGameEngine.Cards
         /// <summary>
         /// Mots clé appliqués à la carte
         /// </summary>
-        public List<Keyword> Keywords { get; }
+        private List<Keyword> Keywords { get; }
+
+        /// <summary>
+        /// Id de la carte dans la partie
+        /// </summary>
+        private int Id { get; }
 
         public bool IsMaxLevel => CurrentLevel.Value == MaxLevel;
 
@@ -65,7 +75,7 @@ namespace CardGameEngine.Cards
         [MoonSharpVisible(true)]
         internal Card Virtual()
         {
-            Card virt = new Card(_game, _game.EffectsDatabase[Effect.EffectId](), true);
+            Card virt = _game.CreateNewCard(_game.EffectsDatabase[Effect.EffectId](), true);
 
             virt.OnCardCreate();
 
@@ -75,7 +85,7 @@ namespace CardGameEngine.Cards
         [MoonSharpVisible(true)]
         public Card Clone()
         {
-            Card clone = new Card(_game, _game.EffectsDatabase[Effect.EffectId](), false);
+            Card clone = _game.CreateNewCard(_game.EffectsDatabase[Effect.EffectId](), false);
 
             clone.OnCardCreate();
 
@@ -83,7 +93,7 @@ namespace CardGameEngine.Cards
         }
 
 
-        internal Card(Game game, Effect effect, bool isVirtual = false)
+        internal Card(Game game, Effect effect, int id, bool isVirtual = false)
         {
             if (effect.EffectType != EffectType.Card)
                 throw new InvalidOperationException(
@@ -91,6 +101,8 @@ namespace CardGameEngine.Cards
             _game = game;
 
             Effect = effect;
+
+            Id = id;
 
             IsVirtual = isVirtual;
 
@@ -105,13 +117,16 @@ namespace CardGameEngine.Cards
             Description = new EventProperty<Card, string, CardDescriptionChangeEvent>(this, game.EventManager,
                 effect.GetProperty<string>(LuaStrings.Card.DescriptionProperty));
 
+            ImageId = new EventProperty<Card, int, CardImageIdChangeEvent>(this, game.EventManager,
+                effect.GetProperty<int>(LuaStrings.Card.ImageIdProperty));
+
             CurrentLevel = new LevelEventProperty(this, game.EventManager, 1);
 
             Keywords = new List<Keyword>();
         }
 
-        public Card(Game game, string name, string description, int imageId, Closure? effect) : this(game,
-            game.EffectsDatabase.Blank(), true)
+        internal Card(Game game, string name, string description, int imageId, Closure? effect, int id) : this(game,
+            game.EffectsDatabase.Blank(), id, true)
         {
             Name.StealthChange(name);
             Description.StealthChange(description);
@@ -148,10 +163,10 @@ namespace CardGameEngine.Cards
                 {
                     //globals spécifique au cartes :
                     script.Globals["AskForTarget"] =
-                        (Func<int, ITargetable>)(i => _game.LuaAskForTarget(Effect, effectOwner, i));
+                        (Func<int, ITargetable>) (i => _game.LuaAskForTarget(Effect, effectOwner, i));
 
                     script.Globals["TargetsExists"] =
-                        (Func<List<int>, bool>)(list => _game.LuaTargetsExists(Effect, effectOwner, list));
+                        (Func<List<int>, bool>) (list => _game.LuaTargetsExists(Effect, effectOwner, list));
                 }
             });
         }
@@ -197,6 +212,11 @@ namespace CardGameEngine.Cards
         {
             SetUpScriptBeforeRunning(null);
             Effect.RunMethodOptional(LuaStrings.Card.OnLevelChangeMethod, oldLevel, newLevel);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Card card && (Id == card.Id);
         }
     }
 }

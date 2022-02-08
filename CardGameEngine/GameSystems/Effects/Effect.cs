@@ -50,10 +50,13 @@ namespace CardGameEngine.GameSystems.Effects
         {
             //fonctions
             Script.Globals["SubscribeTo"] =
-                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>)game.EventManager.LuaSubscribeToEvent;
+                (Func<Type, Closure, bool?, bool?, EventManager.IEventHandler>) game.EventManager.LuaSubscribeToEvent;
 
             Script.Globals["UnsubscribeTo"] =
-                (Action<EventManager.IEventHandler>)game.EventManager.LuaUnsubscribeFromEvent;
+                (Action<EventManager.IEventHandler>) game.EventManager.LuaUnsubscribeFromEvent;
+
+            Script.Globals["GetRandomNumber"] =
+                (Func<int, int, int>) game.LuaGetRandomNumber;
 
             //propriétés
 

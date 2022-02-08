@@ -23,6 +23,8 @@ namespace CardGameEngine
 
         public const int DefaultMaxActionPoint = 5;
 
+        private int _maxId = 0;
+
         /// <summary>
         /// Le joueur en train de jouer (c'est son tour)
         /// </summary>
@@ -70,15 +72,15 @@ namespace CardGameEngine
             _externCallbacks = externCallbacks;
 
             EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.DebugPrint);
-            var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
+            var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] {VictoryCardEffectId})
                 .Select(s => EffectsDatabase[s]())
-                .Select(e => new Card(this, e)).ToList();
-            var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
+                .Select(e => new Card(this, e, _maxId++)).ToList();
+            var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new[] {VictoryCardEffectId})
                 .Select(s => EffectsDatabase[s]())
-                .Select(e => new Card(this, e)).ToList();
+                .Select(e => new Card(this, e, _maxId++)).ToList();
 
-            Player1 = new Player(this, cards1);
-            Player2 = new Player(this, cards2);
+            Player1 = new Player(this, cards1, 0);
+            Player2 = new Player(this, cards2, 1);
 
             CurrentPlayer = Player1;
         }
@@ -385,7 +387,7 @@ namespace CardGameEngine
         [MoonSharpVisible(true)]
         internal Card MakeVirtual(string nom, string description, int? imageId = null, Closure? effect = null)
         {
-            var makeVirtual = new Card(this, nom, description, imageId ?? 0, effect);
+            var makeVirtual = new Card(this, nom, description, imageId ?? 0, effect, _maxId++);
             makeVirtual.OnCardCreate();
             return makeVirtual;
         }
@@ -394,11 +396,12 @@ namespace CardGameEngine
         /// Fonction lua qui résout une cible
         /// </summary>
         /// <param name="effect"></param>
+        /// <param name="effectOwner"></param>
         /// <param name="i"></param>
         /// <returns></returns>
         internal ITargetable LuaAskForTarget(Effect effect, Player effectOwner, int i)
         {
-            i = i - 1; //parce que lua
+            i -= 1; //parce que lua
             var target = effect.AllTargets[i];
             ITargetable resolved;
 
@@ -459,6 +462,22 @@ namespace CardGameEngine
         public void Log(string source, string message)
         {
             _externCallbacks.DebugPrint("C#", source, message);
+        }
+
+        public Card CreateNewCard(Effect effect, bool isVirtual = false)
+        {
+            return new Card(this, effect, _maxId++, isVirtual);
+        }
+
+
+        public Card CreateNewCard(string name, string description, int imageId, Closure? effect)
+        {
+            return new Card(this, name, description, imageId, effect, _maxId++);
+        }
+
+        internal int LuaGetRandomNumber(int a, int b)
+        {
+            return _externCallbacks.GetExternalRandomNumber(a, b);
         }
     }
 }

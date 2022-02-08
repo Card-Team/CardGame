@@ -35,6 +35,14 @@ namespace CardGameEngine.GameSystems
         /// </summary>
         private readonly Game _game;
 
+        /// <summary>
+        /// Id du joueur dans la partie
+        /// </summary>
+        public int Id { get; }
+
+        /// <summary>
+        /// Event manager
+        /// </summary>
         private readonly EventManager _eventManager;
 
         /// <summary>
@@ -60,10 +68,12 @@ namespace CardGameEngine.GameSystems
         public IEnumerable<Card> Cards => Hand.Concat(Deck).Concat(Discard);
 
 
-        internal Player(Game game, List<Card> cards)
+        internal Player(Game game, List<Card> cards, int id)
         {
             _game = game;
             _eventManager = game.EventManager;
+
+            Id = id;
 
             Deck = new CardPile(game, cards);
             Hand = new CardPile(game, 5);
@@ -114,6 +124,11 @@ namespace CardGameEngine.GameSystems
                     toLoop.Discard.MoveTo(toLoop.Deck, card, 0);
                 }
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Player player && (Id == player.Id);
         }
     }
 }
