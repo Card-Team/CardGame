@@ -65,7 +65,7 @@ namespace CardGameEngine.Cards
         /// <summary>
         /// Id de la carte dans la partie
         /// </summary>
-        private int Id { get; }
+        public int Id { get; }
 
         public bool IsMaxLevel => CurrentLevel.Value == MaxLevel;
 
@@ -163,10 +163,10 @@ namespace CardGameEngine.Cards
                 {
                     //globals spécifique au cartes :
                     script.Globals["AskForTarget"] =
-                        (Func<int, ITargetable>) (i => _game.LuaAskForTarget(Effect, effectOwner, i));
+                        (Func<int, ITargetable>)(i => _game.LuaAskForTarget(Effect, effectOwner, i));
 
                     script.Globals["TargetsExists"] =
-                        (Func<List<int>, bool>) (list => _game.LuaTargetsExists(Effect, effectOwner, list));
+                        (Func<List<int>, bool>)(list => _game.LuaTargetsExists(Effect, effectOwner, list));
                 }
             });
         }
