@@ -8,6 +8,8 @@ namespace CardGameConsole
 {
     public class ConsoleExternCallbacks : IExternCallbacks
     {
+        private readonly Random _random = new Random();
+
         public Card ExternCardAskForTarget(Player effectOwner, string targetName, List<Card> cardList)
         {
             Console.WriteLine($"Choisissez une carte pour {targetName}");
@@ -60,6 +62,11 @@ namespace CardGameConsole
         {
             EventDisplayer.Events.Add(
                 $"[grey][underline][[{Markup.Escape(from)}:{Markup.Escape(source)}]][/] {Markup.Escape(debugPrint)}[/]");
+        }
+
+        public int GetExternalRandomNumber(int a, int b)
+        {
+            return _random.Next(a, b);
         }
 
         public void ExternGameEnded(Player winner)
