@@ -50,7 +50,7 @@ namespace CardGameEngine.Cards
         /// <summary>
         /// Id de l'image de la carte
         /// </summary>
-        private EventProperty<Card, int, CardImageIdChangeEvent> ImageId { get; }
+        public EventProperty<Card, int, CardImageIdChangeEvent> ImageId { get; }
 
         /// <summary>
         /// Effet de la carte
