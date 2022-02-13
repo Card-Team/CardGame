@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using CardGameEngine.Cards;
 using MoonSharp.Interpreter;
 
@@ -43,7 +44,7 @@ namespace CardGameEngine.GameSystems.Effects
 
             try
             {
-                script.DoFile(path);
+                script.DoString(File.ReadAllText(path), codeFriendlyName: path);
             }
             catch (ScriptRuntimeException sre)
             {
