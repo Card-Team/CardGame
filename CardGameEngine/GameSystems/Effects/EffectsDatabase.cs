@@ -75,7 +75,7 @@ namespace CardGameEngine.GameSystems.Effects
         private void LoadAllEffects(string path, EffectType effectType)
         {
             foreach (var file in Directory.EnumerateFiles(path)
-                         .Where(f => Path.GetExtension(f) == "lua"))
+                         .Where(f => Path.GetExtension(f) == ".lua"))
             {
                 LoadEffect(file, effectType);
             }
