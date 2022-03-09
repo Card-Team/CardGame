@@ -100,20 +100,25 @@ namespace CardGameConsole
 
         private static void OnCardPlay(CardPlayEvent evt)
         {
-            WriteEvent($"[underline]{evt.Card.Name}[/] vient d'être jouée par [bold]{evt.WhoPlayed.GetName()}[/]");
+            var virtualString = evt.Card.IsVirtual ? " [blue]Virtuelle[/]" : "";
+            WriteEvent(
+                $"[underline]{evt.Card.Name}[/]{virtualString} vient d'être jouée par [bold]{evt.WhoPlayed.GetName()}[/]");
         }
 
         private static void OnCardEffectPlay(CardEffectPlayEvent evt)
         {
+            var virtualString = evt.Card.IsVirtual ? " [blue]Virtuelle[/]" : "";
             WriteEvent(
-                $"L'effet de [underline]{evt.Card.Name}[/] vient d'être activé par [bold]{evt.WhoPlayed.GetName()}[/]");
+                $"L'effet de [underline]{evt.Card.Name}[/]{virtualString} vient d'être activé par [bold]{evt.WhoPlayed.GetName()}[/]");
         }
 
         private static void OnPostCardEffectPlay(CardEffectPlayEvent evt)
         {
-            if (evt.Cancelled) WriteEvent($"L'effet de [underline]{evt.Card.Name}[/] [red] a été annulé[/]");
+            var virtualString = evt.Card.IsVirtual ? " [blue]Virtuelle[/]" : "";
+            if (evt.Cancelled)
+                WriteEvent($"L'effet de [underline]{evt.Card.Name}[/]{virtualString} [red] a été annulé[/]");
 
-            WriteEvent($"L'effet de [underline]{evt.Card.Name}[/] a terminé son execution");
+            WriteEvent($"L'effet de [underline]{evt.Card.Name}[/]{virtualString} a terminé son execution");
         }
 
         private static void WriteEvent(string evt)

@@ -26,10 +26,10 @@ function do_effect()
 		print("Doing " .. EventStack.Count - i)
 		local cur = EventStack.Count - i
 		local ev = EventStack[cur]
-		if ev.GetType() == CardEffectPlayEvent then
-			print("Event " .. i .. " is " .. ev.ToString())
+		if ev.GetType() == T_CardEffectPlayEvent then
+			local ev = --[[---@type CardEffectPlayEvent]] print("Event " .. i .. " is " .. ev.ToString())
 			ev.Cancelled = true
-			
+		
 		end
 	end
 end

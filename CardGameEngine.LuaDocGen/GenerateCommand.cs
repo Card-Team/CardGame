@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using CardGameEngine.EventSystem.Events;
 using Spectre.Console;
@@ -23,7 +25,14 @@ namespace CardGameEngine.LuaDocGen
         public override int Execute(CommandContext context, Settings settings)
         {
             var allTypes = typeof(Game).Assembly.DefinedTypes
-                .Where(Visibility.IsVisibleToLua).ToList();
+                .Where(Visibility.IsVisibleToLua).Concat(new List<TypeInfo>
+                {
+                    typeof(List<>).GetTypeInfo(),
+                    typeof(ReadOnlyCollection<>).GetTypeInfo(),
+                    typeof(IEnumerable<>).GetTypeInfo(),
+                    typeof(IComparer<>).GetTypeInfo(),
+                    typeof(object).GetTypeInfo()
+                }).ToList();
 
             var effectTypes = new List<Type>();
 
@@ -65,7 +74,7 @@ namespace CardGameEngine.LuaDocGen
                 var genericname = typename;
                 if (typename == "CardPropertyChangeEvent") genericname = "CardPropertyChangeEvent<any>";
                 builder.AppendLine($"---@type Type<{genericname}>");
-                builder.AppendLine($"{typename} = --[[---@type Type<{genericname}>]] {{}}");
+                builder.AppendLine($"T_{typename} = --[[---@type Type<{genericname}>]] {{}}");
                 builder.AppendLine();
             }
 

@@ -41,7 +41,7 @@ function do_effect()
 		local carte = --[[---@type Card]] AskForTarget(1)
 		
 		---@type Card
-		carte_copie = carte.Virtual()         --creer une copie virtuel de la carte ciblé
+		carte_copie = carte.Virtual(This)         --creer une copie virtuel de la carte ciblé
 		
 		This.Cost.TryChangeValue(carte_copie.Cost.Value)
 		This.Description.TryChangeValue("Carte Blanche : " .. carte_copie.Description.Value)

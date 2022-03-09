@@ -57,13 +57,24 @@ namespace CardGameEngine.LuaDocGen
             var whered = methodInfo.GetParameters()
                 .Where(f => !f.IsOut);
             var parameters = whered
-                .Select(s => $"{Comment("param")} {s.Name} {s.ToLuaType()} Documentation a venir");
+                .Select(MapParameter)
+                .Select(s => $"{Comment("param")} {s.Name} {s.Type} Documentation a venir");
 
             if (methodInfo.GetParameters().Length > 0) builder.AppendLine(string.Join("\n", parameters));
 
-            if (methodInfo.ReturnType != typeof(void))
+            var methodName = methodInfo.Name;
+            if (methodName == "GetEnumerator")
+            {
+                methodName = "__iterator";
                 builder.AppendLine(
-                    $"{Comment("return")} {methodInfo.ReturnType.ToLuaType()} Documentation a venir");
+                    $"{Comment("return")} fun():T Documentation a venir");
+            }
+            else
+            {
+                if (methodInfo.ReturnType != typeof(void))
+                    builder.AppendLine(
+                        $"{Comment("return")} {methodInfo.ReturnType.ToLuaType()} Documentation a venir");
+            }
 
             if (methodInfo.GetParameters().Any(p => p.IsOptional))
             {
@@ -78,9 +89,22 @@ namespace CardGameEngine.LuaDocGen
             var fulparlist = methodInfo.GetParameters().Select(s => s.Name);
             var fulparstring = string.Join(",", fulparlist);
 
-            builder.AppendLine($"function {typename}.{methodInfo.Name} ({fulparstring}) end");
+
+            builder.AppendLine($"function {typename}.{methodName} ({fulparstring}) end");
 
             return builder.ToString();
+        }
+
+        private static (string Name, string Type) MapParameter(ParameterInfo arg)
+        {
+            var luaType = arg.ToLuaType();
+            if (luaType.StartsWith("IEnumera"))
+            {
+                var genArgs = arg.ParameterType.GetGenericArguments()[0];
+                luaType += $" | {genArgs.ToLuaType()}[]";
+            }
+
+            return (arg.Name, luaType);
         }
 
         private static string PropertyComment(PropertyInfo propertyInfo)
@@ -99,7 +123,11 @@ namespace CardGameEngine.LuaDocGen
 
         private static string ClassComment(TypeInfo typeInfo)
         {
-            var classComment = $"{Comment("class")} {typeInfo.ToLuaType()}";
+            var luaType = typeInfo.ToLuaType();
+            if (typeInfo == typeof(object)) luaType = "Object";
+
+            var classComment = $"{Comment("class")} {luaType}";
+
             if (typeInfo.BaseType != null
                 && typeInfo.BaseType != typeof(object)
                 && typeInfo.IsVisibleToLua()

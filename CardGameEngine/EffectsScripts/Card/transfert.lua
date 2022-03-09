@@ -12,6 +12,7 @@ pa_cost = 3
 description = "Transfère le niveau de cette carte à une autre"
 
 --fonction qui recupere toute les cartes de sa main sauf celle ci est lui demande d'en selectionné une
+---@param aCard Card
 local function cardFilter(aCard)
 	return EffectOwner.Hand.Contains(aCard)
 			and This ~= aCard and not aCard.IsMaxLevel

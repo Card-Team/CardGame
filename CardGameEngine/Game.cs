@@ -72,10 +72,10 @@ namespace CardGameEngine
             _externCallbacks = externCallbacks;
 
             EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.DebugPrint);
-            var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] {VictoryCardEffectId})
+            var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
                 .Select(s => EffectsDatabase[s]())
                 .Select(e => new Card(this, e, _maxId++)).ToList();
-            var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new[] {VictoryCardEffectId})
+            var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
                 .Select(s => EffectsDatabase[s]())
                 .Select(e => new Card(this, e, _maxId++)).ToList();
 
@@ -205,7 +205,7 @@ namespace CardGameEngine
                 throw new InvalidOperationException(
                     "La précondition de la carte est fausse");
 
-            var result = upgrade ? UpgradeCard(card) : PlayCard(player, card);
+            var result = upgrade ? UpgradeCard(player, card) : PlayCard(player, card);
             if (AllowedToPlayPlayer != CurrentPlayer)
                 //fin de chaine apres action
                 AllowedToPlayPlayer = CurrentPlayer;
@@ -283,8 +283,10 @@ namespace CardGameEngine
             }
         }
 
-        private bool UpgradeCard(Card card)
+        private bool UpgradeCard(Player upgrader, Card card)
         {
+            if (card.CanBePlayed(upgrader) == false) return false;
+
             var evt = new CardMarkUpgradeEvent(card);
             using (var post = EventManager.SendEvent(evt))
             {
@@ -294,9 +296,12 @@ namespace CardGameEngine
                 }
 
                 var toUp = post.Event.Card;
+                var owner = GetCurrentOwner(toUp);
+
+                var newVal = Math.Max(0, owner.ActionPoints.Value - card.Cost.Value);
+                owner.ActionPoints.TryChangeValue(newVal);
 
                 var location = GetPileOf(toUp);
-                var owner = GetCurrentOwner(toUp);
 
                 return owner.Discard.MoveForUpgrade(location, toUp);
             }
@@ -464,9 +469,9 @@ namespace CardGameEngine
             _externCallbacks.DebugPrint("C#", source, message);
         }
 
-        public Card CreateNewCard(Effect effect, bool isVirtual = false)
+        public Card CreateNewCard(Effect effect, bool isVirtual = false, Card? virtualThis = null)
         {
-            return new Card(this, effect, _maxId++, isVirtual);
+            return new Card(this, effect, _maxId++, isVirtual, virtualThis);
         }
 
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using System.Reflection;
 
@@ -25,13 +24,14 @@ namespace CardGameEngine.LuaDocGen
         public static string ToLuaType(this Type propertyInfoPropertyType)
         {
             if (propertyInfoPropertyType == typeof(Type)) return "Type<Event>";
+            if (propertyInfoPropertyType == typeof(object)) return "Object | any";
 
             if (propertyInfoPropertyType.IsGenericType)
             {
                 //todo peut etre ajouter list pour avoir contains et tout a moins que moonsharp transforme en tableau
                 //voir IEnumerable 
-                if (typeof(IEnumerable).IsAssignableFrom(propertyInfoPropertyType))
-                    return $"{ToLuaType(propertyInfoPropertyType.GetGenericArguments()[0])}[]";
+                // if (typeof(IEnumerable).IsAssignableFrom(propertyInfoPropertyType))
+                //     return $"{ToLuaType(propertyInfoPropertyType.GetGenericArguments()[0])}[]";
 
                 if (propertyInfoPropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                     return $"{ToLuaType(propertyInfoPropertyType.GetGenericArguments()[0])} | nil";

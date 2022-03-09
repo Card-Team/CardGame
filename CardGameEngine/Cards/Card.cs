@@ -71,11 +71,12 @@ namespace CardGameEngine.Cards
 
         private readonly Game _game;
         private readonly Closure? _virtualClosure;
+        private readonly Card? virtualThis;
 
         [MoonSharpVisible(true)]
-        internal Card Virtual()
+        internal Card Virtual(Card? virtualThis = null)
         {
-            Card virt = _game.CreateNewCard(_game.EffectsDatabase[Effect.EffectId](), true);
+            var virt = _game.CreateNewCard(_game.EffectsDatabase[Effect.EffectId](), true, virtualThis);
 
             virt.OnCardCreate();
 
@@ -93,7 +94,7 @@ namespace CardGameEngine.Cards
         }
 
 
-        internal Card(Game game, Effect effect, int id, bool isVirtual = false)
+        internal Card(Game game, Effect effect, int id, bool isVirtual = false, Card? virtualThis = null)
         {
             if (effect.EffectType != EffectType.Card)
                 throw new InvalidOperationException(
@@ -101,6 +102,7 @@ namespace CardGameEngine.Cards
             _game = game;
 
             Effect = effect;
+            this.virtualThis = virtualThis;
 
             Id = id;
 
@@ -141,9 +143,8 @@ namespace CardGameEngine.Cards
         /// <returns>Vrai si la carte doit etre défaussée, faux sinon</returns>
         internal bool DoEffect(Player effectOwner)
         {
-            SetUpScriptBeforeRunning(effectOwner);
             DynValue result;
-            if (IsVirtual)
+            if (IsVirtual && _virtualClosure != null)
                 result = _virtualClosure?.Call() ?? DynValue.Nil;
             else
                 result = Effect.RunMethod(LuaStrings.Card.DoEffectMethod);
@@ -156,8 +157,7 @@ namespace CardGameEngine.Cards
 
         private void SetUpScriptBeforeRunning(Player? effectOwner)
         {
-            if (IsVirtual) return;
-            Effect.FillGlobals(_game, effectOwner, this, script =>
+            Effect.FillGlobals(_game, effectOwner, virtualThis ?? this, script =>
             {
                 if (effectOwner != null)
                 {
