@@ -143,6 +143,7 @@ namespace CardGameEngine.Cards
         /// <returns>Vrai si la carte doit etre défaussée, faux sinon</returns>
         internal bool DoEffect(Player effectOwner)
         {
+            SetUpScriptBeforeRunning(effectOwner);
             DynValue result;
             if (IsVirtual && _virtualClosure != null)
                 result = _virtualClosure?.Call() ?? DynValue.Nil;

@@ -194,16 +194,20 @@ namespace CardGameEngine
                     $"Player {player} tried to play card {card} but it's not in their hand");
             }
 
+            if (player.ActionPoints.Value < card.Cost.Value)
+                throw new InvalidOperationException(
+                    $"Le joueur n'a pas assez de Points d'actions pour jouer la carte (il en faut {card.Cost.Value} et il en a {player.ActionPoints.Value})");
+
             if (upgrade && card.IsMaxLevel)
             {
                 throw new InvalidOperationException(
                     $"Tentative d'amélioration de la carte {card} alors qu'elle est au niveau maximum ({card.CurrentLevel})");
             }
 
-
             if (!upgrade && card.CanBePlayed(player) == false)
                 throw new InvalidOperationException(
-                    "La précondition de la carte est fausse");
+                    "La carte n'est pas jouable (précondition fausse)");
+
 
             var result = upgrade ? UpgradeCard(player, card) : PlayCard(player, card);
             if (AllowedToPlayPlayer != CurrentPlayer)
@@ -220,7 +224,7 @@ namespace CardGameEngine
             discardSource ??= effectowner.Hand;
             discardGoal ??= effectowner.Discard;
 
-            if (card.CanBePlayed(effectowner) == false) return false;
+            if (CanPlay(effectowner, card, false) == false) return false;
 
             var playEvt = new CardPlayEvent(effectowner, card);
             using (var post = EventManager.SendEvent(playEvt))
@@ -285,7 +289,7 @@ namespace CardGameEngine
 
         private bool UpgradeCard(Player upgrader, Card card)
         {
-            if (card.CanBePlayed(upgrader) == false) return false;
+            if (CanPlay(upgrader, card, true) == false) return false;
 
             var evt = new CardMarkUpgradeEvent(card);
             using (var post = EventManager.SendEvent(evt))
