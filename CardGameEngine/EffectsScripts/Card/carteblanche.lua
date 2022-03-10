@@ -16,6 +16,7 @@ description = base_description
 local function card_filter(a_card)
 	return EffectOwner.Hand.Contains(a_card)
 			and a_card.Name.Value ~= This.Name.Value
+			and not string.match(a_card.EffectId, "^_")
 end
 
 ---@type Target[]
@@ -32,7 +33,7 @@ function precondition()
 	if carte_copie == nil then
 		return targ
 	else
-		return targ and carte_copie.CanBePlayed(EffectOwner)
+		return carte_copie.CanBePlayed(EffectOwner)
 	end
 end
 
@@ -46,11 +47,16 @@ function do_effect()
 		This.Cost.TryChangeValue(carte_copie.Cost.Value)
 		This.Description.TryChangeValue("Carte Blanche : " .. carte_copie.Description.Value)
 		This.Name.TryChangeValue(carte_copie.Name.Value)
+		This.ImageId.TryChangeValue(carte_copie.ImageId.Value)
 		return false    --pour pas carteblanche se fasse defaussé (A REVOIR !!)
 	else
 		Game.PlayCardEffect(EffectOwner, carte_copie)
 		This.Description.TryChangeValue(base_description)
 		This.Name.TryChangeValue(name)
+		This.Cost.TryChangeValue(pa_cost)
+		This.ImageId.TryChangeValue(image_id)
+		---@type Card
+		carte_copie = --[[---@type Card]] nil
 	end
 end
 

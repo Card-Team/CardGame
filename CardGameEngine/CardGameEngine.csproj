@@ -131,7 +131,12 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="*.puml" />
+        <Content Include="*.puml"/>
+        <Content Include="EffectsScripts\Artefact.meta"/>
+        <Content Include="EffectsScripts\Card.meta"/>
+        <Content Include="EffectsScripts\generated.def.lua.meta"/>
+        <Content Include="EffectsScripts\globals.def.lua.meta"/>
+        <Content Include="EffectsScripts\Keyword.meta"/>
     </ItemGroup>
     <ItemGroup>
       <Content Include="EffectsScripts\**\*.lua">

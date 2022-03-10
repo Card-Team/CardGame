@@ -15,7 +15,8 @@ namespace CardGameEngine.LuaDocGen
 
         private static readonly List<string> _whitelist = new List<string>
         {
-            "CardEffectPlayEvent"
+            "CardEffectPlayEvent",
+            "EffectId"
         };
 
         public static bool IsBlacklisted(Type arg)

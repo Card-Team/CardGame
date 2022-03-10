@@ -201,6 +201,7 @@ DeckLoopEvent = {}
 ---@field public Player Player
 EndTurnEvent = {}
 
+
 ---@class StartTurnEvent : Event
 ---@field public Player Player
 StartTurnEvent = {}
@@ -310,6 +311,7 @@ end
 
 ---@class Card
 ---@field public Name EventProperty<Card,string,CardNameChangeEvent>
+---@field public EffectId string
 ---@field public IsVirtual boolean
 ---@field public MaxLevel number
 ---@field public Cost EventProperty<Card,number,CardCostChangeEvent>
