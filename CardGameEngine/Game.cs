@@ -82,10 +82,20 @@ namespace CardGameEngine
             EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.DebugPrint);
             var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
                 .Select(s => EffectsDatabase[s]())
-                .Select(e => new Card(this, e, _maxId++)).ToList();
+                .Select(e =>
+                {
+                    var card = new Card(this, e, _maxId++);
+                    _allCards.Add(card);
+                    return card;
+                }).ToList();
             var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
                 .Select(s => EffectsDatabase[s]())
-                .Select(e => new Card(this, e, _maxId++)).ToList();
+                .Select(e =>
+                {
+                    var card = new Card(this, e, _maxId++);
+                    _allCards.Add(card);
+                    return card;
+                }).ToList();
 
             Player1 = new Player(this, cards1, 0);
             Player2 = new Player(this, cards2, 1);
@@ -405,6 +415,7 @@ namespace CardGameEngine
         internal Card MakeVirtual(string nom, string description, int? imageId = null, Closure? effect = null)
         {
             var makeVirtual = new Card(this, nom, description, imageId ?? 0, effect, _maxId++);
+            _allCards.Add(makeVirtual);
             makeVirtual.OnCardCreate();
             return makeVirtual;
         }
