@@ -25,6 +25,8 @@ namespace CardGameEngine
 
         private int _maxId = 0;
 
+        private readonly List<Card> _allCards;
+
         /// <summary>
         /// Le joueur en train de jouer (c'est son tour)
         /// </summary>
@@ -58,6 +60,11 @@ namespace CardGameEngine
         internal EffectsDatabase EffectsDatabase { get; }
 
         /// <summary>
+        ///     Toutes les cartes de la partie
+        /// </summary>
+        public IReadOnlyList<Card> AllCards => _allCards;
+
+        /// <summary>
         /// Callbacks externes au moteurs, ce champ va être donné par l'application externe.
         /// </summary>
         private readonly IExternCallbacks _externCallbacks;
@@ -70,6 +77,7 @@ namespace CardGameEngine
             EventManager = new EventManager();
 
             _externCallbacks = externCallbacks;
+            _allCards = new List<Card>();
 
             EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.DebugPrint);
             var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
@@ -475,13 +483,17 @@ namespace CardGameEngine
 
         public Card CreateNewCard(Effect effect, bool isVirtual = false, Card? virtualThis = null)
         {
-            return new Card(this, effect, _maxId++, isVirtual, virtualThis);
+            var newCard = new Card(this, effect, _maxId++, isVirtual, virtualThis);
+            _allCards.Add(newCard);
+            return newCard;
         }
 
 
         public Card CreateNewCard(string name, string description, int imageId, Closure? effect)
         {
-            return new Card(this, name, description, imageId, effect, _maxId++);
+            var newCard = new Card(this, name, description, imageId, effect, _maxId++);
+            _allCards.Add(newCard);
+            return newCard;
         }
 
         internal int LuaGetRandomNumber(int a, int b)
