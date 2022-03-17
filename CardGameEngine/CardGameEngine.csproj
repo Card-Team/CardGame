@@ -81,6 +81,7 @@
         <Compile Include="Cards\CardPiles\CardPile.cs" />
         <Compile Include="Cards\CardPiles\DiscardPile.cs" />
         <Compile Include="Cards\CardPiles\NotInPileException.cs" />
+        <Compile Include="Cards\ChainMode.cs"/>
         <Compile Include="Cards\Keyword.cs" />
         <Compile Include="EventSystem\EventManager.cs" />
         <Compile Include="EventSystem\EventProperty.cs" />
@@ -100,6 +101,7 @@
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordRemoveEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\KeywordEvents\CardKeywordTriggerEvent.cs" />
+        <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardChainModeChangeEvent.cs"/>
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardImageIdChangeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\TransferrableCardEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardCostChangeEvent.cs" />
@@ -109,7 +111,7 @@
         <Compile Include="EventSystem\Events\CardEvents\PropertyChange\CardPropertyChangeEvent.cs" />
         <Compile Include="EventSystem\Events\CardEvents\TargetingEvent.cs" />
         <Compile Include="EventSystem\Events\Event.cs" />
-        <Compile Include="EventSystem\Events\GameStateEvents\ChainOpportunityEvent.cs" />
+        <Compile Include="EventSystem\Events\GameStateEvents\ChainingEvent.cs"/>
         <Compile Include="EventSystem\Events\GameStateEvents\DeckLoopEvent.cs" />
         <Compile Include="EventSystem\Events\GameStateEvents\EndTurnEvent.cs" />
         <Compile Include="EventSystem\Events\GameStateEvents\StartTurnEvent.cs" />

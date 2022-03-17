@@ -8,15 +8,18 @@ name = "Espion"
 ---@type number
 pa_cost = 3
 
+---@type ChainMode
+chain_mode = ChainMode.StartChain
+
 ---@type string
 description = "voir une carte aleatoire de la main de l'adversaire"
 
 --fonction qui recupere toute les cartes de sa main
 local function cardFilter()
-    -- carte choisis aleatoirement depuis sa main
-    local OtherPlayerHand = EffectOwner.OtherPlayer.Hand
-    local random = math.random(0, OtherPlayerHand.Count - 1)
-    return OtherPlayerHand[random]
+	-- carte choisis aleatoirement depuis sa main
+	local OtherPlayerHand = EffectOwner.OtherPlayer.Hand
+	local random = math.random(0, OtherPlayerHand.Count - 1)
+	return OtherPlayerHand[random]
 end
 
 ---@type Target[]

@@ -20,7 +20,16 @@ namespace CardGameEngine.Cards
         /// </summary>
         public EventProperty<Card, string, CardNameChangeEvent> Name { get; }
 
+
+        /// <summary>
+        ///     Le nom du script de l'effet
+        /// </summary>
         public string EffectId => Effect.EffectId;
+
+        /// <summary>
+        ///     Le mode de chainage de la carte
+        /// </summary>
+        public EventProperty<Card, ChainMode, CardChainModeChangeEvent> ChainMode { get; }
 
         /// <summary>
         /// Est-ce que la carte est virtuelle ?
@@ -115,6 +124,10 @@ namespace CardGameEngine.Cards
                 effect.GetProperty<int>(LuaStrings.Card.CostProperty));
 
             MaxLevel = effect.GetProperty<int>(LuaStrings.Card.MaxLevelProperty);
+
+            ChainMode = new EventProperty<Card, ChainMode, CardChainModeChangeEvent>(this,
+                game.EventManager,
+                effect.GetProperty<ChainMode>(LuaStrings.Card.ChainModeProperty));
 
             Description = new EventProperty<Card, string, CardDescriptionChangeEvent>(this, game.EventManager,
                 effect.GetProperty<string>(LuaStrings.Card.DescriptionProperty));

@@ -9,12 +9,15 @@ name = "Sacrifice"
 ---@type number
 pa_cost = 2
 
+---@type ChainMode
+chain_mode = ChainMode.StartChain
+
 local base_description = "Enlever le marquage d'évolution d'une de vos cartes et réduisez le cout d'une carte de votre main"
 description = base_description
 
 local function card_filter(aCard)
-		return EffectOwner.Discard.Contains(aCard)
-				and This ~= aCard
+	return EffectOwner.Discard.Contains(aCard)
+			and This ~= aCard
 end
 
 ---@type Target[]

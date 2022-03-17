@@ -2,11 +2,11 @@
 
 namespace CardGameEngine.EventSystem.Events.GameStateEvents
 {
-    public class ChainOpportunityEvent : CancellableEvent
+    public class ChainingEvent : Event
     {
         public Player Chainer { get; internal set; }
 
-        public ChainOpportunityEvent(Player chainer)
+        public ChainingEvent(Player chainer)
         {
             Chainer = chainer;
         }

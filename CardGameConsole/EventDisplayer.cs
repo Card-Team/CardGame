@@ -35,12 +35,26 @@ namespace CardGameConsole
 
             // Bouclage du deck
             eventManager.SubscribeToEvent<DeckLoopEvent>(OnDeckLoop, postEvent: true);
+            eventManager.SubscribeToEvent<ChainingEvent>(OnChainStart);
+            eventManager.SubscribeToEvent<ChainingEvent>(OnChainEnd, postEvent: true);
 
             // Nombre de point d'action
             eventManager.SubscribeToEvent<ActionPointsEditEvent>(OnActionPointsEdit, postEvent: true);
 
             // Nombre max de points d'actions
             eventManager.SubscribeToEvent<MaxActionPointsEditEvent>(OnMaxActionPointsEdit, postEvent: true);
+        }
+
+        private static void OnChainStart(ChainingEvent evt)
+        {
+            WriteEvent(
+                $"{evt.Chainer.GetName()} chaine ! (niveau de chaine : {ConsoleGame.Game.ChainCounter})");
+        }
+
+        private static void OnChainEnd(ChainingEvent evt)
+        {
+            WriteEvent(
+                $"{evt.Chainer.GetName()} termine sa chaine ! (niveau de chaine : {ConsoleGame.Game.ChainCounter})");
         }
 
         private static void OnMaxActionPointsEdit(MaxActionPointsEditEvent evt)

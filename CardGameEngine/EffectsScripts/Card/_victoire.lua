@@ -3,6 +3,9 @@ max_level = 6 --TODO-- A définir
 ---@type number
 image_id = 519
 
+---@type ChainMode
+chain_mode = ChainMode.NoChain
+
 ---@type string
 name = "Victoire"
 ---@type number

@@ -67,7 +67,8 @@ namespace CardGameEngine.GameSystems.Effects
                 { LuaStrings.Card.TargetsProperty, DataType.Table },
                 { LuaStrings.Card.DescriptionProperty, DataType.String },
                 { LuaStrings.Card.PreconditionMethod, DataType.Function },
-                { LuaStrings.Card.DoEffectMethod, DataType.Function }
+                { LuaStrings.Card.DoEffectMethod, DataType.Function },
+                { LuaStrings.Card.ChainModeProperty, DataType.UserData }
             };
 
             // Élements lua optionnels et leur type respectif

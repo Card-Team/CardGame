@@ -13,12 +13,12 @@ namespace CardGameConsole
     {
         private const string ScriptError = "[red][[Erreur de script]][/] : ";
 
-        public static void PrintError(InterpreterException exc)
+        public static void PrintError(InterpreterException exc, string? sourceContent = null)
         {
-            PrintError(exc, exc.CallStack?.ToList() ?? new List<WatchItem>());
+            PrintError(exc, exc.CallStack?.ToList() ?? new List<WatchItem>(), sourceContent);
         }
 
-        public static void PrintError(InterpreterException exception, List<WatchItem> callstack)
+        public static void PrintError(InterpreterException exception, List<WatchItem> callstack, string? source = null)
         {
             var splitted = exception.DecoratedMessage.Split(':').ToList();
             var scriptName = string.Join(":", splitted.GetRange(0, splitted.Count - 2));
@@ -32,7 +32,7 @@ namespace CardGameConsole
                 if (watchItem.Location is { IsClrLocation: false } && (!watchItem.Name?.StartsWith("<") ?? true))
                 {
                     text += " : " + ColoredSource(scriptName, text.Length - ScriptError.Length - 2, watchItem.Location,
-                        index == 0) + "\n";
+                        index == 0, source ?? ConsoleGame.Game.GetScriptByName(scriptName)) + "\n";
                 }
 
                 AnsiConsole.Write(new Markup(text));
@@ -51,16 +51,14 @@ namespace CardGameConsole
 
         public static void PrintError(InvalidOperationException exception)
         {
-            AnsiConsole.Write(new Markup($"[red][[Erreur Moteur]] : {exception.Message}[/]"));
+            AnsiConsole.Write(new Markup($"[red][[Erreur Moteur]] : {exception.Message}[/]\n"));
             AnsiConsole.WriteException(exception);
             DumpEvents();
         }
 
-        private static string ColoredSource(string scriptName, int padding, SourceRef watchItemLocation, bool isError)
+        private static string ColoredSource(string scriptName, int padding, SourceRef watchItemLocation, bool isError,
+            string? scriptContent)
         {
-            var scriptContent = ConsoleGame.Game.GetScriptByName(scriptName);
-            if (scriptContent == null) return "";
-
             bool isMultiLine = watchItemLocation.FromLine != watchItemLocation.ToLine && watchItemLocation.ToChar != 0;
 
             var strings = scriptContent.Split('\n');
@@ -141,9 +139,9 @@ namespace CardGameConsole
 
         public static void PrintError(InvalidEffectException exception)
         {
-            AnsiConsole.Write(new Markup($"[red][[Effet invalide]]: {exception.Message}[/]"));
+            AnsiConsole.Write(new Markup($"[red][[Effet invalide]]: {exception.Message}[/]\n"));
             if (exception.InnerException != null)
-                PrintError(exception.InnerException);
+                PrintError(exception.InnerException, exception.EffectContent);
             else
                 DumpEvents();
         }

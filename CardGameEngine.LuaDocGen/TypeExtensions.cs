@@ -41,6 +41,7 @@ namespace CardGameEngine.LuaDocGen
                 return $"{GetNameWithoutGenericArity(propertyInfoPropertyType.GetGenericTypeDefinition())}<{genArgs}>";
             }
 
+            if (propertyInfoPropertyType.IsEnum) return propertyInfoPropertyType.Name;
 
             if (IsNumericType(propertyInfoPropertyType.GetTypeInfo())) return "number";
 

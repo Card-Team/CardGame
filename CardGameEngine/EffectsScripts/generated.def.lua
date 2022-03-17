@@ -1,8 +1,10 @@
 ---@class Game
 ---@field public CurrentPlayer Player
 ---@field public AllowedToPlayPlayer Player
+---@field public IsInChain boolean
 ---@field public Player1 Player
 ---@field public Player2 Player
+---@field public AllCards IReadOnlyList<Card>
 Game = {}
 --- Documentation a venir
 ---@param playerToWin Player Documentation a venir
@@ -89,7 +91,7 @@ end
 function Game.CreateNewCard (name, description, imageId, effect)
 end
 
----@class Player
+---@class Player : ITargetable
 ---@field public Deck CardPile
 ---@field public Hand CardPile
 ---@field public Discard DiscardPile
@@ -124,7 +126,7 @@ end
 ITargetable = {}
 
 ---@class Target
----@field public TargetType number
+---@field public TargetType TargetTypes
 ---@field public IsAutomatic boolean
 ---@field public Name string
 Target = {}
@@ -206,19 +208,24 @@ EndTurnEvent = {}
 ---@field public Player Player
 StartTurnEvent = {}
 
+
 ---@class CardDeleteEvent : TransferrableCardEvent
 CardDeleteEvent = {}
+
 
 ---@class CardEffectPlayEvent : TransferrableCardEvent
 ---@field public WhoPlayed Player
 CardEffectPlayEvent = {}
 
+
 ---@class CardEvent : CancellableEvent
 ---@field public Card Card
 CardEvent = {}
 
+
 ---@class CardMarkUpgradeEvent : CardEvent
 CardMarkUpgradeEvent = {}
+
 
 ---@class CardMovePileEvent : CardEvent
 ---@field public SourcePile CardPile
@@ -244,6 +251,9 @@ TransferrableCardEvent = {}
 ---@field public TargetData Target
 ---@field public ResolvedTarget ITargetable
 TargetingEvent = {}
+
+---@class CardChainModeChangeEvent : CardPropertyChangeEvent<ChainMode>
+CardChainModeChangeEvent = {}
 
 ---@class CardImageIdChangeEvent : CardPropertyChangeEvent<number>
 CardImageIdChangeEvent = {}
@@ -309,9 +319,10 @@ Artefact = {}
 function Artefact.CanBeActivated (game)
 end
 
----@class Card
+---@class Card : ITargetable
 ---@field public Name EventProperty<Card,string,CardNameChangeEvent>
 ---@field public EffectId string
+---@field public ChainMode EventProperty<Card,ChainMode,CardChainModeChangeEvent>
 ---@field public IsVirtual boolean
 ---@field public MaxLevel number
 ---@field public Cost EventProperty<Card,number,CardCostChangeEvent>
@@ -361,11 +372,21 @@ end
 function Card.Equals (obj)
 end
 
+
+
+---@class ChainMode
+---@field public StartChain ChainMode
+---@field public MiddleChain ChainMode
+---@field public StartOrMiddleChain ChainMode
+---@field public EndChain ChainMode
+---@field public NoChain ChainMode
+
+
 ---@class Keyword
 ---@field public Name string
 Keyword = {}
 
----@class CardPile
+---@class CardPile : IEnumerable<Card>
 ---@field public Count number
 ---@field public IsEmpty boolean
 ---@field public [number] Card
@@ -440,16 +461,9 @@ IEventHandler = {}
 function IEventHandler.HandleEvent (evt)
 end
 
----@class List<T>
+---@class List<T> : IList<T>
 ---@field public Capacity number
----@field public Count number
----@field public [number] T
 List = {}
---- Documentation a venir
----@param item T Documentation a venir
-function List.Add (item)
-end
-
 --- Documentation a venir
 ---@param collection IEnumerable<T> | T[] Documentation a venir
 function List.AddRange (collection)
@@ -483,47 +497,6 @@ function List.BinarySearch (item, comparer)
 end
 
 --- Documentation a venir
-function List.Clear ()
-end
-
---- Documentation a venir
----@param item T Documentation a venir
----@return boolean Documentation a venir
-function List.Contains (item)
-end
-
---- Documentation a venir
----@param index number Documentation a venir
----@param array T[] Documentation a venir
----@param arrayIndex number Documentation a venir
----@param count number Documentation a venir
-function List.CopyTo (index, array, arrayIndex, count)
-end
-
---- Documentation a venir
----@param array T[] Documentation a venir
----@param arrayIndex number Documentation a venir
-function List.CopyTo (array, arrayIndex)
-end
-
---- Documentation a venir
----@return fun():T Documentation a venir
-function List.__iterator ()
-end
-
---- Documentation a venir
----@param item T Documentation a venir
----@return number Documentation a venir
-function List.IndexOf (item)
-end
-
---- Documentation a venir
----@param index number Documentation a venir
----@param item T Documentation a venir
-function List.Insert (index, item)
-end
-
---- Documentation a venir
 ---@param index number Documentation a venir
 ---@param collection IEnumerable<T> | T[] Documentation a venir
 function List.InsertRange (index, collection)
@@ -535,17 +508,6 @@ end
 ---@param count number Documentation a venir
 ---@return number Documentation a venir
 function List.LastIndexOf (item, index, count)
-end
-
---- Documentation a venir
----@param item T Documentation a venir
----@return boolean Documentation a venir
-function List.Remove (item)
-end
-
---- Documentation a venir
----@param index number Documentation a venir
-function List.RemoveAt (index)
 end
 
 --- Documentation a venir
@@ -590,30 +552,10 @@ function List.TrimExcess ()
 end
 
 --- Documentation a venir
----@param array T[] Documentation a venir
-function List.CopyTo (array)
-end
-
---- Documentation a venir
 ---@param index number Documentation a venir
 ---@param count number Documentation a venir
 ---@return List<T> Documentation a venir
 function List.GetRange (index, count)
-end
-
---- Documentation a venir
----@param item T Documentation a venir
----@param index number Documentation a venir
----@return number Documentation a venir
-function List.IndexOf (item, index)
-end
-
---- Documentation a venir
----@param item T Documentation a venir
----@param index number Documentation a venir
----@param count number Documentation a venir
----@return number Documentation a venir
-function List.IndexOf (item, index, count)
 end
 
 --- Documentation a venir
@@ -629,27 +571,8 @@ end
 function List.LastIndexOf (item, index)
 end
 
----@class ReadOnlyCollection<T>
----@field public Count number
----@field public [number] T
+---@class ReadOnlyCollection<T> : IList<T>
 ReadOnlyCollection = {}
---- Documentation a venir
----@param value T Documentation a venir
----@return boolean Documentation a venir
-function ReadOnlyCollection.Contains (value)
-end
-
---- Documentation a venir
----@param value T Documentation a venir
----@return number Documentation a venir
-function ReadOnlyCollection.IndexOf (value)
-end
-
---- Documentation a venir
----@param array T[] Documentation a venir
----@param index number Documentation a venir
-function ReadOnlyCollection.CopyTo (array, index)
-end
 
 ---@class IEnumerable<T>
 IEnumerable = {}
@@ -698,6 +621,65 @@ end
 --- Documentation a venir
 ---@return string Documentation a venir
 function Object.ToString ()
+end
+
+---@class IReadOnlyList<T> : IReadOnlyCollection<T>
+---@field public [number] T
+IReadOnlyList = {}
+
+---@class IReadOnlyCollection<T> : IEnumerable<T>
+---@field public Count number
+IReadOnlyCollection = {}
+
+---@class IList<T> : ICollection<T>
+---@field public [number] T
+IList = {}
+--- Documentation a venir
+---@param item T Documentation a venir
+---@return number Documentation a venir
+function IList.IndexOf (item)
+end
+
+--- Documentation a venir
+---@param index number Documentation a venir
+---@param item T Documentation a venir
+function IList.Insert (index, item)
+end
+
+--- Documentation a venir
+---@param index number Documentation a venir
+function IList.RemoveAt (index)
+end
+
+---@class ICollection<T> : IEnumerable<T>
+---@field public Count number
+---@field public IsReadOnly boolean
+ICollection = {}
+--- Documentation a venir
+---@param item T Documentation a venir
+function ICollection.Add (item)
+end
+
+--- Documentation a venir
+function ICollection.Clear ()
+end
+
+--- Documentation a venir
+---@param item T Documentation a venir
+---@return boolean Documentation a venir
+function ICollection.Contains (item)
+end
+
+--- Documentation a venir
+---@param array T[] Documentation a venir
+---@param arrayIndex number Documentation a venir
+function ICollection.CopyTo (array, arrayIndex)
+end
+
+--- Documentation a venir
+---@param item T Documentation a venir
+---@return boolean Documentation a venir
+function ICollection.Remove (item)
 end
 
 
@@ -759,6 +741,9 @@ T_TransferrableCardEvent = --[[---@type Type<TransferrableCardEvent>]] {}
 
 ---@type Type<TargetingEvent>
 T_TargetingEvent = --[[---@type Type<TargetingEvent>]] {}
+
+---@type Type<CardChainModeChangeEvent>
+T_CardChainModeChangeEvent = --[[---@type Type<CardChainModeChangeEvent>]] {}
 
 ---@type Type<CardImageIdChangeEvent>
 T_CardImageIdChangeEvent = --[[---@type Type<CardImageIdChangeEvent>]] {}

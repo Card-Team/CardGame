@@ -115,11 +115,11 @@ namespace CardGameConsole
                 switch (choice)
                 {
                     case 3:
-                        PlayCard(player, false);
+                        PlayCard(player, false, isChaining);
                         if (isChaining) return true;
                         break;
                     case 4:
-                        PlayCard(player, true);
+                        PlayCard(player, true, isChaining);
                         break;
                 }
 
@@ -212,9 +212,17 @@ namespace CardGameConsole
         {
         }
 
-        private static void PlayCard(Player player, bool upgrade)
+        private static void PlayCard(Player player, bool upgrade, bool isChaining)
         {
-            var cards = player.Hand.Where(c => Game.CanPlay(player, c, upgrade)).ToList();
+            var tempCards = player.Hand
+                .Where(c => Game.CanPlay(player, c, upgrade));
+            if (isChaining)
+                tempCards = tempCards.Where(c =>
+                    c.ChainMode.Value == ChainMode.EndChain
+                    || c.ChainMode.Value == ChainMode.MiddleChain
+                    || c.ChainMode.Value == ChainMode.StartOrMiddleChain);
+
+            var cards = tempCards.ToList();
 
             if (cards.Count == 0)
             {

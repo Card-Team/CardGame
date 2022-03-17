@@ -32,7 +32,12 @@ namespace CardGameEngine.LuaDocGen
 
             //fields
 
-            foreach (var propertyInfo in typeInfo.DeclaredProperties.Where(Visibility.IsVisibleToLua))
+            var propImpls = typeInfo.GetInterfaces()
+                .SelectMany(type => type.GetProperties().Select(m => m.Name)).ToList();
+
+            foreach (var propertyInfo in typeInfo.DeclaredProperties
+                         .Where(m => !propImpls.Contains(m.Name))
+                         .Where(Visibility.IsVisibleToLua))
                 builder.AppendLine(PropertyComment(propertyInfo));
 
             // stub
@@ -44,7 +49,12 @@ namespace CardGameEngine.LuaDocGen
 
             //methods
 
-            foreach (var propertyInfo in typeInfo.DeclaredMethods.Where(Visibility.IsVisibleToLua))
+            var methodImplementations = typeInfo.GetInterfaces()
+                .SelectMany(type => type.GetMethods().Select(m => m.Name)).ToList();
+
+            foreach (var propertyInfo in typeInfo.DeclaredMethods
+                         .Where(m => !methodImplementations.Contains(m.Name))
+                         .Where(Visibility.IsVisibleToLua))
                 builder.AppendLine(MethodComment(varname, propertyInfo));
 
             return builder.ToString();
@@ -128,11 +138,22 @@ namespace CardGameEngine.LuaDocGen
 
             var classComment = $"{Comment("class")} {luaType}";
 
+            string parent = null;
             if (typeInfo.BaseType != null
                 && typeInfo.BaseType != typeof(object)
-                && typeInfo.IsVisibleToLua()
-                && typeInfo.BaseType?.Assembly == typeInfo.Assembly)
-                classComment += $" : {typeInfo.BaseType.ToLuaType()}";
+                && typeInfo.IsVisibleToLua())
+                parent = typeInfo.BaseType.ToLuaType();
+            else
+                parent = typeInfo.ImplementedInterfaces
+                    .Where(i => i.GetTypeInfo().IsVisibleToLua()
+                                && i.GetTypeInfo().GetNameWithoutGenericArity() !=
+                                typeInfo.GetNameWithoutGenericArity())
+                    .Select(i => i.ToLuaType())
+                    .FirstOrDefault();
+
+            if (parent != null)
+                classComment += $" : {parent}";
+
 
             return classComment;
         }

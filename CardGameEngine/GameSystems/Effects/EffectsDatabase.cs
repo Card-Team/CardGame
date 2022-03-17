@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CardGameEngine.Cards;
 using CardGameEngine.GameSystems.Targeting;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop;
@@ -92,18 +93,18 @@ namespace CardGameEngine.GameSystems.Effects
         {
             // ID de l'effet (le nom du fichier sans extension)
             string effectId = Path.GetFileNameWithoutExtension(path);
+            var fileContent = File.ReadAllText(path);
 
             // Teste la validité de l'effet
             if (!EffectChecker.CheckEffect(path, effectType, out var error))
             {
                 throw error switch
                 {
-                    InterpreterException exc => new InvalidEffectException(effectId, effectType, exc),
-                    _ => new InvalidEffectException(effectId, effectType, error.ToString())
+                    InterpreterException exc => new InvalidEffectException(effectId, effectType, exc, fileContent),
+                    _ => new InvalidEffectException(effectId, effectType, fileContent, error.ToString())
                 };
             }
 
-            var fileContent = File.ReadAllText(path);
             _scripts[effectId] = fileContent;
             _effectDictionary[effectId] = () =>
             {
@@ -139,6 +140,7 @@ namespace CardGameEngine.GameSystems.Effects
                 {
                     ["CreateTarget"] = (Func<string, TargetTypes, bool, Closure?, Target>)CreateTarget,
                     ["TargetTypes"] = UserData.CreateStatic<TargetTypes>(),
+                    ["ChainMode"] = UserData.CreateStatic<ChainMode>()
                 }
             };
             return script;

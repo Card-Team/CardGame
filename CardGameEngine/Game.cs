@@ -38,6 +38,11 @@ namespace CardGameEngine
         public Player AllowedToPlayPlayer { get; internal set; }
 
         /// <summary>
+        ///     Est ce que l'on est en train de chainer
+        /// </summary>
+        public bool IsInChain => ChainCounter > 0;
+
+        /// <summary>
         /// Le joueur 1
         /// </summary>
         public Player Player1 { get; }
@@ -68,6 +73,8 @@ namespace CardGameEngine
         /// Callbacks externes au moteurs, ce champ va être donné par l'application externe.
         /// </summary>
         private readonly IExternCallbacks _externCallbacks;
+
+        public int ChainCounter { get; private set; }
 
 
         [MoonSharpVisible(false)]
@@ -222,6 +229,13 @@ namespace CardGameEngine
                     $"Tentative d'amélioration de la carte {card} alors qu'elle est au niveau maximum ({card.CurrentLevel})");
             }
 
+            if (upgrade && IsInChain)
+                throw new InvalidOperationException("Tentative d'amélioration pendant une chaine");
+
+            if ((card.ChainMode.Value == ChainMode.StartChain
+                 || card.ChainMode.Value == ChainMode.NoChain) && IsInChain)
+                throw new InvalidOperationException("Tentative de chainage d'une carte non chainable");
+
             if (!upgrade && card.CanBePlayed(player) == false)
                 throw new InvalidOperationException(
                     "La carte n'est pas jouable (précondition fausse)");
@@ -281,7 +295,10 @@ namespace CardGameEngine
             var playEvent = new CardEffectPlayEvent(effectowner, card);
             using (var post = EventManager.SendEvent(playEvent))
             {
-                ChainOpportunity(effectowner.OtherPlayer);
+                if (card.ChainMode.Value == ChainMode.MiddleChain && IsInChain
+                    || card.ChainMode.Value == ChainMode.StartChain
+                    || card.ChainMode.Value == ChainMode.StartOrMiddleChain)
+                    ChainOpportunity(effectowner.OtherPlayer);
                 if (post.Event.Cancelled)
                 {
                     return false;
@@ -294,14 +311,16 @@ namespace CardGameEngine
 
         internal void ChainOpportunity(Player player)
         {
-            //todo check if effect can be chained
-            using (var postchain = EventManager.SendEvent(new ChainOpportunityEvent(player)))
+            using (var postchain = EventManager.SendEvent(new ChainingEvent(player)))
             {
-                if (postchain.Event.Cancelled) return;
+                ChainCounter++;
                 AllowedToPlayPlayer = AllowedToPlayPlayer.OtherPlayer;
                 if (!_externCallbacks.ExternChainOpportunity(postchain.Event.Chainer))
+                {
+                    ChainCounter--;
                     //si abandon de chaine , on rechange
                     AllowedToPlayPlayer = AllowedToPlayPlayer.OtherPlayer;
+                }
             }
         }
 
@@ -441,7 +460,7 @@ namespace CardGameEngine
                 }
                 catch (InvalidEffectException exc)
                 {
-                    throw new InvalidEffectException(effect, exc.Message);
+                    throw new InvalidEffectException(effect, exc.Message, GetScriptByName(effect.EffectId)!);
                 }
             }
             else

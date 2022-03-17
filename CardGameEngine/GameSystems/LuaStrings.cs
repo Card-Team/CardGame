@@ -10,6 +10,7 @@
             public const string DescriptionProperty = "description";
             public const string TargetsProperty = "targets";
             public const string ImageIdProperty = "image_id";
+            public const string ChainModeProperty = "chain_mode";
 
             public const string PreconditionMethod = "precondition";
             public const string DoEffectMethod = "do_effect";

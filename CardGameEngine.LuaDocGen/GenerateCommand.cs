@@ -31,7 +31,12 @@ namespace CardGameEngine.LuaDocGen
                     typeof(ReadOnlyCollection<>).GetTypeInfo(),
                     typeof(IEnumerable<>).GetTypeInfo(),
                     typeof(IComparer<>).GetTypeInfo(),
-                    typeof(object).GetTypeInfo()
+                    typeof(object).GetTypeInfo(),
+                    typeof(IReadOnlyList<>).GetTypeInfo(),
+                    typeof(IReadOnlyCollection<>).GetTypeInfo(),
+                    typeof(IList<>).GetTypeInfo(),
+                    typeof(ICollection<>).GetTypeInfo()
+                    // typeof(IEnumerable).GetTypeInfo(),
                 }).ToList();
 
             var effectTypes = new List<Type>();
