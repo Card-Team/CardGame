@@ -130,5 +130,20 @@ namespace CardGameEngine.GameSystems
         {
             return obj is Player player && (Id == player.Id);
         }
+
+        public static bool operator ==(Player first, object other)
+        {
+            return first.Equals(other);
+        }
+
+        public static bool operator !=(Player first, object other)
+        {
+            return !(first == other);
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
     }
 }

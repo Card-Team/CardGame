@@ -232,5 +232,15 @@ namespace CardGameEngine.Cards
         {
             return obj is Card card && (Id == card.Id);
         }
+
+        public static bool operator ==(Card first, object second)
+        {
+            return first.Equals(second);
+        }
+
+        public static bool operator !=(Card first, object second)
+        {
+            return !(first == second);
+        }
     }
 }
