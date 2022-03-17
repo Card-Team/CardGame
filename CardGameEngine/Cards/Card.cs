@@ -235,7 +235,7 @@ namespace CardGameEngine.Cards
 
         public static bool operator ==(Card first, object second)
         {
-            return first.Equals(second);
+            return Equals(first, second);
         }
 
         public static bool operator !=(Card first, object second)

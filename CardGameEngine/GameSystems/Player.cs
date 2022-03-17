@@ -133,7 +133,7 @@ namespace CardGameEngine.GameSystems
 
         public static bool operator ==(Player first, object other)
         {
-            return first.Equals(other);
+            return Equals(first, other);
         }
 
         public static bool operator !=(Player first, object other)
