@@ -5,6 +5,7 @@
 ---@field public Player1 Player
 ---@field public Player2 Player
 ---@field public AllCards IReadOnlyList<Card>
+---@field public ChainCounter number
 Game = {}
 --- Documentation a venir
 ---@param playerToWin Player Documentation a venir
@@ -122,6 +123,11 @@ end
 function Player.Equals (obj)
 end
 
+--- Documentation a venir
+---@return number Documentation a venir
+function Player.GetHashCode ()
+end
+
 ---@class ITargetable
 ITargetable = {}
 
@@ -188,10 +194,9 @@ Event = {}
 ---@field public NewMaxPointCount number
 MaxActionPointsEditEvent = {}
 
-
----@class ChainOpportunityEvent : CancellableEvent
+---@class ChainingEvent : Event
 ---@field public Chainer Player
-ChainOpportunityEvent = {}
+ChainingEvent = {}
 
 
 ---@class DeckLoopEvent : Event
@@ -243,9 +248,11 @@ CardPlayEvent = {}
 ---@class CardUnMarkUpgradeEvent : CardEvent
 CardUnMarkUpgradeEvent = {}
 
+
 ---@class TransferrableCardEvent : CardEvent
 ---@field public Card Card
 TransferrableCardEvent = {}
+
 
 ---@class TargetingEvent : Event
 ---@field public TargetData Target
@@ -387,6 +394,7 @@ end
 Keyword = {}
 
 ---@class CardPile : IEnumerable<Card>
+---@field public LimitSize number | nil
 ---@field public Count number
 ---@field public IsEmpty boolean
 ---@field public [number] Card
@@ -703,8 +711,8 @@ T_Event = --[[---@type Type<Event>]] {}
 ---@type Type<MaxActionPointsEditEvent>
 T_MaxActionPointsEditEvent = --[[---@type Type<MaxActionPointsEditEvent>]] {}
 
----@type Type<ChainOpportunityEvent>
-T_ChainOpportunityEvent = --[[---@type Type<ChainOpportunityEvent>]] {}
+---@type Type<ChainingEvent>
+T_ChainingEvent = --[[---@type Type<ChainingEvent>]] {}
 
 ---@type Type<DeckLoopEvent>
 T_DeckLoopEvent = --[[---@type Type<DeckLoopEvent>]] {}

@@ -12,7 +12,10 @@ namespace CardGameEngine.EventSystem.Events.CardEvents
         /// </summary>
         public Target TargetData { get; internal set; }
 
-        public ITargetable ResolvedTarget { get; internal set; }
+        /// <summary>
+        ///     La cible résolue
+        /// </summary>
+        public ITargetable ResolvedTarget { get; set; }
 
         internal TargetingEvent(Target targetData, ITargetable resolvedTarget)
         {
