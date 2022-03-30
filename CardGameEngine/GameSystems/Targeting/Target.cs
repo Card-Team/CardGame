@@ -69,7 +69,7 @@ namespace CardGameEngine.GameSystems.Targeting
             }
             catch (ScriptRuntimeException ex)
             {
-                throw new LuaException(ex, ex.CallStack.ToList());
+                throw new LuaException(ex, ex.CallStack?.ToList());
             }
 
             throw new InvalidEffectException(

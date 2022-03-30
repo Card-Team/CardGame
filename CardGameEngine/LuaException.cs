@@ -8,9 +8,9 @@ namespace CardGameEngine
     public class LuaException : Exception
     {
         public ScriptRuntimeException RuntimeException { get; }
-        public List<WatchItem> CallStack { get; }
+        public List<WatchItem>? CallStack { get; }
 
-        internal LuaException(ScriptRuntimeException runtimeException, List<WatchItem> callStack)
+        internal LuaException(ScriptRuntimeException runtimeException, List<WatchItem>? callStack)
         {
             RuntimeException = runtimeException;
             CallStack = callStack;

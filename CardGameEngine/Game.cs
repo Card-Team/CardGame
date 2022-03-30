@@ -43,6 +43,11 @@ namespace CardGameEngine
         public bool IsInChain => ChainCounter > 0;
 
         /// <summary>
+        ///     La pile des cartes actuellement chainées
+        /// </summary>
+        public Stack<Card> ChainStack { get; }
+
+        /// <summary>
         /// Le joueur 1
         /// </summary>
         public Player Player1 { get; }
@@ -85,6 +90,7 @@ namespace CardGameEngine
 
             _externCallbacks = externCallbacks;
             _allCards = new List<Card>();
+            ChainStack = new Stack<Card>();
 
             EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.DebugPrint);
             var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
@@ -298,7 +304,7 @@ namespace CardGameEngine
                 if (card.ChainMode.Value == ChainMode.MiddleChain && IsInChain
                     || card.ChainMode.Value == ChainMode.StartChain
                     || card.ChainMode.Value == ChainMode.StartOrMiddleChain)
-                    ChainOpportunity(effectowner.OtherPlayer);
+                    ChainOpportunity(effectowner.OtherPlayer, card);
                 if (post.Event.Cancelled)
                 {
                     return false;
@@ -309,18 +315,21 @@ namespace CardGameEngine
         }
 
 
-        internal void ChainOpportunity(Player player)
+        internal void ChainOpportunity(Player player, Card card)
         {
             using (var postchain = EventManager.SendEvent(new ChainingEvent(player)))
             {
                 ChainCounter++;
+                ChainStack.Push(card);
                 AllowedToPlayPlayer = AllowedToPlayPlayer.OtherPlayer;
                 if (!_externCallbacks.ExternChainOpportunity(postchain.Event.Chainer))
                 {
-                    ChainCounter--;
                     //si abandon de chaine , on rechange
-                    AllowedToPlayPlayer = AllowedToPlayPlayer.OtherPlayer;
                 }
+
+                AllowedToPlayPlayer = AllowedToPlayPlayer.OtherPlayer;
+                ChainStack.Pop();
+                ChainCounter--;
             }
         }
 

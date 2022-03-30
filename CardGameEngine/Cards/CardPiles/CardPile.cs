@@ -29,7 +29,7 @@ namespace CardGameEngine.Cards.CardPiles
         /// <summary>
         /// Nombre de cartes maximal dans la pile
         /// </summary>
-        private int? LimitSize { get; }
+        public int? LimitSize { get; }
 
         /// <summary>
         /// Propriété renvoyant le nombre de cartes
