@@ -93,7 +93,8 @@ namespace CardGameEngine
             ChainStack = new Stack<Card>();
 
             EffectsDatabase = new EffectsDatabase(effectFolder, _externCallbacks.DebugPrint);
-            var cards1 = deck1.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
+            var cards1 = deck1.Where(s => !s.StartsWith("_"))
+                .Prepend(VictoryCardEffectId)
                 .Select(s => EffectsDatabase[s]())
                 .Select(e =>
                 {
@@ -101,7 +102,7 @@ namespace CardGameEngine
                     _allCards.Add(card);
                     return card;
                 }).ToList();
-            var cards2 = deck2.Where(s => !s.StartsWith("_")).Concat(new[] { VictoryCardEffectId })
+            var cards2 = deck2.Where(s => !s.StartsWith("_")).Prepend(VictoryCardEffectId)
                 .Select(s => EffectsDatabase[s]())
                 .Select(e =>
                 {
@@ -246,6 +247,8 @@ namespace CardGameEngine
                 throw new InvalidOperationException(
                     "La carte n'est pas jouable (précondition fausse)");
 
+            if (ChainStack.Contains(card))
+                throw new InvalidOperationException("Tentative de chainage d'une carte déja en train d'être chainée");
 
             var result = upgrade ? UpgradeCard(player, card) : PlayCard(player, card);
             if (AllowedToPlayPlayer != CurrentPlayer)
