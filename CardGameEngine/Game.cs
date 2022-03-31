@@ -308,7 +308,7 @@ namespace CardGameEngine
                     || card.ChainMode.Value == ChainMode.StartChain
                     || card.ChainMode.Value == ChainMode.StartOrMiddleChain)
                     ChainOpportunity(effectowner.OtherPlayer, card);
-                if (post.Event.Cancelled)
+                if (post.Event.Cancelled || card.CanBePlayed(effectowner) == false)
                 {
                     return false;
                 }
